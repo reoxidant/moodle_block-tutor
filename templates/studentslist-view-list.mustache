@@ -1,17 +1,21 @@
 <li class="studentrow {{#hasfindebt}}hasfindebt{{/hasfindebt}}">
-	<a href="{{studenturl}}" target="_blank">{{studentname}}</a> {{#student_leangroup}}(<i>{{student_leangroup}}</i>) {{/student_leangroup}}{{#groupname}}<small> - {{groupname}}</small>{{/groupname}} {{#hasfindebt}}<span class="hasfindebt_info">({{#str}} hasfindebt, block_tutor {{/str}})</span>{{/hasfindebt}}
-	<ul>
-		{{#data}}
-			<li><a href="{{{courseurl}}}" target="_blank">{{coursename}}</a>
-			{{#mod_info}}
-				{{#mod_url}}
-					- (<b><a href="{{mod_url}}&rownum=0&action=grader&userid={{userid}}&group={{groupid}}&treset=1" target="_blank" title="{{#str}} gotosubmition, block_tutor {{/str}}">{{mod_grade}}</a></b>)
-				{{/mod_url}}
-				{{^mod_url}}
-					- (<b>{{mod_grade}}</b>)
-				{{/mod_url}}
-			{{/mod_info}}
-			</li>
-		{{/data}}
-	</ul>
+    <a href="{{studenturl}}" target="_blank">{{studentname}}</a> {{#student_leangroup}}
+    (<i>{{student_leangroup}}</i>) {{/student_leangroup}}{{#groupname}}
+    <small> - {{groupname}}</small>{{/groupname}} {{#hasfindebt}}
+    <span class="hasfindebt_info">({{#str}} hasfindebt, block_tutor {{/str}})</span>{{/hasfindebt}}
+    <ul>
+        {{#data}}
+            <li><a href="{{{courseurl}}}" target="_blank">{{coursename}}</a>
+                {{#mod_info}}
+                    {{#mod_url}}
+                        - (<b><a href="{{mod_url}}&rownum=0&action=grader&userid={{userid}}&group={{groupid}}&treset=1"
+                        target="_blank" title="{{#str}} gotosubmition, block_tutor {{/str}}">{{mod_grade}}</a></b>)
+                    {{/mod_url}}
+                    {{^mod_url}}
+                        - (<b>{{mod_grade}}</b>)
+                    {{/mod_url}}
+                {{/mod_info}}
+            </li>
+        {{/data}}
+    </ul>
 </li>

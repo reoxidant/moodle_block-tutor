@@ -1,19 +1,19 @@
 <div>
-	<ol>
-		{{#needgradignview.data}}
-			{{> block_tutor/needgradign-view-list }}
-		{{/needgradignview.data}}
-		{{^needgradignview.data}}
-			{{#str}} noungrades, block_tutor {{/str}}
-		{{/needgradignview.data}}
-	</ol>
+    <ol>
+        {{#needgradignview.data}}
+            {{> block_tutor/needgradign-view-list }}
+        {{/needgradignview.data}}
+        {{^needgradignview.data}}
+            {{#str}} noungrades, block_tutor {{/str}}
+        {{/needgradignview.data}}
+    </ol>
 </div>
 {{#js}}
-	require(['jquery'], function($) {
-		$('.needgradingsubmit').click(function(){
-			if($('.notgradestudents').length > 1){
-				$(this).closest('.notgradestudents').fadeOut();
-			}
-		})
-	});
+    require(['jquery'], function($) {
+    $('.needgradingsubmit').click(function(){
+    if($('.notgradestudents').length > 1){
+    $(this).closest('.notgradestudents').fadeOut();
+    }
+    })
+    });
 {{/js}}

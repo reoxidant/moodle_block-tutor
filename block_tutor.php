@@ -1,15 +1,21 @@
 <?php
 
+namespace block_tutor;
+
+use block_base;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/blocks/tutor/lib.php');
 
-class block_tutor extends block_base {
+class block_tutor extends block_base
+{
 
     /**
      * Init.
      */
-    public function init() {
+    public function init()
+    {
         $this->title = get_string('pluginname', 'block_tutor');
     }
 
@@ -18,17 +24,18 @@ class block_tutor extends block_base {
      *
      * @return stdClass contents of block
      */
-    public function get_content() {
-		global $USER, $DB;
-		
-		if (!isloggedin() || !has_capability('block/tutor:view', $this->page->context))
-			return false;
+    public function get_content()
+    {
+        global $USER, $DB;
+
+        if (!isloggedin() || !has_capability('block/tutor:view', $this->page->context))
+            return false;
 
         if (isset($this->content)) {
             return $this->content;
         }
 
-		$data = new stdClass;
+        $data = new stdClass;
         // Check if the tab to select wasn't passed in the URL, if so see if the user has any preference.
         if (!$tab = optional_param('tutortab', null, PARAM_ALPHA)) {
             // Check if the user has no preference, if so get the site setting.
@@ -37,13 +44,13 @@ class block_tutor extends block_base {
                 $tab = $config->defaulttab;
             }
         }
-		$data->tab = $tab;
+        $data->tab = $tab;
 
-		// для переключателя внутри вкладки
-		if (!$studentlist_type = get_user_preferences('block_tutor_studentlist_tab')) {
-			$studentlist_type = BLOCK_TUTOR_STUDENTLIST_BYGROUP;
-		}
-		$data->studentlist_type = $studentlist_type;
+        // для переключателя внутри вкладки
+        if (!$studentlist_type = get_user_preferences('block_tutor_studentlist_tab')) {
+            $studentlist_type = BLOCK_TUTOR_STUDENTLIST_BYGROUP;
+        }
+        $data->studentlist_type = $studentlist_type;
 
         $renderable = new \block_tutor\output\main($data);
         $renderer = $this->page->get_renderer('block_tutor');
@@ -60,7 +67,8 @@ class block_tutor extends block_base {
      *
      * @return array
      */
-    public function applicable_formats() {
+    public function applicable_formats()
+    {
         return array('my' => true);
     }
 
@@ -69,7 +77,8 @@ class block_tutor extends block_base {
      *
      * @return boolean
      */
-    public function has_config() {
+    public function has_config()
+    {
         return true;
     }
 }
