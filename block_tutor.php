@@ -1,8 +1,5 @@
 <?php
 
-namespace block_tutor;
-
-use block_base;
 
 defined('MOODLE_INTERNAL') || die();
 

@@ -4,10 +4,9 @@ namespace block_tutor\output;
 
 class sirius_student
 {
-    private $name;
+    private $user;
 
-    function __construct($name_student)
-    {
-        $this->name = $name_student;
+    public function getUserGroups(){
+        return [1,2,3,4,5,6,7,8,9,10];
     }
 }
