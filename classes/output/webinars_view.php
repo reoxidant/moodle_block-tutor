@@ -18,8 +18,8 @@ class webinars_view
     {
 
         $return_arr = Array();
-        $arr_userwebinars = $this->get_user_webinars();
-
+//        $arr_userwebinars = $this->get_user_webinars();
+        $arr_userwebinars = array();
         $return_arr['count'] = 0;
         $return_arr['webinars'] = Array();
         foreach ($arr_userwebinars as $webinarobj) {
