@@ -4,6 +4,9 @@ namespace block_tutor\output;
 
 defined('MOODLE_INTERNAL') || die();
 
+use sirius_student, moodle_url/*, customscripts_muiv_students*/
+    ;
+
 //require_once($CFG->dirroot . "/local/customlib.php");
 
 global $CFG;
@@ -12,7 +15,7 @@ if (is_file($CFG->dirroot . '/local/student_lib/locallib.php')) {
     require_once($CFG->dirroot . '/local/student_lib/locallib.php');
 }
 
-class studentslist_view
+class studentslist_view extends sirius_student
 {
     private $sortcmpby = 'coursename'; // для функции сортировки массива
 
@@ -56,7 +59,7 @@ class studentslist_view
                     $data = Array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl_return, 'mod_info' => $mod_info);
 
                     // проверка на фин долг
-                    $curuser_hasfindebt = customscripts_muiv_students::check_hasfindebt($userid);
+                    $curuser_hasfindebt = sirius_student::check_hasfindebt($userid);
                     $student_leangroup = self::get_student_leangroup($userid);
                     $return_arr['students'][$userid]['studentname'] = $studentname;
                     $return_arr['students'][$userid]['studenturl'] = $profileurl;
@@ -143,30 +146,5 @@ class studentslist_view
         } else {
             return false;
         }
-    }
-
-    private function getUserGroups()
-    {
-        global $DB;
-
-        $sqlUserGroups = "SELECT 
-                                    g.id, g.courseid, g.name, c.fullname as coursename
-                                  FROM
-                                    {groups} g,
-                                    {groups_members} gm,
-                                    {course} c
-                                  WHERE 
-                                    g.id = gm.groupid
-                                    AND c.id = g.courseid
-                                    AND gm.userid = ?
-                                  ORDER BY g.name, c.fullname;";
-        $res = $DB->get_records_sql($sqlUserGroups, array($this->userid));
-
-        $groupedByCourseidArr = Array();
-
-        foreach ($res as $key => $value)
-            $groupedByCourseidArr[$value->courseid][$value->name] = $value;
-
-        return $groupedByCourseidArr;
     }
 }

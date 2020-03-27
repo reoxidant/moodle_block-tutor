@@ -18,8 +18,8 @@ class webinars_view
     {
 
         $return_arr = Array();
-//        $arr_userwebinars = $this->get_user_webinars();
-        $arr_userwebinars = array();
+        $arr_userwebinars = $this->get_user_webinars();
+
         $return_arr['count'] = 0;
         $return_arr['webinars'] = Array();
         foreach ($arr_userwebinars as $webinarobj) {
@@ -68,7 +68,8 @@ class webinars_view
 					mdl_course.fullname, mdl_bigbluebuttonbn.name';
         $params = Array('userid' => $this->userid);
 
-        return $DB->get_records_sql($sql, $params);
+//        return $DB->get_records_sql($sql, $params);
+        return array();
     }
 
 }
