@@ -2,7 +2,9 @@ define(['jquery', 'core/ajax', 'core/custom_interaction_events',
     'core/notification'], function ($, Ajax, CustomEvents, Notification) {
 
     var init = function() {
-        alert('Hi alone');
+        $(window.document).ready(function(){
+            console.log('Hello Admin');
+        });
     };
 
     return {
