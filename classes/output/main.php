@@ -47,6 +47,8 @@ class main implements renderable, templatable
         global $USER;
 
         $needgradignview = new needgradign_view($USER->id);
+
+        //fall server
         $studentslistview = new studentslist_view;
         $enrolledview = new enrolled_view;
         $webinarsview = new webinars_view($USER->id);

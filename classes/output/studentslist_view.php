@@ -15,7 +15,8 @@ if (is_file($CFG->dirroot . '/local/student_lib/locallib.php')) {
     require_once($CFG->dirroot . '/local/student_lib/locallib.php');
 }
 
-class studentslist_view extends sirius_student
+//extends sirius_student
+class studentslist_view
 {
     private $sortcmpby = 'coursename'; // для функции сортировки массива
 
@@ -29,8 +30,8 @@ class studentslist_view extends sirius_student
         global $DB, $USER;
 
         //$sirius_student = new sirius_student;
-        $groups_arr = $this->getUserGroups();
-
+        //$groups_arr = $this->getUserGroups();
+        $groups_arr = array();
         $return_arr = Array('students' => Array(), 'groups' => Array());
 
         // if($USER->id == 17810 && isset($USER->realuser) && $USER->realuser == 26102){
