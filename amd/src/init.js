@@ -1,5 +1,5 @@
 define(['jquery', 'core/ajax', 'core/custom_interaction_events',
-    'core/notification'], function($, ajax, config, renderer) {
+    'core/notification'], function ($, ajax, config, renderer) {
 
     const init = $(document).ready(() => {
         const URL = config.wwwroot + '/blocks/';
@@ -9,8 +9,8 @@ define(['jquery', 'core/ajax', 'core/custom_interaction_events',
             dataType: 'json'
         };
 
-        $.ajax( URL, settings).done(() => {
-           console.log('success');
+        $.ajax(URL, settings).done(() => {
+            console.log('success');
         });
     });
 
