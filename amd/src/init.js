@@ -1,3 +1,9 @@
+/**
+ * Javascript used to save the user's tab preference.
+ *
+ * @package    block_tutor
+ */
+/*
 define(['jquery', 'core/ajax', 'core/custom_interaction_events',
     'core/notification'], function ($, ajax, config, renderer) {
 
@@ -17,4 +23,6 @@ define(['jquery', 'core/ajax', 'core/custom_interaction_events',
     return {
         init: init
     };
-});
+});*/
+console.log(123);
+alert('sosi');
