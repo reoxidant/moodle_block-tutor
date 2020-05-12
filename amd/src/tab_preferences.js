@@ -4,7 +4,7 @@
  * @package    block_tutor
  */
 
-define(['jquery', 'core/ajax', 'core/custom_interaction_events',
+define('block_tutor/tab_preferences', ['jquery', 'core/ajax', 'core/custom_interaction_events',
     'core/notification'], function ($, Ajax, CustomEvents, Notification) {
 
     /**

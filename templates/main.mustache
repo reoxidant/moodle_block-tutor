@@ -1,7 +1,4 @@
 <div id="block-tutor-{{uniqid}}" class="block-tutor" data-region="tutor">
-    <span class="overlay-icon-container {{$hiddenclass}}{{^visible}}hidden{{/visible}}{{/hiddenclass}}" data-region="overlay-icon-container">
-         {{> core/loading }}
-    </span>
     <ul id="block-tutor-view-choices-{{uniqid}}" class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a class="nav-link {{#viewingneedgradign}}active show{{/viewingneedgradign}}" href="#tutor_needgradign_view"
@@ -30,6 +27,11 @@
                     webinars, block_tutor {{/str}}{{#webinarsview.count}}
                 (<b>{{webinarsview.count}}</b>){{/webinarsview.count}}
             </a>
+        </li>
+        <li>
+            <span class="overlay-icon-container {{$hiddenclass}}{{^visible}}hidden{{/visible}}{{/hiddenclass}}" data-region="overlay-icon-container">
+                {{> core/loading }}
+            </span>
         </li>
     </ul>
     <div class="tab-content content-centred">

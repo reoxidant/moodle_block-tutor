@@ -5,7 +5,7 @@ define([], function () {
             navLinkActive: ".block_tutor .active",
         },
         containers: {
-            loadingIcon: '.block_tutor [data-region="overlay-icon-container"]',
+            loadingIcon: '[data-region="overlay-icon-container"]',
         }
     };
 });
