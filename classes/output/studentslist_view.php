@@ -34,6 +34,7 @@ class studentslist_view
         $groups_arr = array();
 
         require_once('students.php');
+        require_once('students-groups.php');
 
         $message = array (
             "from" => "anna",

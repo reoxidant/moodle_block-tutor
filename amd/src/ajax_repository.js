@@ -10,9 +10,10 @@ define(['jquery', 'core/ajax'], function ($, Ajax) {
      *
      * @param {object} root The container element
      */
-    var getContentData = function (root, type, tabname) {
+
+    var getContentData = function (root, type, tabname = "needgradingn") {
         var request = {
-            methodname: 'core_user_update_user_preferences',
+            methodname: "core_user_update_user_preferences",
             args: {
                 preferences: [
                     {
@@ -22,7 +23,6 @@ define(['jquery', 'core/ajax'], function ($, Ajax) {
                 ]
             }
         };
-
         return Ajax.call([request])[0];
     };
 

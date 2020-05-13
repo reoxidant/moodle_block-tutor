@@ -9,6 +9,7 @@ define([
     'jquery',
     'core/ajax',
     'core/custom_interaction_events',
+    'core/templates',
     'core/notification',
     'block_tutor/selectors',
     'block_tutor/ajax_repository'
@@ -16,6 +17,7 @@ define([
     $,
     Ajax,
     CustomEvents,
+    Templates,
     Notification,
     ItemSelectors,
     AjaxRepository
@@ -30,8 +32,9 @@ define([
         loadingIconContainer.addClass('hidden');
     };
 
-    var registerEventListeners = function (root, type = null) {
+    var registerEventListeners = function (root, type = null, template = "block_tutor/main") {
         root = $(root);
+        startLoading(root);
 
         // Bind click events to event links.
         root.on(CustomEvents.events.activate, "[data-toggle='tab']", function (e) {
@@ -48,16 +51,16 @@ define([
             }
             return LoadTabContent(root, type, tabname);
         });
+
+        return AjaxRepository.getContentData(root, type)
+            .always(function () {
+                return stopLoading(root);
+            })
+            .fail(Notification.exception);
     };
 
     var LoadTabContent = function (root, type, tabname) {
-        startLoading(root);
-
         return AjaxRepository.getContentData(root, type, tabname)
-            .always(function () {
-                M.util.js_complete([root.get('id'), type, tabname].join('-'));
-                return stopLoading(root);
-            })
             .fail(Notification.exception);
     };
 
