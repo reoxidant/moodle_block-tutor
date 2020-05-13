@@ -32,9 +32,7 @@ class studentslist_view
         //$sirius_student = new sirius_student;
         //$groups_arr = $this->getUserGroups();
         $groups_arr = array();
-
         require_once('students.php');
-        require_once('students-groups.php');
 
         $message = array (
             "from" => "anna",
