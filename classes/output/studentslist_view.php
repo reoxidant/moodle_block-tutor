@@ -4,8 +4,8 @@ namespace block_tutor\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-use sirius_student, moodle_url/*, customscripts_muiv_students*/
-    ;
+use moodle_url;
+use sirius_student;
 
 //require_once($CFG->dirroot . "/local/customlib.php");
 
@@ -15,7 +15,8 @@ if (is_file($CFG->dirroot . '/local/student_lib/locallib.php')) {
     require_once($CFG->dirroot . '/local/student_lib/locallib.php');
 }
 
-class studentslist_view extends sirius_student
+//extends sirius_student
+class studentslist_view
 {
     private $sortcmpby = 'coursename'; // для функции сортировки массива
 
@@ -29,9 +30,61 @@ class studentslist_view extends sirius_student
         global $DB, $USER;
 
         //$sirius_student = new sirius_student;
-        $groups_arr = $this->getUserGroups();
+        //$groups_arr = $this->getUserGroups();
+        $groups_arr = array();
+        require_once('students.php');
 
-        $return_arr = Array('students' => Array(), 'groups' => Array());
+        $message = array (
+            "from" => "anna",
+            "to" => array (
+                array ( "name" => "john" ),
+                array ( "name" => "bob" ),
+                array ( "name" => "claire" ),
+            ),
+            "hasCC" => false,
+            "content" => "Hi, will you attend my birthday party?",
+            // We need a boolean in case of recursive partials
+            // see: https://github.com/bobthecow/mustache.php/issues/44
+            "hasReplies" => true,
+            "replies" => array (
+                array (
+                    "from" => "john",
+                    "to" => array (
+                            array ( "name" => "anna" ),
+                    ),
+                    "hasCC" => true,
+                    "cc" => array (
+                            array ( "name" => "bob" ),
+                            array ( "name" => "claire" ),
+                    ),
+                    "content" => "Of course!",
+                    "hasReplies" => true,
+                    "replies" => array (
+                        "from" => "claire",
+                        "to" => array (
+                            array("name" => "anna"),
+                            array("name" => "john"),
+                            array("name" => "claire"),
+                        ),
+                        "hasCC" => true,
+                        "cc" => array (
+                            array ( "name" => "bob" ),
+                        ),
+                        "content" => "Let's party like it's 1999!",
+                        "hasReplies" => false,
+                    ),
+                ),
+                array (
+                    "from" => "bob",
+                    "to" => array (
+                        array ( "name" => "anna" ),
+                    ),
+                    "hasCC" => false,
+                    "content" => "Sorry I can't :(",
+                    "hasReplies" => false,
+                ),
+            ),
+        );
 
         // if($USER->id == 17810 && isset($USER->realuser) && $USER->realuser == 26102){
         // print_r($groups_arr);die;

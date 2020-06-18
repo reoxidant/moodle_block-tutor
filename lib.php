@@ -52,4 +52,12 @@ function block_tutor_user_preferences()
     return $preferences;
 }
 
+function debug($arr, $die = false)
+{
+    echo '<pre>';
+    var_dump($arr);
+    if ($die) die('test');
+    echo '</pre>';
+}
+
 ?>

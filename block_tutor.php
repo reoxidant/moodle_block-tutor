@@ -16,11 +16,6 @@ class block_tutor extends block_base
         $this->title = get_string('pluginname', 'block_tutor');
     }
 
-    public function get_required_javascript() {
-        parent::get_required_javascript();
-        $this->page->requires->js_call_amd('block_tutor/init', 'init');
-    }
-
     /**
      * Returns the contents.
      *
@@ -58,13 +53,8 @@ class block_tutor extends block_base
         $renderer = $this->page->get_renderer('block_tutor');
 
         $this->content = new stdClass();
-/*        $this->content = new stdClass();
+
         $this->content->text = $renderer->render($renderable);
-        */
-
-
-
-//        $this->content->text = $renderer->render($renderable);
         $this->content->footer = '';
 
         return $this->content;

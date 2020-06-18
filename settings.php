@@ -5,7 +5,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/blocks/tutor/lib.php');
 
 if ($ADMIN->fulltree) {
-
+    //block settings
     $options = [
         BLOCK_TUTOR_NEEDGRADIGN_VIEW => get_string('needgradign', 'block_tutor'),
         BLOCK_TUTOR_STUDENTSLIST_VIEW => get_string('studentslist', 'block_tutor'),
