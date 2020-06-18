@@ -1,4 +1,7 @@
 <div id="block-tutor-{{uniqid}}" class="block-tutor" data-region="tutor">
+    <span class="overlay-icon-container {{$hiddenclass}}{{^visible}}hidden{{/visible}}{{/hiddenclass}}" data-region="overlay-icon-container">
+         {{> core/loading }}
+    </span>
     <ul id="block-tutor-view-choices-{{uniqid}}" class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a class="nav-link {{#viewingneedgradign}}active show{{/viewingneedgradign}}" href="#tutor_needgradign_view"
@@ -28,12 +31,6 @@
                 (<b>{{webinarsview.count}}</b>){{/webinarsview.count}}
             </a>
         </li>
-        <li>
-            <span class="overlay-icon-container {{$hiddenclass}}{{^visible}}hidden{{/visible}}{{/hiddenclass}}"
-                  data-region="overlay-icon-container">
-                {{> core/loading }}
-            </span>
-        </li>
     </ul>
     <div class="tab-content content-centred">
         <div role="tabpanel" class="tab-pane my-5 fade {{#viewingneedgradign}}in active show{{/viewingneedgradign}}"
@@ -57,7 +54,7 @@
     </div>
 </div>
 {{#js}}
-    require(['jquery', 'block_tutor/init'], function($, TabPreferences) {
+    require(['jquery', 'block_tutor/tab_preferences'], function($, TabPreferences) {
     var root = $('#block-tutor-view-choices-{{uniqid}}');
     TabPreferences.registerEventListeners(root);
     });
