@@ -6,14 +6,12 @@ defined('MOODLE_INTERNAL') || die();
 use renderable;
 use renderer_base;
 use templatable;
-use core_completion\progress;
-use sirius_student;
 
 global $CFG;
 
-require_once($CFG->dirroot . '/blocks/tutor/lib.php');
-if (is_file($CFG->dirroot . '/local/student_lib/locallib.php')) {
-    require_once($CFG->dirroot . '/local/student_lib/locallib.php');
+require_once($CFG -> dirroot . '/blocks/tutor/lib.php');
+if (is_file($CFG -> dirroot . '/local/student_lib/locallib.php')) {
+    require_once($CFG -> dirroot . '/local/student_lib/locallib.php');
 }
 
 class main implements renderable, templatable
@@ -32,8 +30,8 @@ class main implements renderable, templatable
      */
     public function __construct($data)
     {
-        $this->tab = $data->tab;
-        $this->studentlist_type = $data->studentlist_type;
+        $this -> tab = $data -> tab;
+        $this -> studentlist_type = $data -> studentlist_type;
     }
 
     /**
@@ -46,22 +44,22 @@ class main implements renderable, templatable
     {
         global $USER;
 
-        $needgradignview = new needgradign_view($USER->id);
+        $needgradignview = new needgradign_view($USER -> id);
 
         //fall server
         $studentslistview = new studentslist_view;
         $enrolledview = new enrolled_view;
-        $webinarsview = new webinars_view($USER->id);
+        $webinarsview = new webinars_view($USER -> id);
 
         $viewingneedgradign = false;
         $viewingstudentslist = false;
         $viewingenrolled = false;
         $viewingwebinars = false;
-        if ($this->tab == BLOCK_TUTOR_STUDENTSLIST_VIEW) {
+        if ($this -> tab == BLOCK_TUTOR_STUDENTSLIST_VIEW) {
             $viewingstudentslist = true;
-        } else if ($this->tab == BLOCK_TUTOR_ENROLLED_VIEW) {
+        } else if ($this -> tab == BLOCK_TUTOR_ENROLLED_VIEW) {
             $viewingenrolled = true;
-        } else if ($this->tab == BLOCK_TUTOR_NEEDGRADIGN_VIEW) {
+        } else if ($this -> tab == BLOCK_TUTOR_NEEDGRADIGN_VIEW) {
             $viewingneedgradign = true;
         } else {
             $viewingwebinars = true;
@@ -69,7 +67,7 @@ class main implements renderable, templatable
 
         $studentlist_bystudent = false;
         $studentlist_bygroup = false;
-        if ($this->studentlist_type == BLOCK_TUTOR_STUDENTLIST_BYSTUDENT) {
+        if ($this -> studentlist_type == BLOCK_TUTOR_STUDENTLIST_BYSTUDENT) {
             $studentlist_bystudent = true;
         } else {
             $studentlist_bygroup = true;
@@ -82,10 +80,10 @@ class main implements renderable, templatable
             'viewingstudentslist' => $viewingstudentslist,
             'viewingenrolled' => $viewingenrolled,
             'viewingwebinars' => $viewingwebinars,
-            'needgradignview' => $needgradignview->export_for_template($output),
-            'studentslistview' => $studentslistview->export_for_template($output),
-            'enrolledview' => $enrolledview->export_for_template($output),
-            'webinarsview' => $webinarsview->export_for_template($output),
+            'needgradignview' => $needgradignview -> export_for_template($output),
+            'studentslistview' => $studentslistview -> export_for_template($output),
+            'enrolledview' => $enrolledview -> export_for_template($output),
+            'webinarsview' => $webinarsview -> export_for_template($output),
             'studentlist_tab' => [
                 'bystudent' => $studentlist_bystudent,
                 'bygroup' => $studentlist_bygroup

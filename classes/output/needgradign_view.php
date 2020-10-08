@@ -3,14 +3,15 @@
 namespace block_tutor\output;
 defined('MOODLE_INTERNAL') || die();
 
-use customscripts_muiv_students, context_module;
+use context_module;
+use customscripts_muiv_students;
 
 global $CFG;
 
-if (is_file($CFG->dirroot . "/local/customlib.php")) {
-    require_once($CFG->dirroot . "/local/customlib.php");
+if (is_file($CFG -> dirroot . "/local/customlib.php")) {
+    require_once($CFG -> dirroot . "/local/customlib.php");
 }
-require_once($CFG->dirroot . '/mod/assign/locallib.php');
+require_once($CFG -> dirroot . '/mod/assign/locallib.php');
 
 class needgradign_view
 {
@@ -18,31 +19,31 @@ class needgradign_view
 
     function __construct($userid)
     {
-        $this->userid = (int)$userid;
+        $this -> userid = (int)$userid;
     }
 
     public function export_for_template($output)
     {
         global $CFG, $DB;
 
-        $return_arr = Array();
-        $wwwroot = $CFG->wwwroot;
-        $arr_needgrading = $this->get_need_grading();
+        $return_arr = array();
+        $wwwroot = $CFG -> wwwroot;
+        $arr_needgrading = $this -> get_need_grading();
 
         $return_arr['count'] = 0;
         foreach ($arr_needgrading as $usersubmit) {
-            $studentid = $usersubmit->studentid;
+            $studentid = $usersubmit -> studentid;
 
-            $context = context_module::instance($usersubmit->cmid);
-            if (!has_capability('mod/assign:submit', $context, $studentid) || customscripts_muiv_students::check_hasfindebt($studentid))
+            $context = context_module ::instance($usersubmit -> cmid);
+            if (!has_capability('mod/assign:submit', $context, $studentid) || customscripts_muiv_students ::check_hasfindebt($studentid))
                 continue;
 
-            $current_arr = Array();
-            $current_arr['form_url'] = $wwwroot . '/mod/assign/view.php?id=' . $usersubmit->cmid . '&rownum=0&action=grader&userid=' . $studentid . '&group=' . $usersubmit->groupid . '&treset=1';
-            $current_arr['coursename'] = $usersubmit->coursename;
-            $current_arr['assignname'] = $usersubmit->assignname;
-            $current_arr['courseid'] = $usersubmit->courseid;
-            $current_arr['studentname'] = fullname($DB->get_record('user', array('id' => $studentid)));
+            $current_arr = array();
+            $current_arr['form_url'] = $wwwroot . '/mod/assign/view.php?id=' . $usersubmit -> cmid . '&rownum=0&action=grader&userid=' . $studentid . '&group=' . $usersubmit -> groupid . '&treset=1';
+            $current_arr['coursename'] = $usersubmit -> coursename;
+            $current_arr['assignname'] = $usersubmit -> assignname;
+            $current_arr['courseid'] = $usersubmit -> courseid;
+            $current_arr['studentname'] = fullname($DB -> get_record('user', array('id' => $studentid)));
 
             $return_arr['data'][] = $current_arr;
 
@@ -102,10 +103,10 @@ class needgradign_view
 					s.id, cm.id, c.fullname, a.name, g.name, g.id, s.userid, u.lastname, u.firstname, c.id, a.name
 				ORDER BY
 					c.fullname, a.name, g.name, u.lastname, u.firstname';
-        $params = Array('submitted' => ASSIGN_SUBMISSION_STATUS_SUBMITTED,
-            'userid' => $this->userid);
+        $params = array('submitted' => ASSIGN_SUBMISSION_STATUS_SUBMITTED,
+            'userid' => $this -> userid);
 
-        return $DB->get_records_sql($sql, $params);
+        return $DB -> get_records_sql($sql, $params);
     }
 
 }

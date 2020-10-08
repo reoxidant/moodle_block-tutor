@@ -3,7 +3,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/blocks/tutor/lib.php');
+require_once($CFG -> dirroot . '/blocks/tutor/lib.php');
 
 class block_tutor extends block_base
 {
@@ -13,7 +13,7 @@ class block_tutor extends block_base
      */
     public function init()
     {
-        $this->title = get_string('pluginname', 'block_tutor');
+        $this -> title = get_string('pluginname', 'block_tutor');
     }
 
     /**
@@ -25,11 +25,11 @@ class block_tutor extends block_base
     {
         global $USER, $DB;
 
-        if (!isloggedin() || !has_capability('block/tutor:view', $this->page->context))
+        if (!isloggedin() || !has_capability('block/tutor:view', $this -> page -> context))
             return false;
 
-        if (isset($this->content)) {
-            return $this->content;
+        if (isset($this -> content)) {
+            return $this -> content;
         }
 
         $data = new stdClass;
@@ -38,26 +38,26 @@ class block_tutor extends block_base
             // Check if the user has no preference, if so get the site setting.
             if (!$tab = get_user_preferences('block_tutor_last_tab')) {
                 $config = get_config('block_tutor');
-                $tab = $config->defaulttab;
+                $tab = $config -> defaulttab;
             }
         }
-        $data->tab = $tab;
+        $data -> tab = $tab;
 
         // для переключателя внутри вкладки
         if (!$studentlist_type = get_user_preferences('block_tutor_studentlist_tab')) {
             $studentlist_type = BLOCK_TUTOR_STUDENTLIST_BYGROUP;
         }
-        $data->studentlist_type = $studentlist_type;
+        $data -> studentlist_type = $studentlist_type;
 
         $renderable = new \block_tutor\output\main($data);
-        $renderer = $this->page->get_renderer('block_tutor');
+        $renderer = $this -> page -> get_renderer('block_tutor');
 
-        $this->content = new stdClass();
+        $this -> content = new stdClass();
 
-        $this->content->text = $renderer->render($renderable);
-        $this->content->footer = '';
+        $this -> content -> text = $renderer -> render($renderable);
+        $this -> content -> footer = '';
 
-        return $this->content;
+        return $this -> content;
     }
 
     /**

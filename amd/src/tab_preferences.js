@@ -38,6 +38,8 @@ define('block_tutor/tab_preferences', ['jquery', 'core/ajax', 'core/custom_inter
                 }
             };
 
+            console.log(request, "request");
+
             Ajax.call([request])[0]
                 .fail(Notification.exception);
         });

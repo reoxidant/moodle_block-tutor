@@ -30,3 +30,4 @@ define(['jquery', 'core/ajax'], function ($, Ajax) {
         getContentData: getContentData
     };
 });
+
