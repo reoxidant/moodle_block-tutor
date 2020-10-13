@@ -1,3 +1,6 @@
 using cmd
 
 E:\PostgreSQL\12\bin>pg_restore --host "localhost" --port "5432" --username "postgres" --password --role "postgres" --dbname "muiv" --format=c --verbose "E:\dumpeso.sql"
+
+using if want to restore an exist table
+E:\PostgreSQL\12\bin>pg_restore --host "localhost" --port "5432" --username "postgres" --password --role "postgres" --dbname "muiv" --format=c --verbose --table=mdl_user --if-exists --clean "E:\dumpeso.sql"
