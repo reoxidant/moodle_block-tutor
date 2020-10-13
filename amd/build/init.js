@@ -38,6 +38,7 @@ define([
 
         // Bind click events to event links.
         root.on(CustomEvents.events.activate, "[data-toggle='tab']", function (e) {
+            startLoading(root);
             var tabname = $(e.currentTarget).data('tabname');
             // Bootstrap does not change the URL when using BS tabs, so need to do this here.
             // Also check to make sure the browser supports the history API.
@@ -61,6 +62,9 @@ define([
 
     var LoadTabContent = function (root, type, tabname) {
         return AjaxRepository.getContentData(root, type, tabname)
+            .done(function () {
+                return stopLoading(root);
+            })
             .fail(Notification.exception);
     };
 
