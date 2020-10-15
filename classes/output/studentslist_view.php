@@ -18,10 +18,16 @@ if (is_file($CFG -> dirroot . '/local/student_lib/locallib.php')) {
 class studentslist_view extends sirius_student
 {
     private $sortcmpby = 'coursename'; // для функции сортировки массива
+    private $count_students = 0;
 
     public function export_for_template($output)
     {
         return $this -> get_students();
+    }
+
+    public function countStudents() : bool
+    {
+        return ($this->count_students ?? null) ? true : false;
     }
 
     private function get_students()

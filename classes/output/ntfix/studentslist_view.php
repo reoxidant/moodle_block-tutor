@@ -18,6 +18,7 @@ if (is_file($CFG -> dirroot . '/local/student_lib/locallib.php')) {
 class studentslist_view extends sirius_student
 {
     private $sortcmpby = 'coursename'; // для функции сортировки массива
+    private $arCourseData = array();
 
     public function export_for_template($output)
     {
@@ -30,9 +31,9 @@ class studentslist_view extends sirius_student
 
         $return_arr = array('students' => array(), 'groups' => array());
 
-        $courses = $this->arCourseData();
+        $this->arCourseData();
 
-        foreach ($courses as $courseid => $courseData)
+        /*foreach ($courses as $courseid => $courseData)
         {
             $modinfo_obj = get_fast_modinfo($courseData["course_db_record"]);
             $cms = $modinfo_obj -> cms;
@@ -58,44 +59,34 @@ class studentslist_view extends sirius_student
                 $return_arr['groupid'] = $courseData["users_id"][$courseid];
                 break;
             }
-        }
+        }*/
 
-        $this -> sortcmpby = 'studentname';
-        usort($return_arr['students'], array('self', 'cmp'));
+        /*      $this -> sortcmpby = 'studentname';
+              usort($return_arr['students'], array('self', 'cmp'));
 
-        // сбрасываем ключи для mustache
-        $return_arr['groups'] = array_values($return_arr['groups']);
-        foreach ($return_arr['groups'] as $key => $val) {
-            $return_arr['groups'][$key]['students'] = array_values($val['students']);
-        }
+              // сбрасываем ключи для mustache
+              $return_arr['groups'] = array_values($return_arr['groups']);
+              foreach ($return_arr['groups'] as $key => $val) {
+                  $return_arr['groups'][$key]['students'] = array_values($val['students']);
+              }*/
         $time = microtime(true) - $start;
         \core\notification::warning($time);
         return $return_arr;
     }
 
-    private function arCourseData() : array
+    private function arCourseData()
     {
-        global $DB;
-        $arCourseData = array();
-        $groups_arr = $this -> getUserGroups();
-        foreach ($groups_arr as $courseid => $val) {
-            $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
-            foreach ($val as $groupname => $group_data) {
-                $arCourseData[$courseid]["course_db_record"] = $DB -> get_record('course', array('id' => $courseid));
-                $arCourseData[$courseid]['course_url'] = $courseurl;
-                $arCourseData[$courseid]['groups']['id'][] = $group_data -> id;
-                $arCourseData[$courseid]['groups']['name'][] = $groupname;
+        $this->arCourseData = $this -> getUserGroups();
+    }
 
-                $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
-                foreach ($group_students as $userid => $profile) {
-                    $arCourseData[$courseid]["users_id"][$userid]['name'] = $profile -> name;
-                    $arCourseData[$courseid]["users_id"][$userid]['profileurl'] = $profile -> profileurl;
-                    $arCourseData[$courseid]["users_id"][$userid]['hasfindebt'] = sirius_student ::check_hasfindebt($userid);
-                }
-            }
+    private function courseUsersData($group_data, $courseid)
+    {
+        foreach ($group_students as $userid => $profile) {
+            $arCourseData[$courseid]["users_id"][$userid]['name'] = $profile -> name;
+            $arCourseData[$courseid]["users_id"][$userid]['profileurl'] = $profile -> profileurl;
+            $arCourseData[$courseid]["users_id"][$userid]['hasfindebt'] = sirius_student ::check_hasfindebt($userid);
+            $arCourseData[$courseid]["users_id"][$userid]['in_group'] = sirius_student ::get_student_leangroup($userid);
         }
-
-        return $arCourseData;
     }
 
     // сортировка студентов

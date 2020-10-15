@@ -15,3 +15,4 @@ $string['dataempty'] = 'Данные отсутствуют';
 $string['gotosubmition'] = 'Перейти к работе';
 $string['defaulttab_desc'] = '';
 $string['defaulttab'] = 'Вкладка по умолчанию';
+$string['load_student_list'] = 'Загрузить список';

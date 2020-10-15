@@ -87,7 +87,8 @@ class main implements renderable, templatable
             'studentlist_tab' => [
                 'bystudent' => $studentlist_bystudent,
                 'bygroup' => $studentlist_bygroup
-            ]
+            ],
+            'show_button_load' => $studentslistview -> countStudents()
         ];
     }
 }
