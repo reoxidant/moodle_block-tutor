@@ -28,7 +28,8 @@ class studentslist_view extends sirius_student
     /**
      * @var null
      */
-    private $count_students = null;
+    private $showButton = false;
+    private $countStudents = 0;
 
     /**
      * @param $output
@@ -37,14 +38,6 @@ class studentslist_view extends sirius_student
     public function export_for_template($output)
     {
         return $this -> get_students();
-    }
-
-    /**
-     * @return bool
-     */
-    public function showButtonLoadMoreStudentByCountStudents(): bool
-    {
-        return boolval(!$this -> count_students);
     }
 
     /**
@@ -72,6 +65,14 @@ class studentslist_view extends sirius_student
 
                 $coursename = $group_data -> coursename;
                 $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
+                $this->countStudents += count($group_students);
+
+                if($this->countStudents >= 50 && !$this->showButton || $this->showButton) {
+                    if(!$this->showButton)
+                        $this->showButton = true;
+                    break;
+                }
+
                 foreach ($group_students as $userid => $profile) {
                     $studentname = $profile -> name;
                     $profileurl = $profile -> profileurl;
@@ -120,6 +121,14 @@ class studentslist_view extends sirius_student
     }
 
     // сортировка студентов
+
+    /**
+     * @return null
+     */
+    public function getShowButton()
+    {
+        return $this -> showButton;
+    }
 
     /**
      * @param $a

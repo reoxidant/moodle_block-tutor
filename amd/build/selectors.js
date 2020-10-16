@@ -6,6 +6,9 @@ define([], function () {
         },
         containers: {
             loadingIcon: '[data-region="overlay-icon-container"]',
+        },
+        buttons: {
+            loadingMoreStudents: "#show-more-students"
         }
     };
 });

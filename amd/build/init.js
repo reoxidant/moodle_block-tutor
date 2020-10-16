@@ -53,6 +53,33 @@ define([
             return LoadTabContent(root, type, tabname);
         });
 
+        console.log("my root is", root);
+
+        root.on('click', ItemSelectors.buttons.loadingMoreStudents, function (e) {
+            startLoading(root);
+
+            console.log("button", ItemSelectors.buttons.loadingMoreStudents);
+
+            $.ajax({
+                type: "POST",
+                data: {pressedShowButton: true},
+                url: location.origin + "/blocks/tutor/ajax.php",
+                beforeSend: function () {
+                    startLoading(root);
+                },
+                complete: function () {
+                    stopLoading(root);
+                },
+                cache: "false",
+                error: function () {
+                    Notification.addNotification({
+                        message: "Ошибка при вызове студентов",
+                        type: "error"
+                    });
+                }
+            });
+        });
+
         return AjaxRepository.getContentData(root, type)
             .always(function () {
                 return stopLoading(root);

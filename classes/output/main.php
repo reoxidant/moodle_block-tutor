@@ -10,6 +10,8 @@ use templatable;
 global $CFG;
 
 require_once($CFG -> dirroot . '/blocks/tutor/lib.php');
+require_once($CFG -> dirroot . '/blocks/tutor/ajax.php');
+
 if (is_file($CFG -> dirroot . '/local/student_lib/locallib.php')) {
     require_once($CFG -> dirroot . '/local/student_lib/locallib.php');
 }
@@ -80,7 +82,6 @@ class main implements renderable, templatable
             $studentlist_bygroup = true;
         }
 
-
         return [
             'midnight' => usergetmidnight(time()),
             'viewingneedgradign' => $viewingneedgradign,
@@ -95,7 +96,7 @@ class main implements renderable, templatable
                 'bystudent' => $studentlist_bystudent,
                 'bygroup' => $studentlist_bygroup
             ],
-            'show_button_load' => $studentslistview -> showButtonLoadMoreStudentByCountStudents()
+            'show_button_load' => ($_POST['pressedShowButton']) ? false : $studentslistview->getShowButton()
         ];
     }
 }
