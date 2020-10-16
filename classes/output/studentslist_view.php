@@ -15,21 +15,43 @@ if (is_file($CFG -> dirroot . '/local/student_lib/locallib.php')) {
     require_once($CFG -> dirroot . '/local/student_lib/locallib.php');
 }
 
+/**
+ * Class studentslist_view
+ * @package block_tutor\output
+ */
 class studentslist_view extends sirius_student
 {
+    /**
+     * @var string
+     */
     private $sortcmpby = 'coursename'; // для функции сортировки массива
+    /**
+     * @var null
+     */
     private $count_students = null;
 
+    /**
+     * @param $output
+     * @return array[]
+     */
     public function export_for_template($output)
     {
         return $this -> get_students();
     }
 
-    public function showButtonLoadMoreStudentByCountStudents() : bool
+    /**
+     * @return bool
+     */
+    public function showButtonLoadMoreStudentByCountStudents(): bool
     {
-        return boolval(!$this->count_students);
+        return boolval(!$this -> count_students);
     }
 
+    /**
+     * @return array[]
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
     private function get_students()
     {
         global $DB, $USER;
@@ -98,6 +120,12 @@ class studentslist_view extends sirius_student
     }
 
     // сортировка студентов
+
+    /**
+     * @param $a
+     * @param $b
+     * @return int|\lt
+     */
     private function cmp($a, $b)
     {
         return strcasecmp(mb_strtolower($a[$this -> sortcmpby]), mb_strtolower($b[$this -> sortcmpby]));
@@ -105,6 +133,13 @@ class studentslist_view extends sirius_student
 
     // поиск в курсе первого assign или quiz и возврат по нему оценки с данными для перехода
     // вместе с оценкой
+    /**
+     * @param $course
+     * @param $userid
+     * @param $groupid
+     * @return array
+     * @throws \moodle_exception
+     */
     private function get_grade_mod($course, $userid, $groupid)
     {
         $modinfo_obj = get_fast_modinfo($course);
@@ -137,6 +172,11 @@ class studentslist_view extends sirius_student
         return $return_arr;
     }
 
+    /**
+     * @param $userid
+     * @return false|string
+     * @throws \dml_exception
+     */
     private static function get_student_leangroup($userid)
     {
         global $DB;

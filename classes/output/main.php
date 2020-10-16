@@ -14,6 +14,10 @@ if (is_file($CFG -> dirroot . '/local/student_lib/locallib.php')) {
     require_once($CFG -> dirroot . '/local/student_lib/locallib.php');
 }
 
+/**
+ * Class main
+ * @package block_tutor\output
+ */
 class main implements renderable, templatable
 {
 
@@ -21,6 +25,9 @@ class main implements renderable, templatable
      * @var string The tab to display.
      */
     public $tab;
+    /**
+     * @var
+     */
     public $studentlist_type;
 
     /**
@@ -37,8 +44,8 @@ class main implements renderable, templatable
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
-     * @param \renderer_base $output
-     * @return stdClass
+     * @param renderer_base $output
+     * @return array
      */
     public function export_for_template(renderer_base $output)
     {
