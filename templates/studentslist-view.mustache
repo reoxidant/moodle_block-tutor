@@ -1,8 +1,8 @@
 <div id="studentlist-view-choices-{{uniqid}}" data-region="studentlist-view">
     {{#show_button_load}}
-        <a href="#" target="_blank" class="load-link">
-            <button>{{#str}} load_student_list, block_tutor {{/str}}</button>
-        </a>
+        <div class="d-flex justify-content-center mb-4 mt-5">
+            <button type="submit" class="btn btn-secondary" id="show-more-students" title="">Загрузить студентов</button>
+        </div>
     {{/show_button_load}}
     {{^show_button_load}}
         <div class="d-flex justify-content-center">
