@@ -54,10 +54,12 @@ class studentslist_view extends sirius_student
 
         $return_arr = array('students' => array(), 'groups' => array());
 
+        $this->loadingStudentButton = true;
+
         // if($USER->id == 17810 && isset($USER->realuser) && $USER->realuser == 26102){
         // print_r($groups_arr);die;
         // }
-        foreach ($groups_arr as $courseid => $val) {
+/*        foreach ($groups_arr as $courseid => $val) {
             $course = $DB -> get_record('course', array('id' => $courseid));
 
             $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
@@ -113,19 +115,9 @@ class studentslist_view extends sirius_student
         $return_arr['groups'] = array_values($return_arr['groups']);
         foreach ($return_arr['groups'] as $key => $val) {
             $return_arr['groups'][$key]['students'] = array_values($val['students']);
-        }
+        }*/
 
         return $return_arr;
-    }
-
-    // сортировка студентов
-
-    /**
-     * @return null
-     */
-    public function showButtonInTheTab()
-    {
-        return $this -> loadingStudentButton;
     }
 
     /**

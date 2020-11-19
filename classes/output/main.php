@@ -96,7 +96,7 @@ class main implements renderable, templatable
                 'bystudent' => $studentlist_bystudent,
                 'bygroup' => $studentlist_bygroup
             ],
-            'show_students_by_action_button' => ($_POST['show_student']) ? false : $studentslistview->getShowButton()
+            'show_students_by_action_button' => ($_POST['show_more_students']) ? false : true
         ];
     }
 }
