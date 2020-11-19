@@ -53,14 +53,16 @@ define([
             return LoadTabContent(root, type, tabname);
         });
 
-        console.log("my root is", root);
+        console.log("my root is 1", root);
 
         root.on('click', ItemSelectors.buttons.loadingMoreStudents, function (e) {
             startLoading(root);
 
             console.log("button", ItemSelectors.buttons.loadingMoreStudents);
 
-            $.ajax({
+            console.log("button is work")
+
+            /*$.ajax({
                 type: "POST",
                 data: {pressedShowButton: true},
                 url: location.origin + "/blocks/tutor/ajax.php",
@@ -77,7 +79,7 @@ define([
                         type: "error"
                     });
                 }
-            });
+            });*/
         });
 
         return AjaxRepository.getContentData(root, type)

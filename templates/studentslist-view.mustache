@@ -1,10 +1,10 @@
 <div id="studentlist-view-choices-{{uniqid}}" data-region="studentlist-view">
-    {{#show_button_load}}
+    {{#show_students_by_action_button}}
         <div class="d-flex justify-content-center mb-4 mt-5">
             <button class="btn btn-secondary" id="show-more-students">Загрузить студентов</button>
         </div>
-    {{/show_button_load}}
-    {{^show_button_load}}
+    {{/show_students_by_action_button}}
+    {{^show_students_by_action_button}}
         <div class="d-flex justify-content-center">
             <ul class="nav nav-pills my-5">
                 <li class="nav-item">
@@ -46,7 +46,7 @@
                 </ol>
             </div>
         </div>
-    {{/show_button_load}}
+    {{/show_students_by_action_button}}
 </div>
 {{#js}}
     require(['jquery', 'core/custom_interaction_events'], function($, customEvents) {
