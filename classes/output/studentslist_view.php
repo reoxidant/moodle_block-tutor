@@ -28,7 +28,7 @@ class studentslist_view extends sirius_student
     /**
      * @var null
      */
-    private $showButton = false;
+    private $loadingStudentButton = false;
     private $countStudents = 0;
 
     /**
@@ -67,17 +67,15 @@ class studentslist_view extends sirius_student
                 $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
                 $this->countStudents += count($group_students);
 
-                if($this->countStudents >= 50 && !$this->showButton || $this->showButton) {
-                    if(!$this->showButton)
-                        $this->showButton = true;
+                if($this->countStudents >= 50 && !$this->loadingStudentButton) {
+                    while(count($return_arr['students']) <= 50){}
+                    $this->loadingStudentButton = true;
                     break;
                 }
 
                 foreach ($group_students as $userid => $profile) {
                     $studentname = $profile -> name;
                     $profileurl = $profile -> profileurl;
-
-
                     $mod_info = $this -> get_grade_mod($course, $userid, $group_data -> id);
 
                     $courseurl_return = $courseurl;
@@ -125,9 +123,9 @@ class studentslist_view extends sirius_student
     /**
      * @return null
      */
-    public function getShowButton()
+    public function showButtonInTheTab()
     {
-        return $this -> showButton;
+        return $this -> loadingStudentButton;
     }
 
     /**
