@@ -65,18 +65,10 @@ class studentslist_view extends sirius_student
 
                 $coursename = $group_data -> coursename;
                 $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
-
-                $this -> countStudents += count($group_students);
-                if ($this -> countStudents > 50) {
-                    //bug moodle platform infinity loading
-                    while (count($return_arr['students']) <= 50) {
-                        $this -> getStudentsArr($group_students, $course, $courseurl, $coursename, $return_arr, $group_data, $groupname);
-                    }
-                    $this -> loadingStudentButton = true;
-                    break;
-                }else{
-                    $this -> getStudentsArr($group_students, $course, $courseurl, $coursename, $return_arr, $group_data, $groupname);
+                if(count($group_students) > 50){
+                    $group_students = array_slice($group_students, 0, 50);
                 }
+                $this -> getStudentsArr($group_students, $course, $courseurl, $coursename, $return_arr, $group_data, $groupname);
             }
 
             usort($return_arr['students'][$userid]['data'], array('self', 'cmp'));
