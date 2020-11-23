@@ -16,3 +16,7 @@ $string['gotosubmition'] = 'Перейти к работе';
 $string['defaulttab_desc'] = '';
 $string['defaulttab'] = 'Вкладка по умолчанию';
 $string['load_student_list'] = 'Загрузить список';
+$string['title_student_select'] = 'Выберите студента';
+$string['title_group_select'] = 'Выберите преподавателя';
+$string['aria:studentsdropdown'] = 'Список студентов';
+$string['aria:groupsdropdown'] = 'Список групп';

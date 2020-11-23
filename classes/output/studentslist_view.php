@@ -26,12 +26,6 @@ class studentslist_view extends sirius_student
      */
     private $sortcmpby = 'coursename'; // для функции сортировки массива
     /**
-     * @var null
-     */
-    private $loadingStudentButton = false;
-    private $countStudents = 0;
-
-    /**
      * @param $output
      * @return array[]
      */
@@ -54,60 +48,31 @@ class studentslist_view extends sirius_student
 
         $return_arr = array('students' => array(), 'groups' => array());
 
-        $this->loadingStudentButton = true;
-
         // if($USER->id == 17810 && isset($USER->realuser) && $USER->realuser == 26102){
         // print_r($groups_arr);die;
         // }
-/*        foreach ($groups_arr as $courseid => $val) {
+        foreach ($groups_arr as $courseid => $val) {
             $course = $DB -> get_record('course', array('id' => $courseid));
 
             $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
-            foreach ($val as $groupname => $group_data) {
 
-                $coursename = $group_data -> coursename;
-                $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
-                $this->countStudents += count($group_students);
-
-                if($this->countStudents >= 50 && !$this->loadingStudentButton) {
-                    while(count($return_arr['students']) <= 50){}
-                    $this->loadingStudentButton = true;
-                    break;
+            if(count($return_arr['students']) < 50){
+                foreach ($val as $groupname => $group_data) {
+                    $coursename = $group_data -> coursename;
+                    $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
+                    if(count($return_arr['students']) < 50){
+                        $this -> getStudentsArr($group_students, $course, $courseurl, $coursename, $return_arr, $group_data, $groupname);
+                    }else{
+                        break;
+                    }
                 }
-
-                foreach ($group_students as $userid => $profile) {
-                    $studentname = $profile -> name;
-                    $profileurl = $profile -> profileurl;
-                    $mod_info = $this -> get_grade_mod($course, $userid, $group_data -> id);
-
-                    $courseurl_return = $courseurl;
-                    // для письменных работ подменяем ссылку на попытку студента
-                    //if(isset($mod_info['modname']) && $mod_info['modname'] == 'assign')
-                    //	$courseurl_return = $mod_info['mod_url'] . '&action=grader&userid=' . $userid;
-
-                    $data = array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl_return, 'mod_info' => $mod_info);
-
-                    // проверка на фин долг
-                    $curuser_hasfindebt = sirius_student ::check_hasfindebt($userid);
-                    $student_leangroup = self ::get_student_leangroup($userid);
-                    $return_arr['students'][$userid]['studentname'] = $studentname;
-                    $return_arr['students'][$userid]['studenturl'] = $profileurl;
-                    $return_arr['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
-                    $return_arr['students'][$userid]['groupname'] = $groupname;
-                    $return_arr['students'][$userid]['student_leangroup'] = $student_leangroup;
-                    $return_arr['students'][$userid]['data'][] = $data;
-
-                    $return_arr['groups'][$groupname]['students'][$userid]['studentname'] = $studentname;
-                    $return_arr['groups'][$groupname]['students'][$userid]['studenturl'] = $profileurl;
-                    $return_arr['groups'][$groupname]['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
-                    $return_arr['groups'][$groupname]['students'][$userid]['student_leangroup'] = $student_leangroup;
-                    $return_arr['groups'][$groupname]['students'][$userid]['data'][] = $data;
-                    $return_arr['groups'][$groupname]['name'] = $groupname;
-                }
+            }else{
+                break;
             }
 
             usort($return_arr['students'][$userid]['data'], array('self', 'cmp'));
         }
+
         $this -> sortcmpby = 'studentname';
         usort($return_arr['students'], array('self', 'cmp'));
 
@@ -115,9 +80,47 @@ class studentslist_view extends sirius_student
         $return_arr['groups'] = array_values($return_arr['groups']);
         foreach ($return_arr['groups'] as $key => $val) {
             $return_arr['groups'][$key]['students'] = array_values($val['students']);
-        }*/
+        }
+
+        if(count($return_arr["students"]) > 50 && count($return_arr["groups"][0]["students"]) > 50){
+            $return_arr["students"] = array_slice($return_arr["students"], 0, 50, true);
+            $return_arr["groups"][0]["students"] = array_slice($return_arr["groups"][0]["students"], 0, 50, true);
+        }
 
         return $return_arr;
+    }
+
+    private function getStudentsArr(&$group_students, &$course, &$courseurl, &$coursename, &$return_arr, &$group_data, &$groupname)
+    {
+        foreach ($group_students as $userid => $profile) {
+            $studentname = $profile -> name;
+            $profileurl = $profile -> profileurl;
+            $mod_info = $this -> get_grade_mod($course, $userid, $group_data -> id);
+
+            $courseurl_return = $courseurl;
+            // для письменных работ подменяем ссылку на попытку студента
+            //if(isset($mod_info['modname']) && $mod_info['modname'] == 'assign')
+            //	$courseurl_return = $mod_info['mod_url'] . '&action=grader&userid=' . $userid;
+
+            $data = array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl_return, 'mod_info' => $mod_info);
+
+            // проверка на фин долг
+            $curuser_hasfindebt = sirius_student ::check_hasfindebt($userid);
+            $student_leangroup = self ::get_student_leangroup($userid);
+            $return_arr['students'][$userid]['studentname'] = $studentname;
+            $return_arr['students'][$userid]['studenturl'] = $profileurl;
+            $return_arr['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
+            $return_arr['students'][$userid]['groupname'] = $groupname;
+            $return_arr['students'][$userid]['student_leangroup'] = $student_leangroup;
+            $return_arr['students'][$userid]['data'][] = $data;
+
+            $return_arr['groups'][$groupname]['students'][$userid]['studentname'] = $studentname;
+            $return_arr['groups'][$groupname]['students'][$userid]['studenturl'] = $profileurl;
+            $return_arr['groups'][$groupname]['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
+            $return_arr['groups'][$groupname]['students'][$userid]['student_leangroup'] = $student_leangroup;
+            $return_arr['groups'][$groupname]['students'][$userid]['data'][] = $data;
+            $return_arr['groups'][$groupname]['name'] = $groupname;
+        }
     }
 
     /**
