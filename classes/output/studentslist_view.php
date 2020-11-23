@@ -25,7 +25,6 @@ class studentslist_view extends sirius_student
      * @var string
      */
     private $sortcmpby = 'coursename'; // для функции сортировки массива
-
     /**
      * @param $output
      * @return array[]
@@ -87,9 +86,6 @@ class studentslist_view extends sirius_student
             $return_arr["students"] = array_slice($return_arr["students"], 0, 50, true);
             $return_arr["groups"][0]["students"] = array_slice($return_arr["groups"][0]["students"], 0, 50, true);
         }
-
-        debug(count($return_arr["groups"][0]["students"]));
-        debug(count($return_arr["students"]));
 
         return $return_arr;
     }

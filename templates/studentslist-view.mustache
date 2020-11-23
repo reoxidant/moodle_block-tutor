@@ -17,8 +17,22 @@
     </div>
 
     <div class="tab-content">
-        <div class="tab-pane {{#studentlist_tab.bygroup}}active show{{/studentlist_tab.bygroup}} fade"
-             id="tutor_studentlist_bygroup">
+        <div class="tab-pane {{#studentlist_tab.bygroup}}active show{{/studentlist_tab.bygroup}} fade" id="tutor_studentlist_bygroup">
+            <ol>
+                <div class="dropdown">
+                    <button id="sortingdropdown" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" aria-label="{{#str}} aria:groupsdropdown, block_tutor {{/str}}">
+                        {{#pix}} t/sort_by {{/pix}}
+                        <span class="d-sm-inline-block" data-active-item-text>
+                            {{#str}} title_group_select, block_tutor {{/str}}
+                        </span>
+                    </button>
+                    <ul class="dropdown-menu" data-show-active-item aria-labelledby="sortingdropdown">
+                        {{#studentslistview.groups}}
+                            {{> block_tutor/studentslist-view-groupslist-select }}
+                        {{/studentslistview.groups}}
+                    </ul>
+                </div>
+            </ol>
             <ol>
                 {{#studentslistview.groups}}
                     {{> block_tutor/studentslist-view-groupslist }}
@@ -28,8 +42,22 @@
                 {{/studentslistview.groups}}
             </ol>
         </div>
-        <div class="tab-pane {{#studentlist_tab.bystudent}}active show{{/studentlist_tab.bystudent}} fade"
-             id="tutor_studentlist_bystudent">
+        <div class="tab-pane {{#studentlist_tab.bystudent}}active show{{/studentlist_tab.bystudent}} fade" id="tutor_studentlist_bystudent">
+            <ol>
+                <div class="dropdown">
+                    <button id="sortingdropdown" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" aria-label="{{#str}} aria:studentsdropdown, block_tutor {{/str}}">
+                        {{#pix}} t/sort_by {{/pix}}
+                        <span class="d-sm-inline-block" data-active-item-text>
+                            {{#str}} title_student_select, block_tutor {{/str}}
+                        </span>
+                    </button>
+                    <ul class="dropdown-menu" data-show-active-item aria-labelledby="sortingdropdown">
+                        {{#studentslistview.students}}
+                            {{> block_tutor/studentslist-view-list-select }}
+                        {{/studentslistview.students}}
+                    </ul>
+                </div>
+            </ol>
             <ol>
                 {{#studentslistview.students}}
                     {{> block_tutor/studentslist-view-list }}
@@ -40,6 +68,7 @@
             </ol>
         </div>
     </div>
+
     {{#show_students_by_action_button}}
         <div class="d-flex justify-content-center mb-4 mt-5">
             <button class="btn btn-secondary" id="show-more-students">Загрузить студентов</button>
