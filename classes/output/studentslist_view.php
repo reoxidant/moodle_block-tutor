@@ -25,11 +25,6 @@ class studentslist_view extends sirius_student
      * @var string
      */
     private $sortcmpby = 'coursename'; // для функции сортировки массива
-    /**
-     * @var null
-     */
-    private $loadingStudentButton = false;
-    public $countStudents = 0;
 
     /**
      * @param $output
@@ -38,23 +33,6 @@ class studentslist_view extends sirius_student
     public function export_for_template($output)
     {
         return $this -> get_students();
-    }
-
-
-    private function debug($array, $die):Array
-    {
-        if($die === true && is_array($array)){
-            echo '<pre>';
-            print_r($array);
-            echo '</pre>';
-            die("stop");
-        }
-        else
-        {
-            echo '<pre>';
-            print_r($array);
-            echo '</pre>';
-        }
     }
 
     /**
@@ -78,19 +56,24 @@ class studentslist_view extends sirius_student
             $course = $DB -> get_record('course', array('id' => $courseid));
 
             $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
-            foreach ($val as $groupname => $group_data) {
-                var_dump($group_data);
-                $coursename = $group_data -> coursename;
-                $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
-                if(count($group_students) > 50){
-                    $group_students = array_slice($group_students, 0, 50, true);
 
+            if(count($return_arr['students']) < 50){
+                foreach ($val as $groupname => $group_data) {
+                    $coursename = $group_data -> coursename;
+                    $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
+                    if(count($return_arr['students']) < 50){
+                        $this -> getStudentsArr($group_students, $course, $courseurl, $coursename, $return_arr, $group_data, $groupname);
+                    }else{
+                        break;
+                    }
                 }
-//                $this -> getStudentsArr($group_students, $course, $courseurl, $coursename, $return_arr, $group_data, $groupname);
+            }else{
+                break;
             }
 
             usort($return_arr['students'][$userid]['data'], array('self', 'cmp'));
         }
+
         $this -> sortcmpby = 'studentname';
         usort($return_arr['students'], array('self', 'cmp'));
 
@@ -99,6 +82,14 @@ class studentslist_view extends sirius_student
         foreach ($return_arr['groups'] as $key => $val) {
             $return_arr['groups'][$key]['students'] = array_values($val['students']);
         }
+
+        if(count($return_arr["students"]) > 50 && count($return_arr["groups"][0]["students"]) > 50){
+            $return_arr["students"] = array_slice($return_arr["students"], 0, 50, true);
+            $return_arr["groups"][0]["students"] = array_slice($return_arr["groups"][0]["students"], 0, 50, true);
+        }
+
+        debug(count($return_arr["groups"][0]["students"]));
+        debug(count($return_arr["students"]));
 
         return $return_arr;
     }

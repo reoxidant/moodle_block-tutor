@@ -56,7 +56,7 @@ function debug($arr, $die = false)
 {
     echo '<pre>';
     var_dump($arr);
-    if ($die) die('test');
+    if ($die) die('die');
     echo '</pre>';
 }
 
