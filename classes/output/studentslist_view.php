@@ -40,6 +40,23 @@ class studentslist_view extends sirius_student
         return $this -> get_students();
     }
 
+
+    private function debug($array, $die):Array
+    {
+        if($die === true && is_array($array)){
+            echo '<pre>';
+            print_r($array);
+            echo '</pre>';
+            die("stop");
+        }
+        else
+        {
+            echo '<pre>';
+            print_r($array);
+            echo '</pre>';
+        }
+    }
+
     /**
      * @return array[]
      * @throws \dml_exception
@@ -62,13 +79,14 @@ class studentslist_view extends sirius_student
 
             $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
             foreach ($val as $groupname => $group_data) {
-
+                var_dump($group_data);
                 $coursename = $group_data -> coursename;
                 $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
                 if(count($group_students) > 50){
-                    $group_students = array_slice($group_students, 0, 50);
+                    $group_students = array_slice($group_students, 0, 50, true);
+
                 }
-                $this -> getStudentsArr($group_students, $course, $courseurl, $coursename, $return_arr, $group_data, $groupname);
+//                $this -> getStudentsArr($group_students, $course, $courseurl, $coursename, $return_arr, $group_data, $groupname);
             }
 
             usort($return_arr['students'][$userid]['data'], array('self', 'cmp'));
