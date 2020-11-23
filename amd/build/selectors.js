@@ -7,8 +7,9 @@ define([], function () {
         containers: {
             loadingIcon: '[data-region="overlay-icon-container"]',
         },
-        buttons: {
-            loadingMoreStudents: "#show-more-students"
+        tabSelector: {
+            groupListDropDown: "#groupsdropdown + .dropdown-menu",
+            studentListDropDown: "#studentsdropdown + .dropdown-menu"
         }
     };
 });

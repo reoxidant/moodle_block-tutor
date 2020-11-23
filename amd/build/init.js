@@ -53,16 +53,12 @@ define([
             return LoadTabContent(root, type, tabname);
         });
 
-        console.log("my root is", root);
-
-        root.on('click', ItemSelectors.buttons.loadingMoreStudents, function (e) {
+        root.on('click', ItemSelectors.selectors.groupListDropDown, function (e) {
             startLoading(root);
-
-            console.log("button", ItemSelectors.buttons.loadingMoreStudents);
 
             $.ajax({
                 type: "POST",
-                data: {pressedShowButton: true},
+                data: {selectList: true},
                 url: location.origin + "/blocks/tutor/ajax.php",
                 beforeSend: function () {
                     startLoading(root);
@@ -73,7 +69,30 @@ define([
                 cache: "false",
                 error: function () {
                     Notification.addNotification({
-                        message: "Ошибка при вызове студентов",
+                        message: "Ошибка при вызове групп",
+                        type: "error"
+                    });
+                }
+            });
+        });
+
+        root.on('click', ItemSelectors.tabSelector.studentListDropDown, function (e) {
+            startLoading(root);
+
+            $.ajax({
+                type: "POST",
+                data: {selectList: true},
+                url: location.origin + "/blocks/tutor/ajax.php",
+                beforeSend: function () {
+                    startLoading(root);
+                },
+                complete: function () {
+                    stopLoading(root);
+                },
+                cache: "false",
+                error: function () {
+                    Notification.addNotification({
+                        message: "Ошибка при выбора студентов",
                         type: "error"
                     });
                 }
