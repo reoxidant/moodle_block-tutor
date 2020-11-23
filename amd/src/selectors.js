@@ -6,6 +6,10 @@ define([], function () {
         },
         containers: {
             loadingIcon: '[data-region="overlay-icon-container"]',
+        },
+        tabSelector: {
+            groupListDropDown: "#groupsdropdown + .dropdown-menu",
+            studentListDropDown: "#studentsdropdown + .dropdown-menu"
         }
     };
 });

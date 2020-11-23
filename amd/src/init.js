@@ -38,6 +38,7 @@ define([
 
         // Bind click events to event links.
         root.on(CustomEvents.events.activate, "[data-toggle='tab']", function (e) {
+            startLoading(root);
             var tabname = $(e.currentTarget).data('tabname');
             // Bootstrap does not change the URL when using BS tabs, so need to do this here.
             // Also check to make sure the browser supports the history API.
@@ -52,6 +53,58 @@ define([
             return LoadTabContent(root, type, tabname);
         });
 
+        root.on('click', ItemSelectors.tabSelector.groupListDropDown, function (e) {
+            startLoading(root);
+
+            console.log("i am here 1!");
+
+            $.ajax({
+                type: "POST",
+                data: {selectList: true},
+                url: location.origin + "/blocks/tutor/ajax.php",
+                beforeSend: function () {
+                    startLoading(root);
+                },
+                complete: function () {
+                    stopLoading(root);
+                },
+                cache: "false",
+                error: function () {
+                    Notification.addNotification({
+                        message: "Ошибка при вызове групп",
+                        type: "error"
+                    });
+                }
+            });
+        });
+
+
+
+        root.on('click', ItemSelectors.tabSelector.studentListDropDown, function (e) {
+            startLoading(root);
+
+            console.log("i am here 2!");
+
+            $.ajax({
+                type: "POST",
+                data: {selectList: true},
+                url: location.origin + "/blocks/tutor/ajax.php",
+                beforeSend: function () {
+                    startLoading(root);
+                },
+                complete: function () {
+                    stopLoading(root);
+                },
+                cache: "false",
+                error: function () {
+                    Notification.addNotification({
+                        message: "Ошибка при выбора студентов",
+                        type: "error"
+                    });
+                }
+            });
+        });
+
         return AjaxRepository.getContentData(root, type)
             .always(function () {
                 return stopLoading(root);
@@ -61,6 +114,9 @@ define([
 
     var LoadTabContent = function (root, type, tabname) {
         return AjaxRepository.getContentData(root, type, tabname)
+            .done(function () {
+                return stopLoading(root);
+            })
             .fail(Notification.exception);
     };
 

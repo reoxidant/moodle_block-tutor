@@ -4,8 +4,19 @@
  * @package    block_tutor
  */
 
-define('block_tutor/tab_preferences', ['jquery', 'core/ajax', 'core/custom_interaction_events',
-    'core/notification'], function ($, Ajax, CustomEvents, Notification) {
+define(
+    'block_tutor/tab_preferences',
+    [
+            'jquery',
+            'core/ajax',
+            'core/custom_interaction_events',
+            'core/notification'
+    ], function (
+        $,
+        Ajax,
+        CustomEvents,
+        Notification
+    ) {
 
     /**
      * Registers an event that saves the user's tab preference when switching between them.
@@ -37,8 +48,6 @@ define('block_tutor/tab_preferences', ['jquery', 'core/ajax', 'core/custom_inter
                     ]
                 }
             };
-
-            console.log(request, "request");
 
             Ajax.call([request])[0]
                 .fail(Notification.exception);
