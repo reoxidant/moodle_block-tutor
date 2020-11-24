@@ -25,6 +25,7 @@ class studentslist_view extends sirius_student
      * @var string
      */
     private $sortcmpby = 'coursename'; // для функции сортировки массива
+
     /**
      * @param $output
      * @return array[]
@@ -32,6 +33,29 @@ class studentslist_view extends sirius_student
     public function export_for_template($output)
     {
         return $this -> get_students();
+    }
+
+    /**
+     * @param $student_id
+     */
+    public function get_students_by_select($student_id)
+    {
+        if (is_int($student_id)) {
+            foreach ($groups_arr as $courseid => $val) {
+                $course = $DB -> get_record('course', array('id' => $courseid));
+
+                $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
+                foreach ($val as $groupname => $group_data) {
+                    $coursename = $group_data -> coursename;
+                    $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
+                    $this -> getReturnStudentsArr($group_students, $course, $courseurl, $coursename, $return_arr, $group_data, $groupname);
+                }
+
+                usort($return_arr['students'][$userid]['data'], array('self', 'cmp'));
+            }
+        }
+
+        echo json_encode($return_arr);
     }
 
     /**
@@ -48,30 +72,7 @@ class studentslist_view extends sirius_student
 
         $return_arr = array('students' => array(), 'groups' => array());
 
-        // if($USER->id == 17810 && isset($USER->realuser) && $USER->realuser == 26102){
-        // print_r($groups_arr);die;
-        // }
-        foreach ($groups_arr as $courseid => $val) {
-            $course = $DB -> get_record('course', array('id' => $courseid));
-
-            $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
-
-            if(count($return_arr['students']) < 50){
-                foreach ($val as $groupname => $group_data) {
-                    $coursename = $group_data -> coursename;
-                    $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
-                    if(count($return_arr['students']) < 50){
-                        $this -> getStudentsArr($group_students, $course, $courseurl, $coursename, $return_arr, $group_data, $groupname);
-                    }else{
-                        break;
-                    }
-                }
-            }else{
-                break;
-            }
-
-            usort($return_arr['students'][$userid]['data'], array('self', 'cmp'));
-        }
+        $this->getStudentsAndGroupListOfNamesForSelector($groups_arr, $return_arr);
 
         $this -> sortcmpby = 'studentname';
         usort($return_arr['students'], array('self', 'cmp'));
@@ -82,15 +83,37 @@ class studentslist_view extends sirius_student
             $return_arr['groups'][$key]['students'] = array_values($val['students']);
         }
 
-        if(count($return_arr["students"]) > 50 && count($return_arr["groups"][0]["students"]) > 50){
-            $return_arr["students"] = array_slice($return_arr["students"], 0, 50, true);
-            $return_arr["groups"][0]["students"] = array_slice($return_arr["groups"][0]["students"], 0, 50, true);
-        }
-
         return $return_arr;
     }
 
-    private function getStudentsArr(&$group_students, &$course, &$courseurl, &$coursename, &$return_arr, &$group_data, &$groupname)
+    private function getStudentsAndGroupListOfNamesForSelector($groups_arr, &$return_arr){
+        foreach ($groups_arr as $courseid => $val) {
+            foreach ($val as $groupname => $group_data) {
+                $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
+                foreach ($group_students as $userid => $profile) {
+                    $studentname = $profile -> name;
+
+                    $return_arr['students'][$userid]['studentname'] = $studentname;
+                    $return_arr['students'][$userid]['userid'] = $userid;
+                    $return_arr['groups'][$groupname]['name'] = $groupname;
+                    $return_arr['groups'][$groupname]['groupid'] = $group_data -> id;
+                }
+            }
+        }
+    }
+
+    /**
+     * @param $group_students
+     * @param $course
+     * @param $courseurl
+     * @param $coursename
+     * @param $return_arr
+     * @param $group_data
+     * @param $groupname
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    private function getReturnStudentsArr(&$group_students, &$course, &$courseurl, &$coursename, &$return_arr, &$group_data, &$groupname)
     {
         foreach ($group_students as $userid => $profile) {
             $studentname = $profile -> name;

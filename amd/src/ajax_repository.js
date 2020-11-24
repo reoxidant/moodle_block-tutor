@@ -4,7 +4,14 @@
  * @package    block_tutor
  */
 
-define(['jquery', 'core/ajax'], function ($, Ajax) {
+define(
+    [
+        'jquery',
+        'core/ajax'
+    ], function (
+        $,
+        Ajax
+    ) {
     /**
      * Registers an event that saves the user's tab preference when switching between them.
      *
