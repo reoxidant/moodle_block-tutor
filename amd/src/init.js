@@ -56,11 +56,9 @@ define([
         root.on('click', ItemSelectors.tabSelector.groupListDropDown, function (e) {
             startLoading(root);
 
-            console.log("i am here 1!");
-
             $.ajax({
                 type: "POST",
-                data: {selectList: true},
+                data: {selectList: true, groupId: },
                 url: location.origin + "/blocks/tutor/ajax.php",
                 beforeSend: function () {
                     startLoading(root);
@@ -83,11 +81,9 @@ define([
         root.on('click', ItemSelectors.tabSelector.studentListDropDown, function (e) {
             startLoading(root);
 
-            console.log("i am here 2!");
-
             $.ajax({
                 type: "POST",
-                data: {selectList: true},
+                data: {selectList: true, studentId:},
                 url: location.origin + "/blocks/tutor/ajax.php",
                 beforeSend: function () {
                     startLoading(root);

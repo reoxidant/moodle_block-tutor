@@ -10,7 +10,6 @@ use templatable;
 global $CFG;
 
 require_once($CFG -> dirroot . '/blocks/tutor/lib.php');
-require_once($CFG -> dirroot . '/blocks/tutor/ajax.php');
 
 if (is_file($CFG -> dirroot . '/local/student_lib/locallib.php')) {
     require_once($CFG -> dirroot . '/local/student_lib/locallib.php');
