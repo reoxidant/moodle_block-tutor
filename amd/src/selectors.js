@@ -8,8 +8,10 @@ define([], function () {
             loadingIcon: '[data-region="overlay-icon-container"]',
         },
         tabSelector: {
-            groupListDropDown: "#groupsdropdown + .dropdown-menu",
-            studentListDropDown: "#studentsdropdown + .dropdown-menu"
+            groupListDropDown: "#groupsdropdown + .dropdown-menu .dropdown-item",
+            studentListDropDown: "#studentsdropdown + .dropdown-menu .dropdown-item",
+            activeItemGroup: "#groupsdropdown + .dropdown-menu .active",
+            activeItemStudent: "#studentsdropdown + .dropdown-menu .active",
         }
     };
 });

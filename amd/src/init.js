@@ -56,49 +56,55 @@ define([
         root.on('click', ItemSelectors.tabSelector.groupListDropDown, function (e) {
             startLoading(root);
 
-            $.ajax({
-                type: "POST",
-                data: {selectList: true, groupId: },
-                url: location.origin + "/blocks/tutor/ajax.php",
-                beforeSend: function () {
-                    startLoading(root);
-                },
-                complete: function () {
-                    stopLoading(root);
-                },
-                cache: "false",
-                error: function () {
-                    Notification.addNotification({
-                        message: "Ошибка при вызове групп",
-                        type: "error"
-                    });
-                }
-            });
+            setTimeout( function(){
+                var groupId = root.find(ItemSelectors.tabSelector.activeItemGroup)[0].dataset.group;
+
+                $.ajax({
+                    type: "POST",
+                    data: {selectList: true, groupId: groupId},
+                    url: location.origin + "/blocks/tutor/ajax.php",
+                    beforeSend: function () {
+                        startLoading(root);
+                    },
+                    complete: function () {
+                        stopLoading(root);
+                    },
+                    cache: "false",
+                    error: function () {
+                        Notification.addNotification({
+                            message: "Ошибка при вызове групп",
+                            type: "error"
+                        });
+                    }
+                });
+            }, 500 );
         });
-
-
 
         root.on('click', ItemSelectors.tabSelector.studentListDropDown, function (e) {
             startLoading(root);
 
-            $.ajax({
-                type: "POST",
-                data: {selectList: true, studentId:},
-                url: location.origin + "/blocks/tutor/ajax.php",
-                beforeSend: function () {
-                    startLoading(root);
-                },
-                complete: function () {
-                    stopLoading(root);
-                },
-                cache: "false",
-                error: function () {
-                    Notification.addNotification({
-                        message: "Ошибка при выбора студентов",
-                        type: "error"
-                    });
-                }
-            });
+            setTimeout( function(){
+                var studentId = root.find(ItemSelectors.tabSelector.activeItemStudent)[0].dataset.student;
+
+                $.ajax({
+                    type: "POST",
+                    data: {selectList: true, studentId: studentId},
+                    url: location.origin + "/blocks/tutor/ajax.php",
+                    beforeSend: function () {
+                        startLoading(root);
+                    },
+                    complete: function () {
+                        stopLoading(root);
+                    },
+                    cache: "false",
+                    error: function () {
+                        Notification.addNotification({
+                            message: "Ошибка при выбора студентов",
+                            type: "error"
+                        });
+                    }
+                });
+            }, 500 );
         });
 
         return AjaxRepository.getContentData(root, type)

@@ -94,7 +94,9 @@ class studentslist_view extends sirius_student
                     $studentname = $profile -> name;
 
                     $return_arr['students'][$userid]['studentname'] = $studentname;
+                    $return_arr['students'][$userid]['userid'] = $userid;
                     $return_arr['groups'][$groupname]['name'] = $groupname;
+                    $return_arr['groups'][$groupname]['groupid'] = $group_data -> id;
                 }
             }
         }
