@@ -37,8 +37,12 @@ class studentslist_view extends sirius_student
 
     /**
      * @param $student_id
+     * @param $requestTabName
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
      */
-    public function get_students_by_select($student_id)
+    public function get_students_by_select($student_id, $requestTabName)
     {
         if (is_int($student_id)) {
             foreach ($groups_arr as $courseid => $val) {
@@ -55,7 +59,90 @@ class studentslist_view extends sirius_student
             }
         }
 
+        $this -> generateHtmlList($return_arr, $requestTabName);
+
         echo json_encode($return_arr);
+    }
+
+    /**
+     * @return string
+     * @throws \coding_exception
+     */
+    private function generateStudentList($return_arr)
+    {
+        return
+            \html_writer ::start_tag('ul') .
+            \html_writer ::start_tag('li') .
+
+            \html_writer ::start_tag('a', array('href' => $studenturl, 'target' => '_blank')) . $studentname . \html_writer ::end_tag('a') .
+
+            \html_writer ::start_tag('i') . $student_leangroup . \html_writer ::end_tag('i') .
+
+            \html_writer ::start_tag('small') . $groupname . \html_writer ::end_tag('small') .
+
+            \html_writer ::start_tag('span', array('class' => 'hasfindebt_info')) .
+            get_string("hasfindebt", 'block_tutor') .
+            \html_writer ::end_tag('span') .
+
+            $this -> getHtmlStudentData() .
+
+            \html_writer ::end_tag('li') .
+            \html_writer ::end_tag('ul');
+    }
+
+    /**
+     * @return string
+     * @throws \coding_exception
+     */
+    private function getHtmlStudentData()
+    {
+        return
+            \html_writer ::start_tag('ul') .
+            \html_writer ::start_tag('li') .
+            \html_writer ::start_tag("b") .
+            \html_writer ::start_tag("a",
+                array(
+                    'href' => "$mod_url&rownum=0&action=grader&userid={{userid}}&group={{groupid}}&treset=1",
+                    'target' => '_blank',
+                    'title' => get_string("gotosubmition", 'block_tutor')
+                )
+            ) .
+            \html_writer ::end_tag("a") .
+            \html_writer ::end_tag("b") .
+            \html_writer ::start_tag("b") . $modgrade . \html_writer ::end_tag("b") .
+            \html_writer ::end_tag('li') .
+            \html_writer ::end_tag('ul');
+    }
+
+
+    /**
+     * @return string
+     * @throws \coding_exception
+     */
+    private function generateGroupList($return_arr)
+    {
+        return
+            \html_writer ::start_tag('div') .
+            \html_writer ::start_tag('h5') . $name . \html_writer ::end_tag('h5') .
+            $this -> generateStudentList() .
+            \html_writer ::end_tag('div');
+    }
+
+    /**
+     * @param $return_arr
+     * @param $requestTabName
+     * @return string
+     * @throws \coding_exception
+     */
+    private function generateHtmlList($return_arr, $requestTabName)
+    {
+        if ($requestTabName === "grouplist") {
+            $html = \html_writer ::start_tag('ol') . $this -> generateGroupList($return_arr) . \html_writer ::end_tag('ol');
+        } else if($requestTabName === "studentlist") {
+            $html = \html_writer ::start_tag('ol') . $this -> generateStudentList($return_arr) . \html_writer ::end_tag('ol');
+        }
+
+        return $html;
     }
 
     /**
@@ -72,7 +159,7 @@ class studentslist_view extends sirius_student
 
         $return_arr = array('students' => array(), 'groups' => array());
 
-        $this->getStudentsAndGroupListOfNamesForSelector($groups_arr, $return_arr);
+        $this -> getStudentsAndGroupListOfNamesForSelector($groups_arr, $return_arr);
 
         $this -> sortcmpby = 'studentname';
         usort($return_arr['students'], array('self', 'cmp'));
@@ -86,7 +173,12 @@ class studentslist_view extends sirius_student
         return $return_arr;
     }
 
-    private function getStudentsAndGroupListOfNamesForSelector($groups_arr, &$return_arr){
+    /**
+     * @param $groups_arr
+     * @param $return_arr
+     */
+    private function getStudentsAndGroupListOfNamesForSelector($groups_arr, &$return_arr)
+    {
         foreach ($groups_arr as $courseid => $val) {
             foreach ($val as $groupname => $group_data) {
                 $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
