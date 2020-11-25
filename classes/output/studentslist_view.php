@@ -55,144 +55,88 @@ class studentslist_view extends sirius_student
             }
         }
 
-        $this->generateHtmlList($return_arr);
+        $this -> generateHtmlList($return_arr);
 
         echo json_encode($return_arr);
     }
 
+    /**
+     * @return string
+     * @throws \coding_exception
+     */
     private function generateStudentList()
     {
-/*
-            {{#student_leangroup}}
-                (<i>{{student_leangroup}}</i>)
-            {{/student_leangroup}}
-
-            {{#groupname}}
-                <small> - {{groupname}}</small>
-            {{/groupname}}
-
-            {{#hasfindebt}}
-                <span class="hasfindebt_info">({{#str}} hasfindebt, block_tutor {{/str}})</span>
-            {{/hasfindebt}}
-
-            */
         return
-            \html_writer::start_tag('ul').
-                \html_writer::start_tag('li').
+            \html_writer ::start_tag('ul') .
+            \html_writer ::start_tag('li') .
 
-                    \html_writer::start_tag('a', array('href' => $studenturl, 'target' => '_blank')). $studentname. \html_writer::end_tag('a').
+            \html_writer ::start_tag('a', array('href' => $studenturl, 'target' => '_blank')) . $studentname . \html_writer ::end_tag('a') .
 
-                    \html_writer::start_tag('i'). $student_leangroup. \html_writer::end_tag('i').
+            \html_writer ::start_tag('i') . $student_leangroup . \html_writer ::end_tag('i') .
 
-                    \html_writer::start_tag('small'). $groupname. \html_writer::end_tag('small').
+            \html_writer ::start_tag('small') . $groupname . \html_writer ::end_tag('small') .
 
-                    \html_writer::start_tag('span', array('class' => 'hasfindebt_info')).
-                        get_string($hasfindebt, 'block_tutor').
-                    \html_writer::end_tag('span').
+            \html_writer ::start_tag('span', array('class' => 'hasfindebt_info')) .
+            get_string("hasfindebt", 'block_tutor') .
+            \html_writer ::end_tag('span') .
 
-                    $this->getHtmlStudentData().
+            $this -> getHtmlStudentData() .
 
-                \html_writer::end_tag('li').
-            \html_writer::end_tag('ul');
+            \html_writer ::end_tag('li') .
+            \html_writer ::end_tag('ul');
     }
 
+    /**
+     * @return string
+     * @throws \coding_exception
+     */
     private function getHtmlStudentData()
     {
         return
-        \html_writer::start_tag('ul').
-            \html_writer::start_tag('li').
-        /*<ul>
-                {{#data}}
-                    <li><a href="{{{courseurl}}}" target="_blank">{{coursename}}</a>
-                        {{#mod_info}}
-                            {{#mod_url}}
-                                - (<b><a href="{{mod_url}}&rownum=0&action=grader&userid={{userid}}&group={{groupid}}&treset=1"
-                                target="_blank" title="{{#str}} gotosubmition, block_tutor {{/str}}">{{mod_grade}}</a></b>)
-                            {{/mod_url}}
-                            {{^mod_url}}
-                                - (<b>{{mod_grade}}</b>)
-                            {{/mod_url}}
-                        {{/mod_info}}
-                    </li>
-                {{/data}}
-            </ul>*/
-                \html_writer::start_tag("b").
-                    \html_writer::start_tag("a",
-                        array(
-                            'href' => "$mod_url&rownum=0&action=grader&userid={{userid}}&group={{groupid}}&treset=1",
-                            'target' => '_blank',
-                            'title' => get_string($gotosubmition, 'block_tutor')
-                        )
-                    ). 
-                    \html_writer::end_tag("a").
-                \html_writer::end_tag("b").
-
-            \html_writer::end_tag('li').
-        \html_writer::end_tag('ul');
+            \html_writer ::start_tag('ul') .
+            \html_writer ::start_tag('li') .
+            \html_writer ::start_tag("b") .
+            \html_writer ::start_tag("a",
+                array(
+                    'href' => "$mod_url&rownum=0&action=grader&userid={{userid}}&group={{groupid}}&treset=1",
+                    'target' => '_blank',
+                    'title' => get_string("gotosubmition", 'block_tutor')
+                )
+            ) .
+            \html_writer ::end_tag("a") .
+            \html_writer ::end_tag("b") .
+            \html_writer ::start_tag("b") . $modgrade . \html_writer ::end_tag("b") .
+            \html_writer ::end_tag('li') .
+            \html_writer ::end_tag('ul');
     }
 
 
+    /**
+     * @return string
+     * @throws \coding_exception
+     */
     private function generateGroupList()
     {
         return
-        \html_writer::start_tag('div').
-            \html_writer::start_tag('h5').$name.\html_writer::end_tag('h5').
-
-        \html_writer::end_tag('div');
+            \html_writer ::start_tag('div') .
+            \html_writer ::start_tag('h5') . $name . \html_writer ::end_tag('h5') .
+            $this -> generateStudentList() .
+            \html_writer ::end_tag('div');
     }
 
-    private function generateHtmlList($return_arr)
+    /**
+     * @param $return_arr
+     * @param $requestTabName
+     * @return string
+     * @throws \coding_exception
+     */
+    private function generateHtmlList($return_arr, $requestTabName)
     {
-        $html = \html_writer ::start_tag('ol');
-        $html .= \html_writer ::end_tag('ol');
-
-        //grouplist
-
-//        <div>
-//            <h5>{{name}}</h5>
-//            <ul>
-        $html .= $this->generateGroupList();
-//            </ul>
-//        </div>
-
-        //studentlist
-
-        /*
-        <li class="studentrow {{#hasfindebt}}hasfindebt{{/hasfindebt}}">
-
-        </li>*/
-
-
-/*        $html = "<h1>Расписание дисциплин {$this->user->firstname} {$this->user->lastname}</h1>"
-        . \html_writer::start_tag('div', array('class' => 'calendar_table', 'userid' => "{$this->user->id}")) .
-        $this->getCalendar()
-        . \html_writer::end_tag('div')
-        . \html_writer::start_tag('div', array('class' => 'main_container_studtimetable'))
-        . \html_writer::start_tag('div', array('class' => 'studtimetable')) .
-        $this->getTableBodyHtml()
-        . \html_writer::end_tag('div')
-        . \html_writer::end_tag('div');*/
-
-        $html .= \html_writer ::start_tag('input', array(
-            'type' => "date",
-            'class' => "input-start",
-            'value' => ($this -> curCalendarDateMin) ? $this -> getDate($this -> curCalendarDateMin, true) : $this -> getDate(),
-            'min' => "{$this->getDate()}",
-            'max' => "{$this->getDate($this->maxDateCurrentUser, true)}"
-        ));
-        $html .= \html_writer ::end_tag('input');
-
-        $html .= \html_writer ::start_tag('label', array('class' => "text-end"));
-        $html .= "До:";
-        $html .= \html_writer ::end_tag('label');
-        $html .= \html_writer ::start_tag('input', array(
-            'type' => "date",
-            'class' => "input-end",
-            'value' => ($this -> curCalendarDateMax) ? $this -> getDate($this -> curCalendarDateMax, true) : $this -> getDate($this -> maxDateCurrentUser, true),
-            'min' => "{$this->getDate()}",
-            'max' => "{$this->getDate($this->maxDateCurrentUser, true)}"
-        ));
-        $html .= \html_writer ::end_tag('input');
+        if ($requestTabName === "studentgroup") {
+            $html = \html_writer ::start_tag('ol') . $this -> generateGroupList() . \html_writer ::end_tag('ol');
+        } else {
+            $html = \html_writer ::start_tag('ol') . $this -> generateStudentList() . \html_writer ::end_tag('ol');
+        }
 
         return $html;
     }
@@ -211,7 +155,7 @@ class studentslist_view extends sirius_student
 
         $return_arr = array('students' => array(), 'groups' => array());
 
-        $this->getStudentsAndGroupListOfNamesForSelector($groups_arr, $return_arr);
+        $this -> getStudentsAndGroupListOfNamesForSelector($groups_arr, $return_arr);
 
         $this -> sortcmpby = 'studentname';
         usort($return_arr['students'], array('self', 'cmp'));
@@ -225,7 +169,12 @@ class studentslist_view extends sirius_student
         return $return_arr;
     }
 
-    private function getStudentsAndGroupListOfNamesForSelector($groups_arr, &$return_arr){
+    /**
+     * @param $groups_arr
+     * @param $return_arr
+     */
+    private function getStudentsAndGroupListOfNamesForSelector($groups_arr, &$return_arr)
+    {
         foreach ($groups_arr as $courseid => $val) {
             foreach ($val as $groupname => $group_data) {
                 $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
