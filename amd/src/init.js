@@ -56,7 +56,7 @@ define([
         root.on('click', ItemSelectors.tabSelector.groupListDropDown, function (e) {
             startLoading(root);
 
-            setTimeout( function(){
+            setTimeout(function () {
                 var groupId = root.find(ItemSelectors.tabSelector.activeItemGroup)[0].dataset.group;
 
                 $.ajax({
@@ -77,13 +77,13 @@ define([
                         });
                     }
                 });
-            }, 500 );
+            }, 500);
         });
 
         root.on('click', ItemSelectors.tabSelector.studentListDropDown, function (e) {
             startLoading(root);
 
-            setTimeout( function(){
+            setTimeout(function () {
                 var studentId = root.find(ItemSelectors.tabSelector.activeItemStudent)[0].dataset.student;
 
                 $.ajax({
@@ -104,7 +104,7 @@ define([
                         });
                     }
                 });
-            }, 500 );
+            }, 500);
         });
 
         return AjaxRepository.getContentData(root, type)
