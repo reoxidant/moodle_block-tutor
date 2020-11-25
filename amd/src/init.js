@@ -61,7 +61,7 @@ define([
 
                 $.ajax({
                     type: "POST",
-                    data: {selectList: true, groupId: groupId},
+                    data: {selectList: "grouplist", groupId: groupId},
                     url: location.origin + "/blocks/tutor/ajax.php",
                     beforeSend: function () {
                         startLoading(root);
@@ -72,7 +72,7 @@ define([
                     cache: "false",
                     error: function () {
                         Notification.addNotification({
-                            message: "Ошибка при вызове групп",
+                            message: "Ошибка при вызове группы, похлже такого преподавателя несуществует",
                             type: "error"
                         });
                     }
@@ -88,7 +88,7 @@ define([
 
                 $.ajax({
                     type: "POST",
-                    data: {selectList: true, studentId: studentId},
+                    data: {selectList: "studentlist", studentId: studentId},
                     url: location.origin + "/blocks/tutor/ajax.php",
                     beforeSend: function () {
                         startLoading(root);
@@ -99,7 +99,7 @@ define([
                     cache: "false",
                     error: function () {
                         Notification.addNotification({
-                            message: "Ошибка при выбора студентов",
+                            message: "Ошибка при выборе студента, похоже такого студента несуществует",
                             type: "error"
                         });
                     }

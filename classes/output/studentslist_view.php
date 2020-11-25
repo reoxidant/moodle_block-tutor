@@ -37,8 +37,12 @@ class studentslist_view extends sirius_student
 
     /**
      * @param $student_id
+     * @param $requestTabName
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
      */
-    public function get_students_by_select($student_id)
+    public function get_students_by_select($student_id, $requestTabName)
     {
         if (is_int($student_id)) {
             foreach ($groups_arr as $courseid => $val) {
@@ -55,7 +59,7 @@ class studentslist_view extends sirius_student
             }
         }
 
-        $this -> generateHtmlList($return_arr);
+        $this -> generateHtmlList($return_arr, $requestTabName);
 
         echo json_encode($return_arr);
     }
@@ -64,7 +68,7 @@ class studentslist_view extends sirius_student
      * @return string
      * @throws \coding_exception
      */
-    private function generateStudentList()
+    private function generateStudentList($return_arr)
     {
         return
             \html_writer ::start_tag('ul') .
@@ -115,7 +119,7 @@ class studentslist_view extends sirius_student
      * @return string
      * @throws \coding_exception
      */
-    private function generateGroupList()
+    private function generateGroupList($return_arr)
     {
         return
             \html_writer ::start_tag('div') .
@@ -132,10 +136,10 @@ class studentslist_view extends sirius_student
      */
     private function generateHtmlList($return_arr, $requestTabName)
     {
-        if ($requestTabName === "studentgroup") {
-            $html = \html_writer ::start_tag('ol') . $this -> generateGroupList() . \html_writer ::end_tag('ol');
-        } else {
-            $html = \html_writer ::start_tag('ol') . $this -> generateStudentList() . \html_writer ::end_tag('ol');
+        if ($requestTabName === "grouplist") {
+            $html = \html_writer ::start_tag('ol') . $this -> generateGroupList($return_arr) . \html_writer ::end_tag('ol');
+        } else if($requestTabName === "studentlist") {
+            $html = \html_writer ::start_tag('ol') . $this -> generateStudentList($return_arr) . \html_writer ::end_tag('ol');
         }
 
         return $html;
