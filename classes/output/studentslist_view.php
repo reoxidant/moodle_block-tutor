@@ -181,7 +181,6 @@ class studentslist_view extends sirius_student
                         $group_students = $this -> returnArr($group_data -> id, $courseid);
                         /*$this -> getReturnStudentsArr($group_students, $course, $courseurl, $coursename, $return_arr, $group_data, $groupname);*/
                     }
-
                     usort($return_arr['students'][$userid]['data'], array('self', 'cmp'));
                 }
             }
