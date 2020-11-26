@@ -36,27 +36,149 @@ class studentslist_view extends sirius_student
     }
 
     /**
+     * @return array[]
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    private function get_students()
+    {
+        $data = $this -> generateMainDataBy($studentid, false);
+
+        $this -> sortStudentArr($data);
+
+        $this -> resetKeysMustacheTemplate($data);
+
+        return $data;
+    }
+
+
+    /**
+     * @param $studentid
+     * @param $isReguest
+     * @return array[]
+     */
+    private function generateMainDataBy($studentid, $isReguest)
+    {
+        global $DB, $USER;
+
+        $course_arr = $isReguest ? $this -> getUserCoursesAndGroupsById($studentid) : $this -> getUserGroups();
+
+        return $isReguest ? $this -> handleGroupArrayBy($course_arr) : $this -> getSelectorData($course_arr);
+    }
+
+    /**
+     * @param $course_arr
+     * @return array[]
+     * @throws \moodle_exception
+     */
+    private function handleGroupArrayBy($course_arr): array
+    {
+        $return_arr = array('students' => array(), 'groups' => array());
+
+        foreach ($course_arr as $courseid => $group_arr) {
+
+            $course = $DB -> get_record('course', array('id' => $courseid));
+            $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
+
+            foreach ($group_arr as $groupname => $group_data) {
+
+                $coursename = $group_data -> coursename;
+                $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
+
+                $this -> handleStudentsBy($group_students, $course, $courseurl, $coursename, $return_arr);
+            }
+        }
+
+        return $return_arr;
+    }
+
+    /**
+     * @param $group_students
+     * @param $course
+     * @param $courseurl
+     * @param $coursename
+     * @param $return_arr
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    private function handleStudentsBy($group_students, $course, $courseurl, $coursename, &$return_arr)
+    {
+        foreach ($group_students as $userid => $profile) {
+            $studentname = $profile -> name;
+            $profileurl = $profile -> profileurl;
+
+            $mod_info = $this -> get_grade_mod($course, $userid, $group_data -> id);
+
+            $courseurl_return = $courseurl;
+
+            $data = array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl_return, 'mod_info' => $mod_info);
+
+            $curuser_hasfindebt = sirius_student ::check_hasfindebt($userid);
+            $student_leangroup = self ::get_student_leangroup($userid);
+
+            $return_arr['students'][$userid]['studentname'] = $studentname;
+            $return_arr['students'][$userid]['studenturl'] = $profileurl;
+            $return_arr['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
+            $return_arr['students'][$userid]['groupname'] = $groupname;
+            $return_arr['students'][$userid]['student_leangroup'] = $student_leangroup;
+            $return_arr['students'][$userid]['data'][] = $data;
+
+            $return_arr['groups'][$groupname]['students'][$userid]['studentname'] = $studentname;
+            $return_arr['groups'][$groupname]['students'][$userid]['studenturl'] = $profileurl;
+            $return_arr['groups'][$groupname]['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
+            $return_arr['groups'][$groupname]['students'][$userid]['student_leangroup'] = $student_leangroup;
+            $return_arr['groups'][$groupname]['students'][$userid]['data'][] = $data;
+            $return_arr['groups'][$groupname]['name'] = $groupname;
+        }
+    }
+
+    /**
+     * @param $groups_arr
+     * @param $return_arr
+     */
+    private function getSelectorData($groups_arr): array
+    {
+        $return_arr = array('students' => array(), 'groups' => array());
+
+        foreach ($groups_arr as $courseid => $val) {
+            foreach ($val as $groupname => $group_data) {
+                $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
+                foreach ($group_students as $userid => $profile) {
+                    $studentname = $profile -> name;
+
+                    $return_arr['students'][$userid]['studentname'] = $studentname;
+                    $return_arr['students'][$userid]['userid'] = $userid;
+                    $return_arr['groups'][$groupname]['name'] = $groupname;
+                    $return_arr['groups'][$groupname]['groupid'] = $group_data -> id;
+                }
+            }
+        }
+
+        return $return_arr;
+    }
+
+    /**
      * @param $student_id
      * @param $selectList
      * @throws \coding_exception
      * @throws \dml_exception
      * @throws \moodle_exception
      */
-    public function get_students_by_select($student_id, $selectList)
+    public function get_students_by_request($student_id, $selectList)
     {
         global $DB, $USER;
 
         try {
             if (is_int($student_id) && is_string($selectList)) {
-                $groups_arr = $this -> getUserGroupsById($student_id);
+                $course_data = $this -> getUserCoursesAndGroupsById($student_id);
 
-                foreach ($groups_arr as $courseid => $val) {
+                foreach ($course_data as $courseid => $group) {
                     $course = $DB -> get_record('course', array('id' => $courseid));
                     $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
 
-                    foreach ($val as $groupname => $group_data) {
+                    foreach ($group as $groupname => $group_data) {
                         $coursename = $group_data -> coursename;
-                        $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
+                        $group_students = $this -> returnArr($group_data -> id, $courseid);
                         /*$this -> getReturnStudentsArr($group_students, $course, $courseurl, $coursename, $return_arr, $group_data, $groupname);*/
                     }
 
@@ -154,97 +276,25 @@ class studentslist_view extends sirius_student
         return $html;
     }
 
+
     /**
-     * @return array[]
-     * @throws \dml_exception
-     * @throws \moodle_exception
+     * @param $return_arr
      */
-    private function get_students()
+    private function sortStudentArr(&$return_arr)
     {
-        global $DB, $USER;
-
-        //$sirius_student = new sirius_student;
-        $groups_arr = $this -> getUserGroups();
-
-        $return_arr = array('students' => array(), 'groups' => array());
-
-        $this -> getStudentsAndGroupListOfNamesForSelector($groups_arr, $return_arr);
-
         $this -> sortcmpby = 'studentname';
         usort($return_arr['students'], array('self', 'cmp'));
+    }
 
+    /**
+     * @param $return_arr
+     */
+    private function resetKeysMustacheTemplate(&$return_arr)
+    {
         // сбрасываем ключи для mustache
         $return_arr['groups'] = array_values($return_arr['groups']);
         foreach ($return_arr['groups'] as $key => $val) {
             $return_arr['groups'][$key]['students'] = array_values($val['students']);
-        }
-
-        return $return_arr;
-    }
-
-    /**
-     * @param $groups_arr
-     * @param $return_arr
-     */
-    private function getStudentsAndGroupListOfNamesForSelector($groups_arr, &$return_arr)
-    {
-        foreach ($groups_arr as $courseid => $val) {
-            foreach ($val as $groupname => $group_data) {
-                $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
-                foreach ($group_students as $userid => $profile) {
-                    $studentname = $profile -> name;
-
-                    $return_arr['students'][$userid]['studentname'] = $studentname;
-                    $return_arr['students'][$userid]['userid'] = $userid;
-                    $return_arr['groups'][$groupname]['name'] = $groupname;
-                    $return_arr['groups'][$groupname]['groupid'] = $group_data -> id;
-                }
-            }
-        }
-    }
-
-    /**
-     * @param $group_students
-     * @param $course
-     * @param $courseurl
-     * @param $coursename
-     * @param $return_arr
-     * @param $group_data
-     * @param $groupname
-     * @throws \dml_exception
-     * @throws \moodle_exception
-     */
-    private function getReturnStudentsArr(&$group_students, &$course, &$courseurl, &$coursename, &$return_arr, &$group_data, &$groupname)
-    {
-        foreach ($group_students as $userid => $profile) {
-            $studentname = $profile -> name;
-            $profileurl = $profile -> profileurl;
-            $mod_info = $this -> get_grade_mod($course, $userid, $group_data -> id);
-
-            $courseurl_return = $courseurl;
-
-            // для письменных работ подменяем ссылку на попытку студента
-            //if(isset($mod_info['modname']) && $mod_info['modname'] == 'assign')
-            //	$courseurl_return = $mod_info['mod_url'] . '&action=grader&userid=' . $userid;
-
-            $data = array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl_return, 'mod_info' => $mod_info);
-
-            // проверка на фин долг
-            $curuser_hasfindebt = sirius_student ::check_hasfindebt($userid);
-            $student_leangroup = self ::get_student_leangroup($userid);
-            $return_arr['students'][$userid]['studentname'] = $studentname;
-            $return_arr['students'][$userid]['studenturl'] = $profileurl;
-            $return_arr['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
-            $return_arr['students'][$userid]['groupname'] = $groupname;
-            $return_arr['students'][$userid]['student_leangroup'] = $student_leangroup;
-            $return_arr['students'][$userid]['data'][] = $data;
-
-            $return_arr['groups'][$groupname]['students'][$userid]['studentname'] = $studentname;
-            $return_arr['groups'][$groupname]['students'][$userid]['studenturl'] = $profileurl;
-            $return_arr['groups'][$groupname]['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
-            $return_arr['groups'][$groupname]['students'][$userid]['student_leangroup'] = $student_leangroup;
-            $return_arr['groups'][$groupname]['students'][$userid]['data'][] = $data;
-            $return_arr['groups'][$groupname]['name'] = $groupname;
         }
     }
 
