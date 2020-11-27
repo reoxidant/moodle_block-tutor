@@ -42,7 +42,7 @@ class studentslist_view extends sirius_student
      */
     private function get_students()
     {
-        $data = $this -> generateMainDataBy($studentid, false);
+        $data = $this -> getStudentAndGroupData($studentId, $selectList, $isRequest);
 
         $this -> sortStudentArr($data);
 
@@ -57,13 +57,13 @@ class studentslist_view extends sirius_student
      * @param $isReguest
      * @return array[]
      */
-    private function generateMainDataBy($studentid, $isReguest)
+    public function getStudentAndGroupData($studentid, $selectList, $isRequest)
     {
         global $DB, $USER;
 
-        $course_arr = $isReguest ? $this -> getUserCoursesAndGroupsById($studentid) : $this -> getUserGroups();
+        $course_arr = $isRequest ? $this -> getUserCoursesAndGroupsById($studentid) : $this -> getUserGroups();
 
-        return $isReguest ? $this -> handleGroupArrayBy($course_arr) : $this -> getSelectorData($course_arr);
+        return $isRequest ? $this -> handleGroupArrayBy($course_arr) : $this -> getSelectorData($course_arr);
     }
 
     /**
@@ -104,32 +104,33 @@ class studentslist_view extends sirius_student
     private function handleStudentsBy($group_students, $course, $courseurl, $coursename, &$return_arr)
     {
         foreach ($group_students as $userid => $profile) {
-            $studentname = $profile -> name;
-            $profileurl = $profile -> profileurl;
-
             $mod_info = $this -> get_grade_mod($course, $userid, $group_data -> id);
 
-            $courseurl_return = $courseurl;
+            $data = array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl, 'mod_info' => $mod_info);
 
-            $data = array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl_return, 'mod_info' => $mod_info);
-
-            $curuser_hasfindebt = sirius_student ::check_hasfindebt($userid);
-            $student_leangroup = self ::get_student_leangroup($userid);
-
-            $return_arr['students'][$userid]['studentname'] = $studentname;
-            $return_arr['students'][$userid]['studenturl'] = $profileurl;
-            $return_arr['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
-            $return_arr['students'][$userid]['groupname'] = $groupname;
-            $return_arr['students'][$userid]['student_leangroup'] = $student_leangroup;
-            $return_arr['students'][$userid]['data'][] = $data;
-
-            $return_arr['groups'][$groupname]['students'][$userid]['studentname'] = $studentname;
-            $return_arr['groups'][$groupname]['students'][$userid]['studenturl'] = $profileurl;
-            $return_arr['groups'][$groupname]['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
-            $return_arr['groups'][$groupname]['students'][$userid]['student_leangroup'] = $student_leangroup;
-            $return_arr['groups'][$groupname]['students'][$userid]['data'][] = $data;
-            $return_arr['groups'][$groupname]['name'] = $groupname;
+            $this->insertStudentDataIn($return_arr, $data, $profile);
+            $this->insertGroupDataIn($return_arr, $data, $profile);
         }
+    }
+
+    private function insertStudentDataIn(&$return_arr, $data, $studentProfile)
+    {
+        $return_arr['students'][$userid]['studentname'] = $studentProfile->name;
+        $return_arr['students'][$userid]['studenturl'] = $studentProfile->profileurl;
+        $return_arr['students'][$userid]['hasfindebt'] = sirius_student ::check_hasfindebt($userid);
+        $return_arr['students'][$userid]['groupname'] = $groupname;
+        $return_arr['students'][$userid]['student_leangroup'] = self ::get_student_leangroup($userid);
+        $return_arr['students'][$userid]['data'][] = $data;
+    }
+
+    private function insertGroupDataIn(&$return_arr, $data, $studentProfile)
+    {
+        $return_arr['groups'][$groupname]['students'][$userid]['studentname'] = $studentProfile->name;
+        $return_arr['groups'][$groupname]['students'][$userid]['studenturl'] = $studentProfile->profileurl;
+        $return_arr['groups'][$groupname]['students'][$userid]['hasfindebt'] = sirius_student ::check_hasfindebt($userid);
+        $return_arr['groups'][$groupname]['students'][$userid]['student_leangroup'] = self ::get_student_leangroup($userid);;
+        $return_arr['groups'][$groupname]['students'][$userid]['data'][] = $data;
+        $return_arr['groups'][$groupname]['name'] = $groupname;
     }
 
     /**
