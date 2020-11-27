@@ -42,7 +42,7 @@ class studentslist_view extends sirius_student
      */
     private function get_students()
     {
-        $data = $this -> generateMainDataBy($studentid, false);
+        $data = $this -> getStudentAndGroupData($studentId, $selectList, $isRequest);
 
         $this -> sortStudentArr($data);
 
@@ -57,13 +57,13 @@ class studentslist_view extends sirius_student
      * @param $isReguest
      * @return array[]
      */
-    private function generateMainDataBy($studentid, $isReguest)
+    public function getStudentAndGroupData($studentid, $selectList, $isRequest)
     {
-        global $DB, $USER;
+        $request_data = [$studentid ?? null, $selectList ?? null];
 
-        $course_arr = $isReguest ? $this -> getUserCoursesAndGroupsById($studentid) : $this -> getUserGroups();
+        $course_arr = $isRequest ? $this -> getUserCoursesAndGroupsById($studentid) : $this -> getUserGroups();
 
-        return $isReguest ? $this -> handleGroupArrayBy($course_arr) : $this -> getSelectorData($course_arr);
+        return $isRequest ? $this -> handleGroupArrayBy($course_arr, $request_data) : $this -> getSelectorData($course_arr);
     }
 
     /**
@@ -71,9 +71,13 @@ class studentslist_view extends sirius_student
      * @return array[]
      * @throws \moodle_exception
      */
-    private function handleGroupArrayBy($course_arr): array
+    private function handleGroupArrayBy($course_arr, $request_data): array
     {
+        global $DB, $USER;
+
         $return_arr = array('students' => array(), 'groups' => array());
+
+        list($studentid, $selectList) = $request_data;
 
         foreach ($course_arr as $courseid => $group_arr) {
 
@@ -81,55 +85,34 @@ class studentslist_view extends sirius_student
             $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
 
             foreach ($group_arr as $groupname => $group_data) {
-
                 $coursename = $group_data -> coursename;
-                $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
+                $userData = $this -> getGroupUsersByRole($group_data -> id, $courseid, $studentid);
 
-                $this -> handleStudentsBy($group_students, $course, $courseurl, $coursename, $return_arr);
+                $mod_info = $this -> get_grade_mod($course, $userid, $group_data -> id);
+                $hasfindebt = sirius_student ::check_hasfindebt($userid);
+                $student_leangroup = self ::get_student_leangroup($userid);
+
+                $data = array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl, 'mod_info' => $mod_info);
+
+                $studentinfo = [
+                    'studentname' => $studentProfile -> name,
+                    'studenturl' => $studentProfile -> profileurl,
+                    'hasfindebt' => $hasfindebt,
+                    'groupname' => $groupname,
+                    'student_leangroup' => $student_leangroup
+                ];
+
+                if($selectList == 'studentlist'){
+                    $return_arr['students'][$userid] = $studentinfo;
+                    $return_arr['students'][$userid]['data'][] = $data;
+                }else{
+                    $return_arr['groups'][$groupname]['students'][$userid] = $studentinfo;
+                    $return_arr['groups'][$groupname]['name'] = $groupname;
+                }
             }
         }
 
         return $return_arr;
-    }
-
-    /**
-     * @param $group_students
-     * @param $course
-     * @param $courseurl
-     * @param $coursename
-     * @param $return_arr
-     * @throws \dml_exception
-     * @throws \moodle_exception
-     */
-    private function handleStudentsBy($group_students, $course, $courseurl, $coursename, &$return_arr)
-    {
-        foreach ($group_students as $userid => $profile) {
-            $studentname = $profile -> name;
-            $profileurl = $profile -> profileurl;
-
-            $mod_info = $this -> get_grade_mod($course, $userid, $group_data -> id);
-
-            $courseurl_return = $courseurl;
-
-            $data = array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl_return, 'mod_info' => $mod_info);
-
-            $curuser_hasfindebt = sirius_student ::check_hasfindebt($userid);
-            $student_leangroup = self ::get_student_leangroup($userid);
-
-            $return_arr['students'][$userid]['studentname'] = $studentname;
-            $return_arr['students'][$userid]['studenturl'] = $profileurl;
-            $return_arr['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
-            $return_arr['students'][$userid]['groupname'] = $groupname;
-            $return_arr['students'][$userid]['student_leangroup'] = $student_leangroup;
-            $return_arr['students'][$userid]['data'][] = $data;
-
-            $return_arr['groups'][$groupname]['students'][$userid]['studentname'] = $studentname;
-            $return_arr['groups'][$groupname]['students'][$userid]['studenturl'] = $profileurl;
-            $return_arr['groups'][$groupname]['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
-            $return_arr['groups'][$groupname]['students'][$userid]['student_leangroup'] = $student_leangroup;
-            $return_arr['groups'][$groupname]['students'][$userid]['data'][] = $data;
-            $return_arr['groups'][$groupname]['name'] = $groupname;
-        }
     }
 
     /**
