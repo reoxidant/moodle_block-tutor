@@ -61,9 +61,11 @@ class studentslist_view extends sirius_student
     {
         global $DB, $USER;
 
+        $request_data = [$studentid ?? null, $selectList ?? null];
+
         $course_arr = $isRequest ? $this -> getUserCoursesAndGroupsById($studentid) : $this -> getUserGroups();
 
-        return $isRequest ? $this -> handleGroupArrayBy($course_arr) : $this -> getSelectorData($course_arr);
+        return $isRequest ? $this -> handleGroupArrayBy($course_arr, $request_data) : $this -> getSelectorData($course_arr);
     }
 
     /**
@@ -71,9 +73,11 @@ class studentslist_view extends sirius_student
      * @return array[]
      * @throws \moodle_exception
      */
-    private function handleGroupArrayBy($course_arr): array
+    private function handleGroupArrayBy($course_arr, $request_data): array
     {
         $return_arr = array('students' => array(), 'groups' => array());
+
+        list($studentid, $selectList) = $request_data;
 
         foreach ($course_arr as $courseid => $group_arr) {
 
@@ -81,11 +85,14 @@ class studentslist_view extends sirius_student
             $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
 
             foreach ($group_arr as $groupname => $group_data) {
-
                 $coursename = $group_data -> coursename;
-                $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
+                $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid, $studentid);
 
-                $this -> handleStudentsBy($group_students, $course, $courseurl, $coursename, $return_arr);
+                $course_data = [$course, $courseurl, $coursename];
+
+                $group_data = [$group_students, $groupname];
+
+                $this -> handleStudentsAndReturnResultBy($group_data, $course_data, $selectList, $return_arr);
             }
         }
 
@@ -94,43 +101,36 @@ class studentslist_view extends sirius_student
 
     /**
      * @param $group_students
-     * @param $course
-     * @param $courseurl
-     * @param $coursename
+     * @param $course_data
      * @param $return_arr
      * @throws \dml_exception
      * @throws \moodle_exception
      */
-    private function handleStudentsBy($group_students, $course, $courseurl, $coursename, &$return_arr)
+    private function handleStudentsAndReturnResultBy($group_data, $course_data, $selectList, &$return_arr)
     {
-        foreach ($group_students as $userid => $profile) {
+        list($course, $courseurl, $coursename) = $course_data;
+        list($group_students, $groupname) = $group_data;
+
+        foreach ($group_students as $userid => $studentProfile) {
             $mod_info = $this -> get_grade_mod($course, $userid, $group_data -> id);
+            $hasfindebt = sirius_student ::check_hasfindebt($userid);
+            $student_leangroup = self ::get_student_leangroup($userid);
 
             $data = array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl, 'mod_info' => $mod_info);
 
-            $this->insertStudentDataIn($return_arr, $data, $profile);
-            $this->insertGroupDataIn($return_arr, $data, $profile);
+            $studentinfo = [
+                'studentname' => $studentProfile -> name,
+                'studenturl' => $studentProfile -> profileurl,
+                'hasfindebt' => $hasfindebt,
+                'groupname' => $groupname,
+                'student_leangroup' => $student_leangroup,
+                'data' => [$data]
+            ];
+
+            ($selectList == "grouplist") ?
+                $return_arr['groups'][$groupname]['students'][$userid] = $studentinfo :
+                $return_arr['students'][$userid] = $studentinfo;
         }
-    }
-
-    private function insertStudentDataIn(&$return_arr, $data, $studentProfile)
-    {
-        $return_arr['students'][$userid]['studentname'] = $studentProfile->name;
-        $return_arr['students'][$userid]['studenturl'] = $studentProfile->profileurl;
-        $return_arr['students'][$userid]['hasfindebt'] = sirius_student ::check_hasfindebt($userid);
-        $return_arr['students'][$userid]['groupname'] = $groupname;
-        $return_arr['students'][$userid]['student_leangroup'] = self ::get_student_leangroup($userid);
-        $return_arr['students'][$userid]['data'][] = $data;
-    }
-
-    private function insertGroupDataIn(&$return_arr, $data, $studentProfile)
-    {
-        $return_arr['groups'][$groupname]['students'][$userid]['studentname'] = $studentProfile->name;
-        $return_arr['groups'][$groupname]['students'][$userid]['studenturl'] = $studentProfile->profileurl;
-        $return_arr['groups'][$groupname]['students'][$userid]['hasfindebt'] = sirius_student ::check_hasfindebt($userid);
-        $return_arr['groups'][$groupname]['students'][$userid]['student_leangroup'] = self ::get_student_leangroup($userid);;
-        $return_arr['groups'][$groupname]['students'][$userid]['data'][] = $data;
-        $return_arr['groups'][$groupname]['name'] = $groupname;
     }
 
     /**
