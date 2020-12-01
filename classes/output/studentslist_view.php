@@ -7,6 +7,7 @@ use moodle_url;
 
 //require_once($CFG->dirroot . "/local/customlib.php");
 require_once($CFG->dirroot . '/local/student_lib/locallib.php');
+require_once('Strategy/StrategySelectorList.php');
 
 
 interface Strategy
@@ -25,17 +26,16 @@ class studentslist_view extends \sirius_student
         $this -> strategy = $strategy;
     }
 
-    public function export_for_template($output, $action, $tablist) {
+    public function export_for_template($output, $action = null, $tablist = null) {
         if($action == "request")
         {
             $this->setStrategy(new \StrategyAjax());
-            $this->strategy->get_students();
         }
-        else if ($action == "fillhtmlselector")
+        else
         {
             $this->setStrategy(new \StrategySelectorList($tablist));
         }
-        $this->setStrategy(new \StrategyHtml());
+        $this->strategy->get_students();
     }
 	
 	private function get_students() {

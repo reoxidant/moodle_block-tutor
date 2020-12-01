@@ -30,10 +30,10 @@ class studentslist_view extends sirius_student
      * @param $output
      * @return array[]
      */
-    public function export_for_template($output)
+/*    public function export_for_template($output)
     {
         return $this -> get_students();
-    }
+    }*/
 
     /**
      * @return array[]
@@ -126,26 +126,7 @@ class studentslist_view extends sirius_student
      * @param $groups_arr
      * @param $return_arr
      */
-    private function getSelectorData($groups_arr): array
-    {
-        $return_arr = array('students' => array(), 'groups' => array());
 
-        foreach ($groups_arr as $courseid => $val) {
-            foreach ($val as $groupname => $group_data) {
-                $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
-                foreach ($group_students as $userid => $profile) {
-                    $studentname = $profile -> name;
-
-                    $return_arr['students'][$userid]['studentname'] = $studentname;
-                    $return_arr['students'][$userid]['userid'] = $userid;
-                    $return_arr['groups'][$groupname]['name'] = $groupname;
-                    $return_arr['groups'][$groupname]['groupid'] = $group_data -> id;
-                }
-            }
-        }
-
-        return $return_arr;
-    }
 
     /**
      * @param $student_id
@@ -154,116 +135,7 @@ class studentslist_view extends sirius_student
      * @throws \dml_exception
      * @throws \moodle_exception
      */
-    public function get_students_by_request($student_id, $selectList)
-    {
-        global $DB, $USER;
 
-        try {
-            if (is_int($student_id) && is_string($selectList)) {
-                $course_data = $this -> getUserCoursesAndGroupsById($student_id);
-
-                foreach ($course_data as $courseid => $group) {
-                    $course = $DB -> get_record('course', array('id' => $courseid));
-                    $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
-
-                    foreach ($group as $groupname => $group_data) {
-                        $coursename = $group_data -> coursename;
-                        $group_students = $this -> returnArr($group_data -> id, $courseid);
-                        /*$this -> getReturnStudentsArr($group_students, $course, $courseurl, $coursename, $return_arr, $group_data, $groupname);*/
-                    }
-                    usort($return_arr['students'][$userid]['data'], array('self', 'cmp'));
-                }
-            }
-
-            //$this -> generateHtmlList($return_arr, $selectList);
-
-            echo json_encode($return_arr);
-
-        } catch (Exception $e) {
-            echo 'Выброшено исключение: ', $e -> getMessage(), "\n";
-        }
-    }
-
-    /**
-     * @return string
-     * @throws \coding_exception
-     */
-    private function generateStudentList($return_arr)
-    {
-        return
-            \html_writer ::start_tag('ul') .
-            \html_writer ::start_tag('li', array('class' => 'studentrow')) .
-
-            \html_writer ::start_tag('a', array('href' => $studenturl, 'target' => '_blank')) . $studentname . \html_writer ::end_tag('a') .
-
-            \html_writer ::start_tag('i') . $student_leangroup . \html_writer ::end_tag('i') .
-
-            \html_writer ::start_tag('small') . $groupname . \html_writer ::end_tag('small') .
-
-            \html_writer ::start_tag('span', array('class' => 'hasfindebt_info')) .
-            get_string("hasfindebt", 'block_tutor') .
-            \html_writer ::end_tag('span') .
-
-            $this -> getHtmlStudentData() .
-
-            \html_writer ::end_tag('li') .
-            \html_writer ::end_tag('ul');
-    }
-
-    /**
-     * @return string
-     * @throws \coding_exception
-     */
-    private function getHtmlStudentData()
-    {
-        return
-            \html_writer ::start_tag('ul') .
-            \html_writer ::start_tag('li') .
-            \html_writer ::start_tag("b") .
-            \html_writer ::start_tag("a",
-                array(
-                    'href' => "$mod_url&rownum=0&action=grader&userid={{userid}}&group={{groupid}}&treset=1",
-                    'target' => '_blank',
-                    'title' => get_string("gotosubmition", 'block_tutor')
-                )
-            ) .
-            \html_writer ::end_tag("a") .
-            \html_writer ::end_tag("b") .
-            \html_writer ::start_tag("b") . $modgrade . \html_writer ::end_tag("b") .
-            \html_writer ::end_tag('li') .
-            \html_writer ::end_tag('ul');
-    }
-
-
-    /**
-     * @return string
-     * @throws \coding_exception
-     */
-    private function generateGroupList($return_arr)
-    {
-        return
-            \html_writer ::start_tag('div') .
-            \html_writer ::start_tag('h5') . $name . \html_writer ::end_tag('h5') .
-            $this -> generateStudentList($return_arr) .
-            \html_writer ::end_tag('div');
-    }
-
-    /**
-     * @param $return_arr
-     * @param $requestTabName
-     * @return string
-     * @throws \coding_exception
-     */
-    private function generateHtmlList($return_arr, $selectList)
-    {
-        if ($selectList === "grouplist") {
-            $html = \html_writer ::start_tag('ol') . $this -> generateGroupList($return_arr) . \html_writer ::end_tag('ol');
-        } else if ($selectList === "studentlist") {
-            $html = \html_writer ::start_tag('ol') . $this -> generateStudentList($return_arr) . \html_writer ::end_tag('ol');
-        }
-
-        return $html;
-    }
 
 
     /**
