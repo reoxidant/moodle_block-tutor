@@ -15,7 +15,7 @@ $groupId = optional_param('groupId', null, PARAM_INT);
 if ($_POST ?? null) {
     if (is_string($selectList) && !is_null($selectList) && (!is_null($studentId) || !is_null($groupId))) {
         $studentsList = new output\studentslist_view;
-        $studentsList -> get_students_by_request($studentId, $selectList, true);
+//        $studentsList -> get_students_by_request($studentId, $selectList, true);
     }
 }
 
