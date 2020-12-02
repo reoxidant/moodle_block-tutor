@@ -6,36 +6,46 @@
  * @package PhpStorm
  */
 
-use block_tutor\output\Strategy;
+namespace Strategy;
 
-require_once("../studentslist_view.php");
+use block_tutor\output\Strategy;
+use sirius_student;
 
 class StrategySelectorList extends sirius_student implements Strategy
 {
-    private $tablist = '';
-
-    public function __construct($tablist){
-        $this->tablist = $tablist;
-    }
-
     public function get_students(): array
     {
         $return_arr = array('students' => array(), 'groups' => array());
 
-        foreach ($groups_arr as $courseid => $val) {
-            foreach ($val as $groupname => $group_data) {
-                $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
-                foreach ($group_students as $userid => $profile) {
-                    $studentname = $profile -> name;
+        $course_data = $this -> getUserGroups();
 
-                    $return_arr['students'][$userid]['studentname'] = $studentname;
-                    $return_arr['students'][$userid]['userid'] = $userid;
-                    $return_arr['groups'][$groupname]['name'] = $groupname;
-                    $return_arr['groups'][$groupname]['groupid'] = $group_data -> id;
-                }
-            }
+        foreach ($course_data as $courseid => $group) {
+            $group_students = $this -> getByGroupDataAllStudents($group);
+            $return_arr['students'] = $this -> getProfileStudentBy($group_students);
         }
-
         return $return_arr;
+    }
+
+    //$return_arr['groups'][$groupname]['name'] = $groupname;
+    //$return_arr['groups'][$groupname]['groupid'] = $group_data -> id;
+
+    private function getByGroupDataAllStudents($group): array
+    {
+        foreach ($group as $groupname => $group_data) {
+            return $this -> getGroupUsersByRole($group_data -> id, $courseid);
+        }
+    }
+
+    private function getProfileStudentBy($group_students) : array
+    {
+        foreach ($group_students as $userid => $profile) {
+            $studentname = $profile -> name;
+            return [
+                $userid => [
+                    'studentname' => $studentname,
+                    'userid' => $userid
+                ]
+            ];
+        }
     }
 }
