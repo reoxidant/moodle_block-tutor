@@ -6,6 +6,8 @@
  * @package PhpStorm
  */
 
+namespace Strategy;
+
 use block_tutor\output\Strategy;
 
 require_once("../studentslist_view.php");

@@ -5,10 +5,12 @@ defined('MOODLE_INTERNAL') || die();
 use customscripts_muiv_students;
 use moodle_url;
 use sirius_student;
+use Strategy\StrategySelectList;
+
+require_once('Strategy/StrategySelectorList.php');
 
 //require_once($CFG->dirroot . "/local/customlib.php");
 require_once($CFG->dirroot . '/local/student_lib/locallib.php');
-
 
 interface Strategy
 {
@@ -27,7 +29,7 @@ class studentslist_view extends sirius_student implements Strategy
     }
 
     public function export_for_template($output) {
-
+        $this->get_students();
     }
 
 	// сортировка студентов
@@ -87,6 +89,7 @@ class studentslist_view extends sirius_student implements Strategy
 
     public function get_students(): array
     {
-        // TODO: Implement get_students() method.
+        $this->setStrategy(new StrategySelectList());
+        return $this->strategy->get_students();
     }
 }
