@@ -5,7 +5,7 @@ defined('MOODLE_INTERNAL') || die();
 use customscripts_muiv_students;
 use moodle_url;
 use sirius_student;
-use Strategy\StrategySelectorList;
+use Strategy\StrategySelectList;
 
 require_once('Strategy/StrategySelectorList.php');
 
@@ -89,7 +89,7 @@ class studentslist_view extends sirius_student implements Strategy
 
     public function get_students(): array
     {
-        $this->setStrategy(new StrategySelectorList());
-        return [];
+        $this->setStrategy(new StrategySelectList());
+        return $this->strategy->get_students();
     }
 }

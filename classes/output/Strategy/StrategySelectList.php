@@ -11,7 +11,7 @@ namespace Strategy;
 use block_tutor\output\Strategy;
 use sirius_student;
 
-class StrategySelectorList extends sirius_student implements Strategy
+class StrategySelectList extends sirius_student implements Strategy
 {
     public function get_students(): array
     {
@@ -20,8 +20,7 @@ class StrategySelectorList extends sirius_student implements Strategy
         $course_data = $this -> getUserGroups();
 
         foreach ($course_data as $courseid => $group) {
-            $group_students = $this -> getByGroupDataAllStudents($group);
-            $return_arr['students'] = $this -> getProfileStudentBy($group_students);
+            $return_arr['students'] = $this -> getProfileStudentBy($this -> getByCourseDataAllStudents($courseid, $group));
         }
         return $return_arr;
     }
@@ -29,23 +28,25 @@ class StrategySelectorList extends sirius_student implements Strategy
     //$return_arr['groups'][$groupname]['name'] = $groupname;
     //$return_arr['groups'][$groupname]['groupid'] = $group_data -> id;
 
-    private function getByGroupDataAllStudents($group): array
+    private function getByCourseDataAllStudents($courseid, $group): array
     {
         foreach ($group as $groupname => $group_data) {
-            return $this -> getGroupUsersByRole($group_data -> id, $courseid);
+            $arStudents = $this -> getGroupUsersByRole($group_data -> id, $courseid);
         }
+        return $arStudents;
     }
 
-    private function getProfileStudentBy($group_students) : array
+    private function getProfileStudentBy($group_students): array
     {
+        $arProfile = [];
         foreach ($group_students as $userid => $profile) {
             $studentname = $profile -> name;
-            return [
-                $userid => [
+            $arProfile[$userid] =
+                [
                     'studentname' => $studentname,
                     'userid' => $userid
-                ]
-            ];
+                ];
         }
+        return $arProfile;
     }
 }
