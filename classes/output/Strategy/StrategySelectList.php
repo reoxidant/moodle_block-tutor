@@ -15,14 +15,16 @@ class StrategySelectList extends sirius_student implements Strategy
 {
     public function get_students(): array
     {
-        $return_arr = array('students' => array(), 'groups' => array());
-
         $course_data = $this -> getUserGroups();
 
+        $listData = array('students' => array(), 'groups' => array());
+
         foreach ($course_data as $courseid => $group) {
-            $return_arr['students'] = $this -> getProfileStudentBy($this -> getByCourseDataAllStudents($courseid, $group));
+            $listData['groups_data'] = $this->getByCourseDataAllStudents($courseid, $group);
+            $listData['students'] = $this->getProfileStudentBy($listData['groups_data']);
         }
-        return $return_arr;
+
+        return $listData;
     }
 
     //$return_arr['groups'][$groupname]['name'] = $groupname;
@@ -30,15 +32,15 @@ class StrategySelectList extends sirius_student implements Strategy
 
     private function getByCourseDataAllStudents($courseid, $group): array
     {
+        $group_students = [];
         foreach ($group as $groupname => $group_data) {
-            $arStudents = $this -> getGroupUsersByRole($group_data -> id, $courseid);
+            array_push($group_students, $this -> getGroupUsersByRole($group_data -> id, $courseid));
         }
-        return $arStudents;
+        return $group_students;
     }
 
     private function getProfileStudentBy($group_students): array
     {
-        $arProfile = [];
         foreach ($group_students as $userid => $profile) {
             $studentname = $profile -> name;
             $arProfile[$userid] =
