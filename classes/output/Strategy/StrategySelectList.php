@@ -11,8 +11,15 @@ namespace Strategy;
 use block_tutor\output\Strategy;
 use sirius_student;
 
+/**
+ * Class StrategySelectList
+ * @package Strategy
+ */
 class StrategySelectList extends sirius_student implements Strategy
 {
+    /**
+     * @return array[]
+     */
     public function get_students(): array
     {
         $course_data = $this -> getUserGroups();
@@ -20,8 +27,7 @@ class StrategySelectList extends sirius_student implements Strategy
         $listData = array('students' => array(), 'groups' => array());
 
         foreach ($course_data as $courseid => $group) {
-            $listData['groups_data'] = $this->getByCourseDataAllStudents($courseid, $group);
-            $listData['students'] = $this->getProfileStudentBy($listData['groups_data']);
+            $this -> getByCourseDataAllStudents($courseid, $group, $listData);
         }
 
         return $listData;
@@ -30,25 +36,32 @@ class StrategySelectList extends sirius_student implements Strategy
     //$return_arr['groups'][$groupname]['name'] = $groupname;
     //$return_arr['groups'][$groupname]['groupid'] = $group_data -> id;
 
-    private function getByCourseDataAllStudents($courseid, $group): array
+    /**
+     * @param $courseid
+     * @param $group
+     * @param $listData
+     */
+    private function getByCourseDataAllStudents($courseid, $group, &$listData)
     {
-        $group_students = [];
         foreach ($group as $groupname => $group_data) {
-            array_push($group_students, $this -> getGroupUsersByRole($group_data -> id, $courseid));
+            $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
+            $this -> addNameAndIdEachStudentAt($group_students, $listData);
         }
-        return $group_students;
     }
 
-    private function getProfileStudentBy($group_students): array
+    /**
+     * @param $group_students
+     * @param $listData
+     */
+    private function addNameAndIdEachStudentAt($group_students, &$listData)
     {
         foreach ($group_students as $userid => $profile) {
             $studentname = $profile -> name;
-            $arProfile[$userid] =
+            $listData['students'][$userid] =
                 [
                     'studentname' => $studentname,
                     'userid' => $userid
                 ];
         }
-        return $arProfile;
     }
 }
