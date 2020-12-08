@@ -2,12 +2,11 @@
 namespace block_tutor\output;
 defined('MOODLE_INTERNAL') || die();
 
-use customscripts_muiv_students;
-use moodle_url;
 use sirius_student;
 use Strategy\StrategySelectList;
 
 require_once('Strategy/StrategySelectList.php');
+require_once('course.php');
 
 require_once($CFG->dirroot . '/local/student_lib/locallib.php');
 
@@ -20,15 +19,15 @@ class studentslist_view extends sirius_student implements Strategy
 {
     private $sortcmpby = 'coursename'; // для функции сортировки массива
 
-    private $strategy;
+    public $strategy;
 
-    private function setStrategy(Strategy $strategy)
+    public function setStrategy(Strategy $strategy)
     {
         $this -> strategy = $strategy;
     }
 
     public function export_for_template($output) {
-        $this->get_students();
+        return $this->get_students();
     }
 
 	// сортировка студентов
@@ -89,6 +88,30 @@ class studentslist_view extends sirius_student implements Strategy
     public function get_students(): array
     {
         $this->setStrategy(new StrategySelectList());
-        return $this->strategy->get_students();
+        $students = $this->strategy->get_students();
+
+        $this -> sortStudentArr($students);
+
+        $this -> resetKeysMustacheTemplate($students);
+
+        return $students;
+    }
+
+    /**
+     * @param $return_arr
+     */
+    private function sortStudentArr(&$return_arr)
+    {
+        $this -> sortcmpby = 'studentname';
+        usort($return_arr['students'], array('self', 'cmp'));
+    }
+
+    private function resetKeysMustacheTemplate(&$return_arr)
+    {
+        // сбрасываем ключи для mustache
+        $return_arr['groups'] = array_values($return_arr['groups']);
+        foreach ($return_arr['groups'] as $key => $val) {
+            $return_arr['groups'][$key]['students'] = array_values($val['students']);
+        }
     }
 }

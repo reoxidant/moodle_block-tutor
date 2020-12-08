@@ -8,44 +8,62 @@
 
 namespace Strategy;
 
+use block_tutor\output\course;
 use block_tutor\output\Strategy;
-
-require_once("../studentslist_view.php");
+use moodle_url;
 
 class StrategyAjax implements Strategy
 {
-    public function get_students(): array
+    /**
+     * @param $student_id
+     * @param $selectList
+     * @return array
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    public function get_students($student_id, $selectList): array
     {
-        // TODO: Implement get_students() method.
+        $course_data = $this -> getStudentCoursesById($student_id);
+
+        foreach ($course_data as $courseid => $group) {
+            $course = new course(null, null, array('students' => array(), 'groups' => array()));
+        }
+
+        echo json_encode($return_arr);
+
+        return [];
     }
 
-    public function get_students_by_request($student_id, $selectList)
+    private function getStudentCoursesById($student_id)
     {
-        global $DB, $USER;
+        $groupedByCourseidArr = array();
 
-        try {
-            if (is_int($student_id) && is_string($selectList)) {
-                $course_data = $this -> getUserCoursesAndGroupsById($student_id);
+        foreach ($this->db_result_connect($student_id) as $key => $value)
+            $groupedByCourseidArr[$value -> courseid][$value -> name] = $value;
 
-                foreach ($course_data as $courseid => $group) {
-                    $course = $DB -> get_record('course', array('id' => $courseid));
-                    $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
+        return $groupedByCourseidArr;
+    }
 
-                    foreach ($group as $groupname => $group_data) {
-                        $coursename = $group_data -> coursename;
-                        $group_students = $this -> returnArr($group_data -> id, $courseid);
-                        /*$this -> getReturnStudentsArr($group_students, $course, $courseurl, $coursename, $return_arr, $group_data, $groupname);*/
-                    }
-                    usort($return_arr['students'][$userid]['data'], array('self', 'cmp'));
-                }
-            }
+    private function db_result_connect($student_id)
+    {
+        $this->db_connect(
+             "SELECT g.id, g.courseid, g.name, c.fullname as coursename
+                  FROM
+                    {groups} g,
+                    {groups_members} gm,
+                    {course} c
+                  WHERE 
+                    g.id = gm.groupid
+                    AND c.id = g.courseid
+                    AND gm.userid = $student_id
+                  ORDER BY g.name, c.fullname;",
+            $student_id
+        );
+    }
 
-            //$this -> generateHtmlList($return_arr, $selectList);
-
-            echo json_encode($return_arr);
-
-        } catch (Exception $e) {
-            echo 'Выброшено исключение: ', $e -> getMessage(), "\n";
-        }
+    private function db_connect($sql, $student_id)
+    {
+        global $DB;
+        return $DB -> get_records_sql($sql, array($student_id));
     }
 }

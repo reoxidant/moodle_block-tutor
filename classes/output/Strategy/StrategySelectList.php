@@ -8,6 +8,7 @@
 
 namespace Strategy;
 
+use block_tutor\output\course;
 use block_tutor\output\Strategy;
 use sirius_student;
 
@@ -15,6 +16,7 @@ use sirius_student;
  * Class StrategySelectList
  * @package Strategy
  */
+
 class StrategySelectList extends sirius_student implements Strategy
 {
     /**
@@ -24,44 +26,46 @@ class StrategySelectList extends sirius_student implements Strategy
     {
         $course_data = $this -> getUserGroups();
 
-        $listData = array('students' => array(), 'groups' => array());
+        $course = new course(null, null, array('students' => array(), 'groups' => array()));
 
         foreach ($course_data as $courseid => $group) {
-            $this -> getByCourseDataAllStudents($courseid, $group, $listData);
+            $course->setCourseid($courseid);
+            $course->setGroup($group);
+            $this -> setCourseListBy($course);
         }
 
-        return $listData;
+        return $course->getListData();
     }
-
-    //$return_arr['groups'][$groupname]['name'] = $groupname;
-    //$return_arr['groups'][$groupname]['groupid'] = $group_data -> id;
 
     /**
      * @param $courseid
      * @param $group
      * @param $listData
      */
-    private function getByCourseDataAllStudents($courseid, $group, &$listData)
+    private function setCourseListBy($course)
     {
-        foreach ($group as $groupname => $group_data) {
-            $group_students = $this -> getGroupUsersByRole($group_data -> id, $courseid);
-            $this -> addNameAndIdEachStudentAt($group_students, $listData);
-        }
-    }
+        foreach ($course->getGroup() as $groupname => $group_data) {
 
-    /**
-     * @param $group_students
-     * @param $listData
-     */
-    private function addNameAndIdEachStudentAt($group_students, &$listData)
-    {
-        foreach ($group_students as $userid => $profile) {
-            $studentname = $profile -> name;
-            $listData['students'][$userid] =
-                [
-                    'studentname' => $studentname,
-                    'userid' => $userid
-                ];
+            $group_students = $this -> getGroupUsersByRole($group_data -> id, $course->getCourseid());
+
+            foreach ($group_students as $userid => $profile) {
+
+                $course->setStudentList(
+                    [
+                        'studentname' => $profile -> name,
+                        'userid' => $userid
+                    ],
+                    $userid
+                );
+
+                $course->setGroupsList(
+                    [
+                        'groupid' => $group_data -> id,
+                        'name' => $groupname
+                    ],
+                    $groupname
+                );
+            }
         }
     }
 }
