@@ -19,9 +19,9 @@ class studentslist_view extends sirius_student implements Strategy
 {
     private $sortcmpby = 'coursename'; // для функции сортировки массива
 
-    private $strategy;
+    public $strategy;
 
-    private function setStrategy(Strategy $strategy)
+    public function setStrategy(Strategy $strategy)
     {
         $this -> strategy = $strategy;
     }
