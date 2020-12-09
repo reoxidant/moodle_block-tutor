@@ -8,17 +8,21 @@
 
 namespace block_tutor\output;
 
-class course
+use sirius_student;
+
+class course extends sirius_student
 {
     private $courseid;
     private $group;
     private $listData;
+    private $courseurl;
 
-    public function __construct($courseid, $group, $listData)
+    public function __construct($courseid, $courseurl, $group, $listData)
     {
-        $this->courseid = $courseid;
-        $this->group = $group;
-        $this->listData = $listData;
+        $this -> courseid = $courseid;
+        $this -> courseurl = $courseurl;
+        $this -> group = $group;
+        $this -> listData = $listData;
     }
 
     /**
@@ -27,6 +31,11 @@ class course
     public function getCourseid()
     {
         return $this -> courseid;
+    }
+
+    public function getCourseurl()
+    {
+        return $this -> courseurl;
     }
 
     /**
@@ -53,6 +62,11 @@ class course
         $this -> courseid = $courseid;
     }
 
+    public function setCourseurl($courseurl)
+    {
+        $this -> courseurl = $courseurl;
+    }
+
     /**
      * @param mixed $group
      */
@@ -70,8 +84,54 @@ class course
         $this -> listData['students'][$byKey] = $studentData;
     }
 
+    /**
+     * @param mixed $listData
+     */
+    public function setListData($listData)
+    {
+        $this -> listData = $listData;
+    }
+
     public function setGroupsList($groupData, $byKey)
     {
         $this -> listData['groups'][$byKey] = $groupData;
+    }
+
+    /**
+     * @param $courseid
+     * @param $group
+     * @param $listData
+     */
+    public function setCourseListBy($course, $selectList)
+    {
+        foreach ($course->getGroup() as $groupname => $group_data) {
+
+            $group_students = $this -> getGroupUsersByRole($group_data -> id, $course->getCourseid());
+
+            foreach ($group_students as $userid => $profile) {
+
+                if($selectList == "studentlist" || $selectList == "default")
+                {
+                    $course->setStudentList(
+                        [
+                            'studentname' => $profile -> name,
+                            'userid' => $userid
+                        ],
+                        $userid
+                    );
+                }
+
+                if($selectList == "grouplist" || $selectList == "default")
+                {
+                    $course->setGroupsList(
+                        [
+                            'groupid' => $group_data -> id,
+                            'name' => $groupname
+                        ],
+                        $groupname
+                    );
+                }
+            }
+        }
     }
 }
