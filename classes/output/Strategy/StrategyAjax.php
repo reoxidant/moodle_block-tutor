@@ -11,8 +11,9 @@ namespace Strategy;
 use block_tutor\output\course;
 use block_tutor\output\Strategy;
 use moodle_url;
+use sirius_student;
 
-class StrategyAjax implements Strategy
+class StrategyAjax extends sirius_student implements Strategy
 {
     /**
      * @param $student_id
@@ -25,29 +26,33 @@ class StrategyAjax implements Strategy
     {
         $course_data = $this -> getStudentCoursesById($student_id);
 
+        $course = new course(null, null, array('students' => array(), 'groups' => array()), null);
+
         foreach ($course_data as $courseid => $group) {
-            $course = new course(null, null, array('students' => array(), 'groups' => array()));
+            $course->setCourseid($courseid);
+            $course->setCourseurl(new moodle_url('/course/view.php', array('id' => $courseid)));
+            $course->setGroup($group);
+            $course->setCourseListBy($course, $selectList);
         }
 
-        echo json_encode($return_arr);
-
-        return [];
+        return $course->getListData();
     }
 
     private function getStudentCoursesById($student_id)
     {
         $groupedByCourseidArr = array();
 
-        foreach ($this->db_result_connect($student_id) as $key => $value)
+        foreach ($this->db_course_records_by($student_id) as $key => $value)
             $groupedByCourseidArr[$value -> courseid][$value -> name] = $value;
 
         return $groupedByCourseidArr;
     }
 
-    private function db_result_connect($student_id)
+    private function db_course_records_by($student_id)
     {
-        $this->db_connect(
-             "SELECT g.id, g.courseid, g.name, c.fullname as coursename
+        global $DB;
+
+        $sql = "SELECT g.id, g.courseid, g.name, c.fullname as coursename
                   FROM
                     {groups} g,
                     {groups_members} gm,
@@ -56,14 +61,8 @@ class StrategyAjax implements Strategy
                     g.id = gm.groupid
                     AND c.id = g.courseid
                     AND gm.userid = $student_id
-                  ORDER BY g.name, c.fullname;",
-            $student_id
-        );
-    }
+                  ORDER BY g.name, c.fullname;";
 
-    private function db_connect($sql, $student_id)
-    {
-        global $DB;
         return $DB -> get_records_sql($sql, array($student_id));
     }
 }
