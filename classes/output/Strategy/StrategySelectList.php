@@ -10,6 +10,7 @@ namespace Strategy;
 
 use block_tutor\output\course;
 use block_tutor\output\Strategy;
+use moodle_url;
 use sirius_student;
 
 /**
@@ -26,46 +27,15 @@ class StrategySelectList extends sirius_student implements Strategy
     {
         $course_data = $this -> getUserGroups();
 
-        $course = new course(null, null, array('students' => array(), 'groups' => array()));
+        $course = new course(null, null, array('students' => array(), 'groups' => array()), null);
 
         foreach ($course_data as $courseid => $group) {
             $course->setCourseid($courseid);
+            $course->setCourseurl(new moodle_url('/course/view.php', array('id' => $courseid)));
             $course->setGroup($group);
-            $this -> setCourseListBy($course);
+            $course->setCourseListBy($course, "default");
         }
 
         return $course->getListData();
-    }
-
-    /**
-     * @param $courseid
-     * @param $group
-     * @param $listData
-     */
-    private function setCourseListBy($course)
-    {
-        foreach ($course->getGroup() as $groupname => $group_data) {
-
-            $group_students = $this -> getGroupUsersByRole($group_data -> id, $course->getCourseid());
-
-            foreach ($group_students as $userid => $profile) {
-
-                $course->setStudentList(
-                    [
-                        'studentname' => $profile -> name,
-                        'userid' => $userid
-                    ],
-                    $userid
-                );
-
-                $course->setGroupsList(
-                    [
-                        'groupid' => $group_data -> id,
-                        'name' => $groupname
-                    ],
-                    $groupname
-                );
-            }
-        }
     }
 }
