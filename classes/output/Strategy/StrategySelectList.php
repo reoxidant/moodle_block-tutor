@@ -27,13 +27,13 @@ class StrategySelectList extends sirius_student implements Strategy
     {
         $course_data = $this -> getUserGroups();
 
-        $course = new course(null, null, array('students' => array(), 'groups' => array()), null);
+        $course = new course( array('students' => array(), 'groups' => array()));
 
         foreach ($course_data as $courseid => $group) {
             $course->setCourseid($courseid);
             $course->setCourseurl(new moodle_url('/course/view.php', array('id' => $courseid)));
             $course->setGroup($group);
-            $course->setCourseListBy($course, "default");
+            $course->setCourseListsBy($course);
         }
 
         return $course->getListData();

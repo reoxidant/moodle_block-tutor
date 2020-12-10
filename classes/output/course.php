@@ -10,6 +10,8 @@ namespace block_tutor\output;
 
 use sirius_student;
 
+//require_once("student.php");
+
 class course extends sirius_student
 {
     private $courseid;
@@ -17,12 +19,9 @@ class course extends sirius_student
     private $listData;
     private $courseurl;
 
-    public function __construct($courseid, $courseurl, $group, $listData)
+    public function __construct($group)
     {
-        $this -> courseid = $courseid;
-        $this -> courseurl = $courseurl;
         $this -> group = $group;
-        $this -> listData = $listData;
     }
 
     /**
@@ -102,36 +101,38 @@ class course extends sirius_student
      * @param $group
      * @param $listData
      */
-    public function setCourseListBy($course, $selectList)
+    public function setCourseListsBy($course)
     {
         foreach ($course->getGroup() as $groupname => $group_data) {
+
+            $group = new group($group_data -> id, $groupname);
 
             $group_students = $this -> getGroupUsersByRole($group_data -> id, $course->getCourseid());
 
             foreach ($group_students as $userid => $profile) {
 
-                if($selectList == "studentlist" || $selectList == "default")
-                {
-                    $course->setStudentList(
-                        [
-                            'studentname' => $profile -> name,
-                            'userid' => $userid
-                        ],
-                        $userid
-                    );
-                }
+                $student = new student($userid, $profile->name, $profile->profileurl);
 
-                if($selectList == "grouplist" || $selectList == "default")
-                {
-                    $course->setGroupsList(
-                        [
-                            'groupid' => $group_data -> id,
-                            'name' => $groupname
-                        ],
-                        $groupname
-                    );
-                }
+                $this->setListBy($course, $student, $group);
             }
         }
+    }
+
+    private function setListBy($course, $student, $group)
+    {
+        $course->setStudentList(
+            $student,
+            $userid
+        );
+
+        $course->setGroupsList(
+            $group,
+            $groupname
+        );
+    }
+
+    public function getListByRequest($selectList, $studentid)
+    {
+
     }
 }
