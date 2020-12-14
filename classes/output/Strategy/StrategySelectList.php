@@ -36,6 +36,10 @@ class StrategySelectList extends sirius_student implements Strategy
             $course->setCourseList();
         }
 
+        global $SESSION;
+
+        $SESSION->listData = $course->getListData();
+
         return $course->getListData();
     }
 }
