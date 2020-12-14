@@ -1,13 +1,9 @@
 <?php
 
-use block_tutor\output;
-use Strategy\StrategyAjax;
-
 define('AJAX_SCRIPT', true);
 
 require_once(__DIR__ . '/../../config.php');
-require_once(__DIR__ . '/classes/output/studentslist_view.php');
-require_once(__DIR__ . '/classes/output/.php');
+require_once(__DIR__ .'classes/output/studentslist_view.php');
 
 // Get submitted parameters.
 $selectList = required_param('selectList', PARAM_RAW);
@@ -22,9 +18,10 @@ if ($_POST ?? null) {
         (!is_null($studentId) || !is_null($groupId))
     )
     {
-        $view = new output\studentslist_view;
-        $view -> setStrategy(new StrategyAjax());
-        $view -> strategy -> get_student($studentId, $selectList);
+//        $view = new output\studentslist_view;
+//        die("hello");
+//        $view -> setStrategy(new StrategyAjax());
+//        echo $view -> strategy -> get_student($studentId, $selectList);
     }
 }
 

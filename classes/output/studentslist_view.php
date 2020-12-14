@@ -5,7 +5,7 @@ defined('MOODLE_INTERNAL') || die();
 use sirius_student;
 use Strategy\StrategySelectList;
 
-require_once('Strategy/StrategySelectList.php');
+require_once(__DIR__ . '/classes/output/Strategy/StrategySelectList.php');
 require_once('course.php');
 
 require_once($CFG->dirroot . '/local/student_lib/locallib.php');

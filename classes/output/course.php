@@ -10,19 +10,35 @@ namespace block_tutor\output;
 
 use sirius_student;
 
-//require_once("student.php");
+require_once("group.php");
+require_once("student.php");
 
+/**
+ * Class course
+ * @package block_tutor\output
+ */
 class course extends sirius_student
 {
+    /**
+     * @var
+     */
     private $courseid;
-    private $group;
+    /**
+     * @var array[]
+     */
+    private $arData = array('students' => array(), 'groups' => array());
+    /**
+     * @var
+     */
     private $listData;
+    /**
+     * @var
+     */
     private $courseurl;
-
-    public function __construct($group)
-    {
-        $this -> group = $group;
-    }
+    /**
+     * @var
+     */
+    private $courseGroups;
 
     /**
      * @return null
@@ -32,6 +48,9 @@ class course extends sirius_student
         return $this -> courseid;
     }
 
+    /**
+     * @return mixed
+     */
     public function getCourseurl()
     {
         return $this -> courseurl;
@@ -42,7 +61,7 @@ class course extends sirius_student
      */
     public function getGroup()
     {
-        return $this -> group;
+        return $this -> arData;
     }
 
     /**
@@ -61,6 +80,9 @@ class course extends sirius_student
         $this -> courseid = $courseid;
     }
 
+    /**
+     * @param $courseurl
+     */
     public function setCourseurl($courseurl)
     {
         $this -> courseurl = $courseurl;
@@ -69,18 +91,18 @@ class course extends sirius_student
     /**
      * @param mixed $group
      */
-    public function setGroup($group)
+    public function setCourseGroups($courseGroups)
     {
-        $this -> group = $group;
+        $this -> courseGroups = $courseGroups;
     }
 
     /**
-     * @param $studentData
-     * @param $byKey
+     * @param $curDataStudent
      */
-    public function setStudentList($studentData, $byKey)
+    public function setStudentList($student)
     {
-        $this -> listData['students'][$byKey] = $studentData;
+        $studentVars = get_object_vars($student);
+        $this -> listData['students'][$studentVars['studentid']] = $studentVars;
     }
 
     /**
@@ -91,9 +113,13 @@ class course extends sirius_student
         $this -> listData = $listData;
     }
 
-    public function setGroupsList($groupData, $byKey)
+    /**
+     * @param $obj_group
+     */
+    public function setGroupsList($obj_group)
     {
-        $this -> listData['groups'][$byKey] = $groupData;
+        $groupVars = get_object_vars($obj_group);
+        $this -> listData['groups'][$groupVars["name"]] = $groupVars;
     }
 
     /**
@@ -101,36 +127,38 @@ class course extends sirius_student
      * @param $group
      * @param $listData
      */
-    public function setCourseListsBy($course)
+    public function setCourseList()
     {
-        foreach ($course->getGroup() as $groupname => $group_data) {
+        foreach ($this -> courseGroups as $groupname => $group_data) {
 
-            $group = new group($group_data -> id, $groupname);
+            $obj_group = new group($group_data -> id, $groupname);
 
-            $group_students = $this -> getGroupUsersByRole($group_data -> id, $course->getCourseid());
+            $group_students = $this -> getGroupUsersByRole($group_data -> id, $this -> getCourseid());
 
             foreach ($group_students as $userid => $profile) {
 
-                $student = new student($userid, $profile->name, $profile->profileurl);
+                $obj_student = new student($userid, $profile -> name, $profile -> profileurl);
 
-                $this->setListBy($course, $student, $group);
+                $this -> setListBy($obj_student, $obj_group);
             }
         }
     }
 
-    private function setListBy($course, $student, $group)
+    /**
+     * @param $obj_student
+     * @param $obj_group
+     */
+    private function setListBy($obj_student, $obj_group)
     {
-        $course->setStudentList(
-            $student,
-            $userid
-        );
+        $this -> setStudentList($obj_student);
 
-        $course->setGroupsList(
-            $group,
-            $groupname
-        );
+        $this -> setGroupsList($obj_group);
     }
 
+    /**
+     * @param $selectList
+     * @param $studentid
+     */
     public function getListByRequest($selectList, $studentid)
     {
 
