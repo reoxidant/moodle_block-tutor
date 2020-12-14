@@ -10,10 +10,10 @@ namespace block_tutor\output;
 
 class student
 {
-    private $studentid;
-    private $studentname;
-    private $studenturl;
-    private $hasfindebt;
+    public $studentid;
+    public $studentname;
+    public $studenturl;
+    public $hasfindebt;
 
     public function __construct($studentid, $studentname, $studenturl)
     {

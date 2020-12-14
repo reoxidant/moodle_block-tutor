@@ -13,6 +13,9 @@ use block_tutor\output\Strategy;
 use moodle_url;
 use sirius_student;
 
+require_once("../group.php");
+require_once("../course.php");
+
 class StrategyAjax extends sirius_student implements Strategy
 {
     /**
@@ -26,13 +29,13 @@ class StrategyAjax extends sirius_student implements Strategy
     {
         $course_data = $this -> getStudentCoursesById($student_id);
 
-        $course = new course(null, null, array('students' => array(), 'groups' => array()), null);
+        $course = new course(array('students' => array(), 'groups' => array()));
 
-        foreach ($course_data as $courseid => $group) {
+        foreach ($course_data as $courseid => $coursegroup) {
             $course->setCourseid($courseid);
             $course->setCourseurl(new moodle_url('/course/view.php', array('id' => $courseid)));
-            $course->setGroup($group);
-            $course->setCourseListBy($course, $selectList);
+            $course->setCourseGroups($coursegroup);
+            $course->setCourseList();
         }
 
         return $course->getListData();

@@ -8,11 +8,10 @@
 
 namespace block_tutor\output;
 
-
 class group
 {
-    private $groupid;
-    private $name;
+    public $groupid;
+    public $name;
 
     public function __construct($groupid, $name)
     {
