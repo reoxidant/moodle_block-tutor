@@ -5,7 +5,7 @@ defined('MOODLE_INTERNAL') || die();
 use sirius_student;
 use Strategy\StrategySelectList;
 
-require_once(__DIR__ . '/classes/output/Strategy/StrategySelectList.php');
+require_once('Strategy/StrategySelectList.php');
 require_once('course.php');
 
 require_once($CFG->dirroot . '/local/student_lib/locallib.php');
@@ -27,7 +27,7 @@ class studentslist_view extends sirius_student implements Strategy
     }
 
     public function export_for_template($output) {
-        return $this->get_students();
+//        return $this->get_students();
     }
 
 	// сортировка студентов
