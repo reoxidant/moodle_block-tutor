@@ -154,7 +154,8 @@ class studentslist_view extends sirius_student implements Strategy
     private function sortStudentArr(&$return_arr)
     {
         $this -> sortcmpby = 'studentname';
-        usort($return_arr['students'], array('self', 'cmp'));
+        if(isset($return_arr['students']))
+            usort($return_arr['students'], array('self', 'cmp'));
     }
 
     /**
@@ -163,9 +164,16 @@ class studentslist_view extends sirius_student implements Strategy
     private function resetKeysMustacheTemplate(&$return_arr)
     {
         // сбрасываем ключи для mustache
-        $return_arr['groups'] = array_values($return_arr['groups']);
-        foreach ($return_arr['groups'] as $key => $val) {
-            $return_arr['groups'][$key]['students'] = array_values($val['students']);
+
+        if(isset($return_arr['groups']))
+        {
+            $return_arr['groups'] = array_values($return_arr['groups']);
+            foreach ($return_arr['groups'] as $key => $val) {
+                if(isset($key, $val['students']))
+                {
+                    $return_arr['groups'][$key]['students'] = array_values($val['students']);
+                }
+            }
         }
     }
 }

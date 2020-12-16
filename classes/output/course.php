@@ -89,7 +89,7 @@ class course extends sirius_student
     }
 
     /**
-     * @param mixed $group
+     * @param $courseGroups
      */
     public function setCourseGroups($courseGroups)
     {
