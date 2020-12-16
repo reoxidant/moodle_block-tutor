@@ -13,11 +13,14 @@ use block_tutor\output\Strategy;
 use moodle_url;
 use sirius_student;
 
+ini_set('display_errors','On');
+error_reporting(E_ALL|E_STRICT);
+
+
 /**
  * Class StrategySelectList
  * @package Strategy
  */
-
 class StrategySelectList extends sirius_student implements Strategy
 {
     /**
@@ -30,16 +33,12 @@ class StrategySelectList extends sirius_student implements Strategy
         $course = new course();
 
         foreach ($course_data as $courseid => $group) {
-            $course->setCourseid($courseid);
-            $course->setCourseurl(new moodle_url('/course/view.php', array('id' => $courseid)));
-            $course->setCourseGroups($group);
-            $course->setCourseList();
+            $course -> setCourseid($courseid);
+            $course -> setCourseurl(new moodle_url('/course/view.php', array('id' => $courseid)));
+            $course -> setCourseGroups($group);
+            $course -> setCourseList();
         }
 
-        global $SESSION;
-
-        $SESSION->listData = $course->getListData();
-
-        return $course->getListData();
+        return $course -> getListData();
     }
 }
