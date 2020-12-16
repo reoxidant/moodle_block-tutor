@@ -39,8 +39,6 @@ class StrategySelectList extends sirius_student implements Strategy
             $course -> setCourseList();
         }
 
-        setcookie("listData", $course -> getListData(), time() + 3600*24, "http://moodle/");
-
         return $course -> getListData();
     }
 }
