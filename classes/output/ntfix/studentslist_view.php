@@ -45,7 +45,6 @@ class studentslist_view extends sirius_student
                     $studentname = $profile->name;
                     $profileurl = $profile->profileurl;
 
-
                     $mod_info = $this->get_grade_mod($course, $userid, $group_data->id);
 
                     $courseurl_return = $courseurl;
