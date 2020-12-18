@@ -155,12 +155,23 @@ class course extends sirius_student
         $this -> setGroupsList($obj_group);
     }
 
-    /**
-     * @param $selectList
-     * @param $studentid
-     */
-    public function getListByRequest($selectList, $studentid)
+    public function setCourseListByRequest()
     {
+        foreach ($this -> courseGroups as $groupname => $group_data) {
+            $obj_group = new group($group_data -> id, $groupname);
 
+            $group_students = $this -> getGroupUsersByRole($group_data -> id, $this -> getCourseid());
+        }
+    }
+
+    /**
+     * @param $obj_student
+     * @param $obj_group
+     * @param $selectList
+     */
+    public function setListByRequest($obj_student, $obj_group, $selectList)
+    {
+        ($selectList == "studentlist")?
+            $this -> setStudentList($obj_student) : $this -> setGroupsList($obj_group);
     }
 }

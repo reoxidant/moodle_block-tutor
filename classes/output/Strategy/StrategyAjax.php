@@ -10,11 +10,7 @@ namespace Strategy;
 
 use block_tutor\output\course;
 use block_tutor\output\Strategy;
-use moodle_url;
 use sirius_student;
-
-require_once("../group.php");
-require_once("../course.php");
 
 class StrategyAjax extends sirius_student implements Strategy
 {
@@ -30,8 +26,6 @@ class StrategyAjax extends sirius_student implements Strategy
         $studentCourses = $this -> getStudentCoursesById($student_id);
 
         $course = new course();
-
-
 
         //what need for data view
 
