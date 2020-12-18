@@ -6,10 +6,10 @@ defined('MOODLE_INTERNAL') || die();
 use sirius_student;
 use Strategy\StrategySelectList;
 
+require_once($_SERVER['DOCUMENT_ROOT']. '\local\student_lib\locallib.php');//good
 require_once('Strategy/StrategySelectList.php');
+require_once('Strategy/StrategyAjax.php');
 require_once('course.php');
-
-require_once($CFG -> dirroot . '/local/student_lib/locallib.php');
 
 /**
  * Interface Strategy
@@ -136,7 +136,7 @@ class studentslist_view extends sirius_student implements Strategy
     /**
      * @return array
      */
-    public function get_students(): array
+    public function get_students() : array
     {
         $this -> setStrategy(new StrategySelectList());
         $students = $this -> strategy -> get_students();

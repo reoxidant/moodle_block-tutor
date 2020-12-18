@@ -13,10 +13,6 @@ use block_tutor\output\Strategy;
 use moodle_url;
 use sirius_student;
 
-ini_set('display_errors','On');
-error_reporting(E_ALL|E_STRICT);
-
-
 /**
  * Class StrategySelectList
  * @package Strategy
