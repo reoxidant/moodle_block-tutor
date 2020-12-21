@@ -21,20 +21,20 @@ class StrategyAjax extends sirius_student implements Strategy
     /**
      * @var
      */
-    private $studentId;
+    private $student_id;
     /**
      * @var
      */
-    private $selectList;
+    private $select_list;
 
     /**
      * StrategyAjax constructor.
      * @param $queueName
      */
-    public function __construct($studentId, $selectList)
+    public function __construct($student_id, $select_list)
     {
-        $this -> studentId = $studentId;
-        $this -> selectList = $selectList;
+        $this -> student_id = $student_id;
+        $this -> select_list = $select_list;
     }
 
     /**
@@ -46,7 +46,7 @@ class StrategyAjax extends sirius_student implements Strategy
      */
     public function get_students(): array
     {
-        $studentCourses = $this -> getStudentCoursesById($student_id);
+        $studentCourses = $this -> getStudentCoursesById($this->student_id);
 
         $course = new course();
 
@@ -64,12 +64,12 @@ class StrategyAjax extends sirius_student implements Strategy
      */
     private function getStudentCoursesById($student_id)
     {
-        $groupedByCourseidArr = array();
+        $arrCourses = array();
 
         foreach ($this -> db_course_records_by($student_id) as $key => $value)
-            $groupedByCourseidArr[$value -> courseid][$value -> name] = $value;
+            $arrCourses[$value -> courseid][$value -> name] = $value;
 
-        return $groupedByCourseidArr;
+        return $arrCourses;
     }
 
     /**
