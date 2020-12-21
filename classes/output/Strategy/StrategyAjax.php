@@ -10,6 +10,7 @@ namespace Strategy;
 
 use block_tutor\output\course;
 use block_tutor\output\Strategy;
+use moodle_url;
 use sirius_student;
 
 /**
@@ -21,20 +22,20 @@ class StrategyAjax extends sirius_student implements Strategy
     /**
      * @var
      */
-    private $studentId;
+    private $student_id;
     /**
      * @var
      */
-    private $selectList;
+    private $select_list;
 
     /**
      * StrategyAjax constructor.
      * @param $queueName
      */
-    public function __construct($studentId, $selectList)
+    public function __construct($student_id, $select_list)
     {
-        $this -> studentId = $studentId;
-        $this -> selectList = $selectList;
+        $this -> student_id = $student_id;
+        $this -> select_list = $select_list;
     }
 
     /**
@@ -46,9 +47,16 @@ class StrategyAjax extends sirius_student implements Strategy
      */
     public function get_students(): array
     {
-        $studentCourses = $this -> getStudentCoursesById($student_id);
+        $studentCourses = $this -> getStudentCoursesById($this->student_id);
 
         $course = new course();
+
+        foreach ($studentCourses as $courseid => $group) {
+            $course -> setCourseid($courseid);
+            $course -> setCourseurl(new moodle_url('/course/view.php', array('id' => $courseid)));
+            $course -> setCourseGroups($group);
+            $course -> setCourseListByRequest($this->student_id, $this->select_list);
+        }
 
         //what need for data view
 
@@ -56,6 +64,8 @@ class StrategyAjax extends sirius_student implements Strategy
         //$student_leangroup = self::get_student_leangroup($userid);
         //$mod_info = $this->get_grade_mod($course, $userid, $group_data->id);
         //$data = Array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl_return, 'mod_info' => $mod_info);
+
+
     }
 
     /**
@@ -64,12 +74,12 @@ class StrategyAjax extends sirius_student implements Strategy
      */
     private function getStudentCoursesById($student_id)
     {
-        $groupedByCourseidArr = array();
+        $arrCourses = array();
 
         foreach ($this -> db_course_records_by($student_id) as $key => $value)
-            $groupedByCourseidArr[$value -> courseid][$value -> name] = $value;
+            $arrCourses[$value -> courseid][$value -> name] = $value;
 
-        return $groupedByCourseidArr;
+        return $arrCourses;
     }
 
     /**
