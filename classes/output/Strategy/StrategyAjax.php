@@ -10,6 +10,7 @@ namespace Strategy;
 
 use block_tutor\output\course;
 use block_tutor\output\Strategy;
+use moodle_url;
 use sirius_student;
 
 /**
@@ -50,12 +51,21 @@ class StrategyAjax extends sirius_student implements Strategy
 
         $course = new course();
 
+        foreach ($studentCourses as $courseid => $group) {
+            $course -> setCourseid($courseid);
+            $course -> setCourseurl(new moodle_url('/course/view.php', array('id' => $courseid)));
+            $course -> setCourseGroups($group);
+            $course -> setCourseListByRequest($this->student_id, $this->select_list);
+        }
+
         //what need for data view
 
         //$curuser_hasfindebt = sirius_student::check_hasfindebt($userid);
         //$student_leangroup = self::get_student_leangroup($userid);
         //$mod_info = $this->get_grade_mod($course, $userid, $group_data->id);
         //$data = Array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl_return, 'mod_info' => $mod_info);
+
+
     }
 
     /**

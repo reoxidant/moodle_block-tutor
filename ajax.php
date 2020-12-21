@@ -22,7 +22,6 @@ if ($_POST ?? null) if (is_string($selectList) && !is_null($selectList) && (!is_
     $view = new studentslist_view;
     $view -> setStrategy(new StrategyAjax($studentId, $selectList));
     $view -> strategy -> get_students();
-    echo "hello world";
 }
 
 ?>

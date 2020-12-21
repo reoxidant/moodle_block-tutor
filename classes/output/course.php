@@ -26,7 +26,7 @@ class course extends sirius_student
     /**
      * @var array[]
      */
-    private $arData = array('students' => array(), 'groups' => array());
+    private $arrResultData = array('students' => array(), 'groups' => array());
     /**
      * @var
      */
@@ -61,7 +61,7 @@ class course extends sirius_student
      */
     public function getGroup()
     {
-        return $this -> arData;
+        return $this -> arrResultData;
     }
 
     /**
