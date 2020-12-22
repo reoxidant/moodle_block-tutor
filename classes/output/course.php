@@ -155,12 +155,13 @@ class course extends sirius_student
         $this -> setGroupsList($obj_group);
     }
 
-    public function setCourseListByRequest()
+    public function setCourseListByRequest($student_id, $select_list)
     {
         foreach ($this -> courseGroups as $groupname => $group_data) {
-            $obj_group = new group($group_data -> id, $groupname);
 
-            $group_students = $this -> getGroupUsersByRole($group_data -> id, $this -> getCourseid());
+            $mod_info = $this->get_grade_mod($student_id, $group_data->id);
+
+            $data = Array('userid' => $student_id, 'coursename' => $groupname, 'courseurl' => $this->courseurl, 'mod_info' => $mod_info);
         }
     }
 
@@ -174,4 +175,56 @@ class course extends sirius_student
         ($selectList == "studentlist")?
             $this -> setStudentList($obj_student) : $this -> setGroupsList($obj_group);
     }
+
+    private function get_grade_mod($userid, $groupid)
+    {
+        global $DB;
+        $course = $DB->get_record('course', array('id' => $this->courseid));
+
+        $modinfo_obj = new modinfo($course);
+
+        return $modinfo_obj->modinfo_data();
+    }
+}
+
+class modinfo
+{
+    public $courseModInfo;
+    private $cms;
+
+    public function __construct($course)
+    {
+        $this->courseModInfo = get_fast_modinfo($course);
+        $this->cms = $this->courseModInfo->cms;
+    }
+
+    public function modinfo_data($userid)
+    {
+        foreach ($this->cms as $mod) {
+            $modname = $mod->modname;
+
+            if ($this->check_mod_capability($mod) && ($modname == 'assign' || $modname == 'quiz')) {
+
+                if (empty($this->mod_grade()))
+                    continue;
+
+                $return_arr['mod_grade'] = (string)intval($mod_grade);
+                $return_arr['mod_url'] = ($modname == 'assign') ? null : $mod->url;
+                $return_arr['modname'] = $modname;
+                $return_arr['groupid'] = $groupid;
+
+                break;
+            }
+        }
+
+        return $return_arr ?? null;
+    }
+
+    private function mod_grade()
+    {
+        $mod_grade = grade_get_grades($course->id, 'mod', $modname, $mod->instance, $userid);
+        @$mod_grade = current($mod_grade->items[0]->grades)->grade;
+        return $mod_grade;
+    }
+
 }
