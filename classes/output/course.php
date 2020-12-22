@@ -183,19 +183,21 @@ class course extends sirius_student
 
         $modinfo_obj = new modinfo($course);
 
-        return $modinfo_obj->modinfo_data();
+        return $modinfo_obj->modinfo_data($userid);
     }
 }
 
-class modinfo
+class modinfo extends sirius_student
 {
-    public $courseModInfo;
+    private $course_mod_info;
     private $cms;
+    private $courseid;
 
     public function __construct($course)
     {
-        $this->courseModInfo = get_fast_modinfo($course);
-        $this->cms = $this->courseModInfo->cms;
+        $this->courseid = $course->id;
+        $this->course_mod_info = get_fast_modinfo($course);
+        $this->cms = $this->course_mod_info->cms;
     }
 
     public function modinfo_data($userid)
@@ -205,7 +207,10 @@ class modinfo
 
             if ($this->check_mod_capability($mod) && ($modname == 'assign' || $modname == 'quiz')) {
 
-                if (empty($this->mod_grade()))
+                $mod_grade = grade_get_grades($this->courseid, 'mod', $modname, $mod->instance, $userid);
+                @$mod_grade = current($mod_grade->items[0]->grades)->grade;
+
+                if (empty($mod_grade))
                     continue;
 
                 $return_arr['mod_grade'] = (string)intval($mod_grade);
@@ -217,14 +222,6 @@ class modinfo
             }
         }
 
-        return $return_arr ?? null;
+        return $return_arr ?? [];
     }
-
-    private function mod_grade()
-    {
-        $mod_grade = grade_get_grades($course->id, 'mod', $modname, $mod->instance, $userid);
-        @$mod_grade = current($mod_grade->items[0]->grades)->grade;
-        return $mod_grade;
-    }
-
 }
