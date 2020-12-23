@@ -30,12 +30,12 @@ class studentslist_view extends sirius_student implements Strategy
     /**
      * @var string
      */
-    private $sortcmpby = 'coursename'; // для функции сортировки массива
+    private string $sortcmpby = 'coursename'; // для функции сортировки массива
 
     /**
      * @var
      */
-    public $strategy;
+    public Strategy $strategy;
 
     /**
      * @param Strategy $strategy
@@ -51,7 +51,7 @@ class studentslist_view extends sirius_student implements Strategy
      * @throws \dml_exception
      * @throws \moodle_exception
      */
-    public function export_for_template($output)
+    public function export_for_template($output): array
     {
         return $this -> get_students();
     }
@@ -77,7 +77,7 @@ class studentslist_view extends sirius_student implements Strategy
      * @return array
      * @throws \moodle_exception
      */
-    private function get_grade_mod($course, $userid, $groupid)
+    private function get_grade_mod($course, $userid, $groupid): array
     {
         $modinfo_obj = get_fast_modinfo($course);
         $cms = $modinfo_obj -> cms;
@@ -87,9 +87,9 @@ class studentslist_view extends sirius_student implements Strategy
         foreach ($cms as $mod) {
             $modname = $mod -> modname;
 
-            if ($this -> check_mod_capability($mod) && ($modname == 'assign' || $modname == 'quiz')) {
+            if ($this -> check_mod_capability($mod) && (($modname == 'assign') || ($modname == 'quiz'))) {
                 $mod_grade = grade_get_grades($course -> id, 'mod', $modname, $mod -> instance, $userid);
-                @$mod_grade = current($mod_grade -> items[0] -> grades) -> grade;
+                //@($mod_grade = current($mod_grade -> items[0] -> grades) -> grade);
                 if (empty($mod_grade))
                     continue;
 
@@ -118,13 +118,15 @@ class studentslist_view extends sirius_student implements Strategy
     {
         global $DB;
         if ($student_leangroup_fieldid = $DB -> get_record('user_info_field', array('shortname' => 'studygroup'), 'id')) {
-            if ($data = $DB -> get_record('user_info_data', array('fieldid' => $student_leangroup_fieldid -> id, 'userid' => $userid), 'data')) {
-                if (!isset($data -> data))
-                    return false;
+            if (!empty($student_leangroup_fieldid -> id)) {
+                if ($data = $DB -> get_record('user_info_data', array('fieldid' => $student_leangroup_fieldid -> id, 'userid' => $userid), 'data')) {
+                    if (!isset($data -> data))
+                        return false;
 
-                return trim($data -> data);
-            } else {
-                return false;
+                    return trim($data -> data);
+                } else {
+                    return false;
+                }
             }
         } else {
             return false;
@@ -134,7 +136,7 @@ class studentslist_view extends sirius_student implements Strategy
     /**
      * @return array
      */
-    public function get_students() : array
+    public function get_students(): array
     {
         $this -> setStrategy(new StrategySelectList());
         $students = $this -> strategy -> get_students();
@@ -152,7 +154,7 @@ class studentslist_view extends sirius_student implements Strategy
     private function sortStudentArr(&$return_arr)
     {
         $this -> sortcmpby = 'studentname';
-        if(isset($return_arr['students']))
+        if (isset($return_arr['students']))
             usort($return_arr['students'], array('self', 'cmp'));
     }
 
@@ -163,12 +165,10 @@ class studentslist_view extends sirius_student implements Strategy
     {
         // сбрасываем ключи для mustache
 
-        if(isset($return_arr['groups']))
-        {
+        if (isset($return_arr['groups'])) {
             $return_arr['groups'] = array_values($return_arr['groups']);
             foreach ($return_arr['groups'] as $key => $val) {
-                if(isset($key, $val['students']))
-                {
+                if (isset($key, $val['students'])) {
                     $return_arr['groups'][$key]['students'] = array_values($val['students']);
                 }
             }

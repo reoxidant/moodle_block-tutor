@@ -8,17 +8,44 @@
 
 namespace block_tutor\output;
 
+/**
+ * Class student
+ * @package block_tutor\output
+ */
 class student
 {
-    public $studentid;
-    public $studentname;
-    public $studenturl;
-    public $hasfindebt;
+    /**
+     * @var int
+     */
+    public int $studentid;
+    /**
+     * @var string
+     */
+    public string $studentname;
+    /**
+     * @var string
+     */
+    public string $studenturl;
+    /**
+     * @var bool
+     */
+    public bool $hasfindebt;
 
+    /**
+     * @var array
+     */
+    public array $data;
+
+    /**
+     * student constructor.
+     * @param $studentid
+     * @param $studentname
+     * @param $studenturl
+     */
     public function __construct($studentid, $studentname, $studenturl)
     {
-        $this->studentid = $studentid;
-        $this->studentname = $studentname;
-        $this->studenturl = $studenturl;
+        $this -> studentid = $studentid;
+        $this -> studentname = $studentname;
+        $this -> studenturl = $studenturl;
     }
 }
