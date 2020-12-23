@@ -20,17 +20,18 @@ use sirius_student;
 class StrategyAjax extends sirius_student implements Strategy
 {
     /**
-     * @var
+     * @var int
      */
-    private $student_id;
+    private int $student_id;
     /**
-     * @var
+     * @var string
      */
-    private $select_list;
+    private string $select_list;
 
     /**
      * StrategyAjax constructor.
-     * @param $queueName
+     * @param $student_id
+     * @param $select_list
      */
     public function __construct($student_id, $select_list)
     {
@@ -39,8 +40,6 @@ class StrategyAjax extends sirius_student implements Strategy
     }
 
     /**
-     * @param $student_id
-     * @param $selectList
      * @return array
      * @throws \dml_exception
      * @throws \moodle_exception
@@ -64,15 +63,14 @@ class StrategyAjax extends sirius_student implements Strategy
         //$student_leangroup = self::get_student_leangroup($userid);
         //$mod_info = $this->get_grade_mod($course, $userid, $group_data->id);
         //$data = Array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl_return, 'mod_info' => $mod_info);
-
-
     }
 
     /**
      * @param $student_id
      * @return array
+     * @throws \dml_exception
      */
-    private function getStudentCoursesById($student_id)
+    private function getStudentCoursesById($student_id): array
     {
         $arrCourses = array();
 
@@ -87,7 +85,7 @@ class StrategyAjax extends sirius_student implements Strategy
      * @return array
      * @throws \dml_exception
      */
-    private function db_course_records_by($student_id)
+    private function db_course_records_by($student_id): array
     {
         global $DB;
 

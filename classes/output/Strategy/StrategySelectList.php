@@ -21,6 +21,7 @@ class StrategySelectList extends sirius_student implements Strategy
 {
     /**
      * @return array[]
+     * @throws \moodle_exception
      */
     public function get_students(): array
     {
