@@ -8,10 +8,12 @@
 
 namespace block_tutor\output;
 
+use MongoDB\Database;
 use sirius_student;
 
 require_once("group.php");
 require_once("student.php");
+require_once("modinfo.php");
 
 /**
  * Class course
@@ -22,95 +24,34 @@ class course extends sirius_student
     /**
      * @var
      */
-    private $courseid;
-    /**
-     * @var array[]
-     */
-    private array $arrResultData = array('students' => array(), 'groups' => array());
-    /**
-     * @var
-     */
-    private array $listData;
-    /**
-     * @var
-     */
-    private ?string $courseurl;
-    /**
-     * @var
-     */
-    private array $courseGroups;
+    public int $id;
 
     /**
-     * @return null
+     * @var string|null
      */
-    public function getCourseid()
-    {
-        return $this -> courseid;
-    }
+    public ?string $url;
 
     /**
-     * @return mixed
+     * @var array
      */
-    public function getCourseurl(): ?string
-    {
-        return $this -> courseurl;
-    }
+    public array $groups;
 
     /**
-     * @return null
+     * @var array
      */
-    public function getGroup(): ?array
-    {
-        return $this -> arrResultData;
-    }
+    public array $listData;
+
+    public array $arrResultData = array('students' => array(), 'groups' => array());
 
     /**
-     * @return array[]
+     * @var dataBaseList
      */
-    public function getListData(): array
-    {
-        return $this -> listData;
-    }
+    public dataBaseList $database;
 
-    /**
-     * @param mixed $courseid
-     */
-    public function setCourseid($courseid)
-    {
-        $this -> courseid = $courseid;
-    }
-
-    /**
-     * @param $courseurl
-     */
-    public function setCourseurl($courseurl)
-    {
-        $this -> courseurl = $courseurl;
-    }
-
-    /**
-     * @param $courseGroups
-     */
-    public function setCourseGroups($courseGroups)
-    {
-        $this -> courseGroups = $courseGroups;
-    }
-
-    /**
-     * @param $student
-     */
     public function setStudentList($student)
     {
         $studentVars = get_object_vars($student);
         $this -> listData['students'][$studentVars['studentid']] = $studentVars;
-    }
-
-    /**
-     * @param mixed $listData
-     */
-    public function setListData($listData)
-    {
-        $this -> listData = $listData;
     }
 
     /**
@@ -126,11 +67,11 @@ class course extends sirius_student
      */
     public function setCourseList()
     {
-        foreach ($this -> courseGroups as $groupname => $group_data) {
+        foreach ($this -> groups as $groupname => $group_data) {
 
             $obj_group = new group($group_data -> id, $groupname);
 
-            $group_students = $this -> getGroupUsersByRole($group_data -> id, $this -> getCourseid());
+            $group_students = $this -> getGroupUsersByRole($group_data -> id, $this -> id);
 
             foreach ($group_students as $userid => $profile) {
 
@@ -155,14 +96,48 @@ class course extends sirius_student
     /**
      * @param $student_id
      * @param $select_list
+     * @throws \dml_exception
      */
     public function setCourseListByRequest($student_id, $select_list)
     {
-        foreach ($this -> courseGroups as $groupname => $group_data) {
+        foreach ($this -> groups as $groupname => $group_data) {
 
-            $mod_info = $this -> get_grade_mod($student_id, $group_data -> id);
+            if ($select_list == "studentlist")
+                $this -> collectDataStudentBy($student_id, $group_data);
+        }
+    }
 
-            $data = array('userid' => $student_id, 'coursename' => $groupname, 'courseurl' => $this -> courseurl, 'mod_info' => $mod_info);
+    /**
+     *
+     * @throws \dml_exception
+     */
+    private function collectDataStudentBy($student_id, $group_data)
+    {
+        $hasfindebt = sirius_student::check_hasfindebt($student_id);
+        $leangroup = self::get_student_leangroup($student_id);
+        $mod_info = $this -> get_grade_mod($student_id, $group_data -> id);
+        $data = array('coursename' => $group_data -> coursename, 'courseurl' => $this -> url, 'mod_info' => $mod_info);
+    }
+
+    /**
+     * @param $userid
+     * @return false|string
+     * @throws \dml_exception
+     */
+    private static function get_student_leangroup($userid)
+    {
+        global $DB;
+        if ($student_leangroup_fieldid = $DB -> get_record('user_info_field', array('shortname' => 'studygroup'), 'id')) {
+            if ($data = $DB -> get_record('user_info_data', array('fieldid' => $student_leangroup_fieldid -> id, 'userid' => $userid), 'data')) {
+                if (!isset($data -> data))
+                    return false;
+
+                return trim($data -> data);
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 
@@ -184,60 +159,23 @@ class course extends sirius_student
      */
     private function get_grade_mod($userid, $groupid): array
     {
+        $course = ($this->database?:new databaseList())->getCourseFromDB($this->id);
+        $modinfo_obj = new modinfo($course);
+        return $modinfo_obj -> modinfo_data($userid, $groupid);
+    }
+}
+
+class databaseList{
+
+    public function getCourseFromDB($courseid)
+    {
         global $DB;
         try {
-            $course = $DB -> get_record('course', array('id' => $this -> courseid));
+            $course = $DB -> get_record('course', array('id' => $courseid));
         } catch (\dml_exception $e) {
             debugging(sprintf(" Cannot connect to external database: %s", $e -> getMessage()), DEBUG_DEVELOPER);
         }
 
-        $modinfo_obj = new modinfo($course);
-
-        return $modinfo_obj -> modinfo_data($userid);
-    }
-}
-
-class modinfo extends sirius_student
-{
-    private ?\course_modinfo $course_mod_info;
-    private array $cms;
-    private int $courseid;
-
-    public function __construct($course)
-    {
-        $this -> courseid = $course -> id;
-        try {
-            $this -> course_mod_info = get_fast_modinfo($course);
-        } catch (\moodle_exception $e) {
-            debugging(sprintf("Cannot returns reference to full info about modules in course: %s", $e -> getMessage()), DEBUG_DEVELOPER);
-        }
-        if (isset($this -> course_mod_info)) {
-            $this -> cms = $this -> course_mod_info -> cms;
-        }
-    }
-
-    public function modinfo_data($userid): array
-    {
-        foreach ($this -> cms as $mod) {
-            $modname = $mod -> modname;
-
-            if ($this -> check_mod_capability($mod) && ($modname == 'assign' || $modname == 'quiz')) {
-
-                $mod_grade = grade_get_grades($this -> courseid, 'mod', $modname, $mod -> instance, $userid);
-                @$mod_grade = current($mod_grade -> items[0] -> grades) -> grade;
-
-                if (empty($mod_grade))
-                    continue;
-
-                $return_arr['mod_grade'] = (string)intval($mod_grade);
-                $return_arr['mod_url'] = ($modname == 'assign') ? null : $mod -> url;
-                $return_arr['modname'] = $modname;
-                $return_arr['groupid'] = $groupid;
-
-                break;
-            }
-        }
-
-        return $return_arr ?? [];
+        return $course;
     }
 }
