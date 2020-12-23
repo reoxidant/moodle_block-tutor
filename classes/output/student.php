@@ -45,11 +45,7 @@ class student
     public function __construct($studentid, $studentname, $studenturl)
     {
         $this -> studentid = $studentid;
-        if (isset($studentname)) {
-            $this -> studentname = $studentname;
-        }
-        if (isset($studenturl)) {
-            $this -> studenturl = $studenturl;
-        }
+        $this -> studentname = $studentname;
+        $this -> studenturl = $studenturl;
     }
 }
