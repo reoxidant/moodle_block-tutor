@@ -8,12 +8,12 @@
 
 namespace block_tutor\output;
 
-use MongoDB\Database;
+use dml_exception;
 use sirius_student;
 
 require_once("group.php");
 require_once("student.php");
-require_once("modinfo.php");
+require_once("databaseList.php");
 
 /**
  * Class course
@@ -22,7 +22,7 @@ require_once("modinfo.php");
 class course extends sirius_student
 {
     /**
-     * @var
+     * @var int
      */
     public int $id;
 
@@ -41,6 +41,9 @@ class course extends sirius_student
      */
     public array $listData;
 
+    /**
+     * @var array|array[]
+     */
     public array $arrResultData = array('students' => array(), 'groups' => array());
 
     /**
@@ -48,6 +51,9 @@ class course extends sirius_student
      */
     public dataBaseList $database;
 
+    /**
+     * @param $student
+     */
     public function setStudentList($student)
     {
         $studentVars = get_object_vars($student);
@@ -64,6 +70,7 @@ class course extends sirius_student
     }
 
     /**
+     * @throws dml_exception
      */
     public function setCourseList()
     {
@@ -96,86 +103,34 @@ class course extends sirius_student
     /**
      * @param $student_id
      * @param $select_list
-     * @throws \dml_exception
+     * @return array
+     * @return array
+     * @throws dml_exception
      */
-    public function setCourseListByRequest($student_id, $select_list)
+    public function setCourseListByRequest($student_id, $select_list): array
     {
         foreach ($this -> groups as $groupname => $group_data) {
 
             if ($select_list == "studentlist")
-                $this -> collectDataStudentBy($student_id, $group_data);
+                return $this -> collectDataStudentBy($student_id, $group_data);
         }
+
+        return array();
     }
 
     /**
      *
-     * @throws \dml_exception
+     * @throws dml_exception
      */
-    private function collectDataStudentBy($student_id, $group_data)
+    private function collectDataStudentBy($student_id, $group_data): array
     {
-        $hasfindebt = sirius_student::check_hasfindebt($student_id);
-        $leangroup = self::get_student_leangroup($student_id);
-        $mod_info = $this -> get_grade_mod($student_id, $group_data -> id);
-        $data = array('coursename' => $group_data -> coursename, 'courseurl' => $this -> url, 'mod_info' => $mod_info);
-    }
+        $student = new student($student_id, null, null);
+        $student -> check_student_hasfindebt();
+        $student -> set_student_leangroup();
+        $student -> set_grade_mod($this -> id, $group_data -> id);
+        $student -> set_course_data($group_data -> coursename, $this -> url);
 
-    /**
-     * @param $userid
-     * @return false|string
-     * @throws \dml_exception
-     */
-    private static function get_student_leangroup($userid)
-    {
-        global $DB;
-        if ($student_leangroup_fieldid = $DB -> get_record('user_info_field', array('shortname' => 'studygroup'), 'id')) {
-            if ($data = $DB -> get_record('user_info_data', array('fieldid' => $student_leangroup_fieldid -> id, 'userid' => $userid), 'data')) {
-                if (!isset($data -> data))
-                    return false;
-
-                return trim($data -> data);
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * @param $obj_student
-     * @param $obj_group
-     * @param $selectList
-     */
-    public function setListByRequest($obj_student, $obj_group, $selectList)
-    {
-        ($selectList == "studentlist") ?
-            $this -> setStudentList($obj_student) : $this -> setGroupsList($obj_group);
-    }
-
-    /**
-     * @param $userid
-     * @param $groupid
-     * @return array
-     */
-    private function get_grade_mod($userid, $groupid): array
-    {
-        $course = ($this->database?:new databaseList())->getCourseFromDB($this->id);
-        $modinfo_obj = new modinfo($course);
-        return $modinfo_obj -> modinfo_data($userid, $groupid);
-    }
-}
-
-class databaseList{
-
-    public function getCourseFromDB($courseid)
-    {
-        global $DB;
-        try {
-            $course = $DB -> get_record('course', array('id' => $courseid));
-        } catch (\dml_exception $e) {
-            debugging(sprintf(" Cannot connect to external database: %s", $e -> getMessage()), DEBUG_DEVELOPER);
-        }
-
-        return $course;
+        $this -> setStudentList($student);
+        return $this -> listData;
     }
 }

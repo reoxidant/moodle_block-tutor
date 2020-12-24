@@ -8,11 +8,17 @@
 
 namespace block_tutor\output;
 
+use dml_exception;
+use sirius_student;
+
+require_once("modinfo.php");
+require_once("databaseList.php");
+
 /**
  * Class student
  * @package block_tutor\output
  */
-class student
+class student extends sirius_student
 {
     /**
      * @var int
@@ -32,20 +38,75 @@ class student
     public bool $hasfindebt;
 
     /**
+     * @var string
+     */
+    public string $leangroup;
+
+    /**
      * @var array
      */
-    public array $data;
+    public array $coursedata;
+
+
+    /**
+     * @var array
+     */
+    public array $grade_mod;
 
     /**
      * student constructor.
      * @param $studentid
      * @param $studentname
      * @param $studenturl
+     * @throws dml_exception
      */
     public function __construct($studentid, $studentname, $studenturl)
     {
         $this -> studentid = $studentid;
-        $this -> studentname = $studentname;
-        $this -> studenturl = $studenturl;
+        $this -> studentname = $studentname ? $studentname : fullname((new databaseList()) -> getStudentBy($studentid));
+        $this -> studenturl = $studenturl ? $studenturl : new moodle_url('/user/profile.php', array('id' => $studentid));
+    }
+
+    /**
+     *
+     * @throws dml_exception
+     * @throws dml_exception
+     */
+    public function set_student_leangroup()
+    {
+        $leangroup_field_id = (new databaseList()) -> getStudentLeanGroup();
+        $data = (new databaseList()) -> getUserInfoBy($leangroup_field_id, $this -> studentid);
+
+        if ($leangroup_field_id && isset($data -> data)) {
+            $this -> leangroup = trim($data -> data);
+        }
+    }
+
+    /**
+     * @param $userid
+     * @param $groupid
+     * @throws dml_exception
+     */
+    public function set_grade_mod($courseid, $groupid)
+    {
+        $course = (new databaseList()) -> getCourseBy($courseid);
+        $this -> grade_mod = (new modinfo($course)) -> modinfo_data($this -> studentid, $groupid);
+    }
+
+    /**
+     * @param $coursename
+     * @param $courseurl
+     */
+    public function set_course_data($coursename, $courseurl)
+    {
+        $this -> coursedata = ['coursename' => $coursename, 'courseurl' => $courseurl];
+    }
+
+    /**
+     *
+     */
+    public function check_student_hasfindebt()
+    {
+        $this -> hasfindebt = sirius_student ::check_hasfindebt($this -> studentid);
     }
 }
