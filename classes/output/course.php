@@ -8,7 +8,6 @@
 
 namespace block_tutor\output;
 
-use MongoDB\Database;
 use sirius_student;
 
 require_once("group.php");
@@ -22,7 +21,7 @@ require_once("modinfo.php");
 class course extends sirius_student
 {
     /**
-     * @var
+     * @var int
      */
     public int $id;
 
@@ -41,6 +40,9 @@ class course extends sirius_student
      */
     public array $listData;
 
+    /**
+     * @var array|array[]
+     */
     public array $arrResultData = array('students' => array(), 'groups' => array());
 
     /**
@@ -48,6 +50,9 @@ class course extends sirius_student
      */
     public dataBaseList $database;
 
+    /**
+     * @param $student
+     */
     public function setStudentList($student)
     {
         $studentVars = get_object_vars($student);
@@ -113,8 +118,8 @@ class course extends sirius_student
      */
     private function collectDataStudentBy($student_id, $group_data)
     {
-        $hasfindebt = sirius_student::check_hasfindebt($student_id);
-        $leangroup = self::get_student_leangroup($student_id);
+        $hasfindebt = sirius_student ::check_hasfindebt($student_id);
+        $leangroup = self ::get_student_leangroup($student_id);
         $mod_info = $this -> get_grade_mod($student_id, $group_data -> id);
         $data = array('coursename' => $group_data -> coursename, 'courseurl' => $this -> url, 'mod_info' => $mod_info);
     }
@@ -122,20 +127,14 @@ class course extends sirius_student
     /**
      * @param $userid
      * @return false|string
-     * @throws \dml_exception
      */
     private static function get_student_leangroup($userid)
     {
-        global $DB;
-        if ($student_leangroup_fieldid = $DB -> get_record('user_info_field', array('shortname' => 'studygroup'), 'id')) {
-            if ($data = $DB -> get_record('user_info_data', array('fieldid' => $student_leangroup_fieldid -> id, 'userid' => $userid), 'data')) {
-                if (!isset($data -> data))
-                    return false;
+        $leangroup_field_id = (new databaseList()) -> getStudentLeanGroup();
+        $data = (new databaseList()) -> getUserInfoBy($leangroup_field_id, $userid);
 
-                return trim($data -> data);
-            } else {
-                return false;
-            }
+        if ($leangroup_field_id && !isset($data -> data)) {
+            return trim($data -> data);
         } else {
             return false;
         }
@@ -159,23 +158,68 @@ class course extends sirius_student
      */
     private function get_grade_mod($userid, $groupid): array
     {
-        $course = ($this->database?:new databaseList())->getCourseFromDB($this->id);
+        $course = (new databaseList()) -> getCourseBy($this -> id);
         $modinfo_obj = new modinfo($course);
         return $modinfo_obj -> modinfo_data($userid, $groupid);
     }
 }
 
-class databaseList{
+/**
+ * Class databaseList
+ * @package block_tutor\output
+ */
+class databaseList
+{
+    /**
+     * @var \moodle_database|null
+     */
+    private $database;
 
-    public function getCourseFromDB($courseid)
+    /**
+     * databaseList constructor.
+     */
+    public function __construct()
     {
         global $DB;
-        try {
-            $course = $DB -> get_record('course', array('id' => $courseid));
-        } catch (\dml_exception $e) {
-            debugging(sprintf(" Cannot connect to external database: %s", $e -> getMessage()), DEBUG_DEVELOPER);
-        }
+        $this -> database = $DB;
+    }
 
-        return $course;
+    /**
+     * @param $courseid
+     * @return false|mixed|\stdClass
+     */
+    public function getCourseBy($courseid)
+    {
+        try {
+            return $this -> database -> get_record('course', array('id' => $courseid));
+        } catch (dml_exception $e) {
+            return debugging(sprintf(" Cannot connect to external database: %s", $e -> getMessage()), DEBUG_DEVELOPER);
+        }
+    }
+
+    /**
+     * @return bool|mixed|\stdClass
+     */
+    public function getStudentLeanGroup()
+    {
+        try {
+            return $this -> database -> get_record('user_info_field', array('shortname' => 'studygroup'), 'id');
+        } catch (dml_exception $e) {
+            return debugging(sprintf(" Cannot connect to external database: %s", $e -> getMessage()), DEBUG_DEVELOPER);
+        }
+    }
+
+    /**
+     * @param $leangroup_field_id
+     * @param $user_id
+     * @return bool|mixed|\stdClass
+     */
+    public function getUserInfoBy($leangroup_field_id, $user_id)
+    {
+        try {
+            return $this -> database -> get_record('user_info_data', array('fieldid' => $leangroup_field_id, 'userid' => $user_id), 'data');
+        } catch (dml_exception $e) {
+            return debugging(sprintf(" Cannot connect to external database: %s", $e -> getMessage()), DEBUG_DEVELOPER);
+        }
     }
 }
