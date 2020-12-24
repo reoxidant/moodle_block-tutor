@@ -10,6 +10,7 @@ namespace block_tutor\output;
 
 use dml_exception;
 use sirius_student;
+use moodle_url;
 
 require_once("modinfo.php");
 require_once("databaseList.php");
@@ -74,7 +75,7 @@ class student extends sirius_student
      */
     public function set_student_leangroup()
     {
-        $leangroup_field_id = (new databaseList()) -> getStudentLeanGroup();
+        $leangroup_field_id = ((new databaseList()) -> getStudentLeanGroup())->id;
         $data = (new databaseList()) -> getUserInfoBy($leangroup_field_id, $this -> studentid);
 
         if ($leangroup_field_id && isset($data -> data)) {
