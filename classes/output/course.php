@@ -109,21 +109,20 @@ class course extends sirius_student
      */
     public function setCourseListByRequest($student_id, $select_list): array
     {
-        foreach ($this -> groups as $groupname => $group_data) {
-            if ($select_list == "studentlist"){
-                $this -> collectDataStudentBy($student_id, $group_data);
-            } else {var_dump("It not time yet!");}
-
-            return $this -> listData;
+        if ($select_list == "studentlist"){
+            $this->collectDataStudentBy($student_id);
+        } else {
+            var_dump("It not time yet!");
         }
 
+        return $this -> listData;
     }
 
     /**
      *
      * @throws dml_exception
      */
-    private function collectDataStudentBy($student_id, $group_data)
+    private function collectDataStudentBy($student_id)
     {
         $student = new student($student_id, null, null);
         $student -> check_student_hasfindebt();

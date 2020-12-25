@@ -53,7 +53,6 @@ class StrategyAjax extends sirius_student implements Strategy
         foreach ($studentCourses as $courseid => $groups) {
             $course -> id = $courseid;
             $course -> url = new moodle_url('/course/view.php', array('id' => $courseid));
-            $course -> groups = $groups;
             $course -> setCourseListByRequest($this->student_id, $this->select_list);
         }
 
