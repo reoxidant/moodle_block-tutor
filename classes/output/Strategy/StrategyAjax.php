@@ -10,6 +10,7 @@ namespace Strategy;
 
 use block_tutor\output\course;
 use block_tutor\output\Strategy;
+use block_tutor\output\student;
 use moodle_url;
 use sirius_student;
 
@@ -46,14 +47,21 @@ class StrategyAjax extends sirius_student implements Strategy
      */
     public function get_students(): array
     {
-        $studentCourses = $this -> getStudentCoursesById($this->student_id);
+        list($studentCourses, $coursesAndGroups) = $this -> getStudentCoursesById($this->student_id);
 
         $course = new course();
 
-        foreach ($studentCourses as $courseid => $groups) {
-            $course -> id = $courseid;
-            $course -> url = new moodle_url('/course/view.php', array('id' => $courseid));
-            $course -> setCourseListByRequest($this->student_id, $this->select_list);
+        if ($this->select_list == "studentlist"){
+            $student = $this->collectDataStudentBy($this->student_id, $coursesAndGroups);
+            foreach ($studentCourses as $courseid => $data) {
+                $course -> id = $courseid;
+                $course -> url = new moodle_url('/course/view.php', array('id' => $courseid));
+                $student -> set_grade_mod($coursesAndGroups);
+                $student -> set_course_data($data -> coursename, $course -> url);
+                $course -> setStudentList($student);
+            }
+        } else {
+            var_dump("It not time yet!");
         }
 
         //what need for data view
@@ -62,6 +70,21 @@ class StrategyAjax extends sirius_student implements Strategy
         //$student_leangroup = self::get_student_leangroup($userid);
         //$mod_info = $this->get_grade_mod($course, $userid, $group_data->id);
         //$data = Array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl_return, 'mod_info' => $mod_info);
+    }
+
+    /**
+     *
+     * @throws dml_exception
+     * @throws \dml_exception
+     * @throws \dml_exception
+     */
+    private function collectDataStudentBy($student_id, $coursesAndGroups): student
+    {
+        $student = new student($student_id, null, null);
+        $student -> check_student_hasfindebt();
+        $student -> set_student_leangroup();
+        $student -> set_grade_mod($coursesAndGroups);
+        return $student;
     }
 
     /**
@@ -74,9 +97,12 @@ class StrategyAjax extends sirius_student implements Strategy
         $arrCourses = array();
 
         foreach ($this -> db_course_records_by($student_id) as $key => $value)
-            $arrCourses[$value -> courseid][$value -> name] = $value;
+        {
+            $arrCourses[$value -> courseid] = $value;
+            $arrCoursesAndGroups[$value -> courseid][$value->name] = $value;
+        }
 
-        return $arrCourses;
+        return [$arrCourses, $arrCoursesAndGroups];
     }
 
     /**
