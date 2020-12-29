@@ -88,10 +88,13 @@ class student extends sirius_student
      * @param $groupid
      * @throws dml_exception
      */
-    public function set_grade_mod($courseid, $groupid)
+    public function set_grade_mod($courseid, $coursesAndGroups)
     {
-        $course = (new databaseList()) -> getCourseBy($courseid);
-        $this -> grade_mod = (new modinfo($course)) -> modinfo_data($this -> studentid, $groupid);
+        foreach($coursesAndGroups[$courseid] as $group)
+        {
+            $course = (new databaseList()) -> getCourseBy($courseid);
+            $this -> grade_mod = (new modinfo($course)) -> modinfo_data($this -> studentid, $group -> id);
+        }
     }
 
     /**
