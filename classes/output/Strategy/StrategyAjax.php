@@ -9,6 +9,7 @@
 namespace Strategy;
 
 use block_tutor\output\course;
+use block_tutor\output\group;
 use block_tutor\output\Strategy;
 use block_tutor\output\student;
 use moodle_url;
@@ -47,19 +48,24 @@ class StrategyAjax extends sirius_student implements Strategy
      */
     public function get_students(): array
     {
-        list($studentCourses, $coursesAndGroups) = $this -> getStudentCoursesById($this->student_id);
+        $coursesAndGroups = $this -> getStudentCoursesById($this->student_id);
 
         $course = new course();
 
         if ($this->select_list == "studentlist"){
-            $student = $this->collectDataStudentBy($this->student_id, $coursesAndGroups);
-            foreach ($studentCourses as $courseid => $data) {
+            $student = $this->collectDataStudentBy($this->student_id);
+            foreach ($coursesAndGroups as $courseid => $groups) {
                 $course -> id = $courseid;
-                $course -> url = new moodle_url('/course/view.php', array('id' => $courseid));
-                $student -> set_grade_mod($coursesAndGroups);
-                $student -> set_course_data($data -> coursename, $course -> url);
-                $course -> setStudentList($student);
+                $course -> url = new moodle_url('/course/view.php', array('id' => $course -> id));
+
+                foreach ($groups as $group)
+                {
+                    $modinfo = $student -> set_mod_info($course -> id);
+                    $student -> set_course_data($group -> coursename, $course -> url, $modinfo);
+                    $course -> setStudentList($student);
+                }
             }
+            $datastudent = $student;
         } else {
             var_dump("It not time yet!");
         }
@@ -70,7 +76,83 @@ class StrategyAjax extends sirius_student implements Strategy
         //$student_leangroup = self::get_student_leangroup($userid);
         //$mod_info = $this->get_grade_mod($course, $userid, $group_data->id);
         //$data = Array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl_return, 'mod_info' => $mod_info);
+
+        /*
+
+        $groups_arr = $this->getUserGroups();
+
+        // if($USER->id == 17810 && isset($USER->realuser) && $USER->realuser == 26102){
+        // print_r($groups_arr);die;
+        // }
+        foreach ($groups_arr as $courseid => $val) {
+            $course = $DB->get_record('course', array('id' => $courseid));
+
+            $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
+            foreach ($val as $groupname => $group_data) {
+
+                $coursename = $group_data->coursename;
+                $group_students = $this->getGroupUsersByRole($group_data->id, $courseid);
+                foreach ($group_students as $userid => $profile) {
+
+                    $needuserid = 40736;
+
+                    if($needuserid == $userid)
+                    {
+                        $studentname = $profile->name;
+                        $profileurl = $profile->profileurl;
+
+                        $mod_info = $this->get_grade_mod($course, $userid, $group_data->id);
+
+                        $courseurl_return = $courseurl;
+
+                        $data = Array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl_return, 'mod_info' => $mod_info);
+
+                        $return_arr['students'][$userid]['data'][] = $data;
+                    }
+                }
+            }
+
+            usort($return_arr['students'][$userid]['data'], array('self', 'cmp'));
+        }
+
+        */
+
+        return [] ?? $return_arr;
     }
+
+
+    private function get_grade_mod($course, $userid, $groupid)
+    {
+        $modinfo_obj = get_fast_modinfo($course);
+        $cms = $modinfo_obj->cms;
+
+        $return_arr = Array();
+
+        foreach ($cms as $mod) {
+            $modname = $mod->modname;
+
+            if ($this->check_mod_capability($mod) && ($modname == 'assign' || $modname == 'quiz')) {
+                $mod_grade = grade_get_grades($course->id, 'mod', $modname, $mod->instance, $userid);
+                @$mod_grade = current($mod_grade->items[0]->grades)->grade;
+                if (empty($mod_grade))
+                    continue;
+
+                $url = null;
+                if ($modname == 'assign')
+                    $url = $mod->url;
+
+                $return_arr['mod_grade'] = (string)intval($mod_grade);
+                $return_arr['mod_url'] = $url;
+                $return_arr['modname'] = $modname;
+                $return_arr['groupid'] = $groupid;
+
+                break;
+            }
+        }
+
+        return $return_arr;
+    }
+
 
     /**
      *
@@ -78,12 +160,11 @@ class StrategyAjax extends sirius_student implements Strategy
      * @throws \dml_exception
      * @throws \dml_exception
      */
-    private function collectDataStudentBy($student_id, $coursesAndGroups): student
+    private function collectDataStudentBy($student_id): student
     {
         $student = new student($student_id, null, null);
         $student -> check_student_hasfindebt();
         $student -> set_student_leangroup();
-        $student -> set_grade_mod($coursesAndGroups);
         return $student;
     }
 
@@ -98,11 +179,10 @@ class StrategyAjax extends sirius_student implements Strategy
 
         foreach ($this -> db_course_records_by($student_id) as $key => $value)
         {
-            $arrCourses[$value -> courseid] = $value;
-            $arrCoursesAndGroups[$value -> courseid][$value->name] = $value;
+            $arrCourses[$value -> courseid][$value->name] = $value;
         }
 
-        return [$arrCourses, $arrCoursesAndGroups];
+        return $arrCourses;
     }
 
     /**
