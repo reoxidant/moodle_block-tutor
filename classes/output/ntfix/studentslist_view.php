@@ -42,34 +42,22 @@ class studentslist_view extends sirius_student
                 $coursename = $group_data->coursename;
                 $group_students = $this->getGroupUsersByRole($group_data->id, $courseid);
                 foreach ($group_students as $userid => $profile) {
-                    $studentname = $profile->name;
-                    $profileurl = $profile->profileurl;
 
-                    $mod_info = $this->get_grade_mod($course, $userid, $group_data->id);
+                    $needuserid = 40736;
 
-                    $courseurl_return = $courseurl;
-                    // для письменных работ подменяем ссылку на попытку студента
-                    //if(isset($mod_info['modname']) && $mod_info['modname'] == 'assign')
-                    //	$courseurl_return = $mod_info['mod_url'] . '&action=grader&userid=' . $userid;
+                    if($needuserid == $userid)
+                    {
+                        $studentname = $profile->name;
+                        $profileurl = $profile->profileurl;
 
-                    $data = Array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl_return, 'mod_info' => $mod_info);
+                        $mod_info = $this->get_grade_mod($course, $userid, $group_data->id);
 
-                    // проверка на фин долг
-                    $curuser_hasfindebt = sirius_student::check_hasfindebt($userid);
-                    $student_leangroup = self::get_student_leangroup($userid);
-                    $return_arr['students'][$userid]['studentname'] = $studentname;
-                    $return_arr['students'][$userid]['studenturl'] = $profileurl;
-                    $return_arr['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
-                    $return_arr['students'][$userid]['groupname'] = $groupname;
-                    $return_arr['students'][$userid]['student_leangroup'] = $student_leangroup;
-                    $return_arr['students'][$userid]['data'][] = $data;
+                        $courseurl_return = $courseurl;
 
-                    $return_arr['groups'][$groupname]['students'][$userid]['studentname'] = $studentname;
-                    $return_arr['groups'][$groupname]['students'][$userid]['studenturl'] = $profileurl;
-                    $return_arr['groups'][$groupname]['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
-                    $return_arr['groups'][$groupname]['students'][$userid]['student_leangroup'] = $student_leangroup;
-                    $return_arr['groups'][$groupname]['students'][$userid]['data'][] = $data;
-                    $return_arr['groups'][$groupname]['name'] = $groupname;
+                        $data = Array('userid' => $userid, 'coursename' => $coursename, 'courseurl' => $courseurl_return, 'mod_info' => $mod_info);
+
+                        $return_arr['students'][$userid]['data'][] = $data;
+                    }
                 }
             }
 

@@ -48,12 +48,6 @@ class student extends sirius_student
      */
     public array $coursedata;
 
-
-    /**
-     * @var array
-     */
-    public array $grade_mod;
-
     /**
      * student constructor.
      * @param $studentid
@@ -88,22 +82,19 @@ class student extends sirius_student
      * @param $groupid
      * @throws dml_exception
      */
-    public function set_grade_mod($courseid, $coursesAndGroups)
+    public function set_mod_info($courseid)
     {
-        foreach($coursesAndGroups[$courseid] as $group)
-        {
-            $course = (new databaseList()) -> getCourseBy($courseid);
-            $this -> grade_mod = (new modinfo($course)) -> modinfo_data($this -> studentid, $group -> id);
-        }
+        $course = (new databaseList()) -> getCourseBy($courseid);
+        return (new modinfo($course)) -> modinfo_data($this -> studentid, $group -> id);
     }
 
     /**
      * @param $coursename
      * @param $courseurl
      */
-    public function set_course_data($coursename, $courseurl)
+    public function set_course_data($coursename, $courseurl, $modinfo)
     {
-        $this -> coursedata = ['coursename' => $coursename, 'courseurl' => $courseurl];
+        $this -> coursedata[] = ['userid' => $this -> studentid, 'coursename' => $coursename, 'courseurl' => $courseurl, 'mod_info' => $modinfo];
     }
 
     /**
