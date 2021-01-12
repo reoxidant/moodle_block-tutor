@@ -48,24 +48,9 @@ class StrategyAjax extends sirius_student implements Strategy
      */
     public function get_students(): array
     {
-        $coursesAndGroups = $this -> getStudentCoursesById($this->student_id);
-
-        $course = new course();
 
         if ($this->select_list == "studentlist"){
             $student = $this->collectDataStudentBy($this->student_id);
-            foreach ($coursesAndGroups as $courseid => $groups) {
-                $course -> id = $courseid;
-                $course -> url = new moodle_url('/course/view.php', array('id' => $course -> id));
-
-                foreach ($groups as $group)
-                {
-                    $modinfo = $student -> set_mod_info($course -> id);
-                    $student -> set_course_data($group -> coursename, $course -> url, $modinfo);
-                    $course -> setStudentList($student);
-                }
-            }
-            $datastudent = $student;
         } else {
             var_dump("It not time yet!");
         }
@@ -162,9 +147,20 @@ class StrategyAjax extends sirius_student implements Strategy
      */
     private function collectDataStudentBy($student_id): student
     {
+        $coursesAndGroups = $this -> getStudentCoursesById($student_id);
+
         $student = new student($student_id, null, null);
         $student -> check_student_hasfindebt();
         $student -> set_student_leangroup();
+
+        foreach ($coursesAndGroups as $courseid => $groups) {
+            $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
+            foreach ($groups as $group)
+            {
+                $modinfo = $student -> set_mod_info($courseid);
+                $student -> set_course_data($group -> coursename, $courseurl, $modinfo);
+            }
+        }
         return $student;
     }
 
