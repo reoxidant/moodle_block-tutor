@@ -8,17 +8,10 @@
 
 namespace Strategy;
 
-use block_tutor\output\Strategy;
-
 require_once("../studentslist_view.php");
 
-class StrategyHtml implements Strategy
+class StrategyHtml
 {
-    public function get_students(): array
-    {
-        // TODO: Implement get_students() method.
-    }
-
     private function generateHtmlList($return_arr, $selectList)
     {
         if ($selectList === "grouplist") {
