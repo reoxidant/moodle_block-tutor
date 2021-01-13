@@ -6,18 +6,21 @@
  * @package PhpStorm
  */
 
-namespace Strategy;
+namespace controller;
 
-use block_tutor\output\course;
-use block_tutor\output\Strategy;
+use model\Course;
 use moodle_url;
 use sirius_student;
+
+global $CFG;
+
+require_once($CFG -> dirroot . '/blocks/tutor/classes/model/Course.php');
 
 /**
  * Class StrategySelectList
  * @package Strategy
  */
-class StrategySelectList extends sirius_student implements Strategy
+class StrategySelectListViewController extends sirius_student implements Strategy
 {
     /**
      * @return array[]
@@ -27,7 +30,7 @@ class StrategySelectList extends sirius_student implements Strategy
     {
         $course_data = $this -> getUserGroups();
 
-        $course = new course();
+        $course = new Course();
 
         foreach ($course_data as $courseid => $group) {
             $course -> id = $courseid;
@@ -36,6 +39,6 @@ class StrategySelectList extends sirius_student implements Strategy
             $course -> setCourseList();
         }
 
-        return $course -> listData;
+        return $course -> SortAndReturnListData();
     }
 }

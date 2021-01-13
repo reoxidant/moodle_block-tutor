@@ -6,10 +6,10 @@
  * @package PhpStorm
  */
 
-namespace Strategy;
+namespace controller;
 
-use block_tutor\output\Strategy;
-use block_tutor\output\student;
+use controller\StudentViewController\Strategy;
+use model\Student;
 use moodle_url;
 use sirius_student;
 
@@ -17,7 +17,7 @@ use sirius_student;
  * Class StrategyAjax
  * @package Strategy
  */
-class StrategyAjax extends sirius_student implements Strategy
+class StrategyAjaxViewController extends sirius_student implements Strategy
 {
     /**
      * @var int
@@ -203,14 +203,13 @@ class StrategyAjax extends sirius_student implements Strategy
 
         foreach ($coursesAndGroups as $courseid => $groups) {
             $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
-            foreach ($groups as $group)
-            {
+            foreach ($groups as $group) {
                 $modinfo = $student -> set_mod_info($courseid);
                 $student -> set_course_data($group -> coursename, $courseurl, $modinfo);
             }
         }
 
-        usort($student->coursedata, array('self', 'cmp'));
+        usort($student -> coursedata, array('self', 'cmp'));
 
         return $student;
     }
@@ -224,9 +223,8 @@ class StrategyAjax extends sirius_student implements Strategy
     {
         $arrCourses = array();
 
-        foreach ($this -> db_course_records_by($student_id) as $key => $value)
-        {
-            $arrCourses[$value -> courseid][$value->name] = $value;
+        foreach ($this -> db_course_records_by($student_id) as $key => $value) {
+            $arrCourses[$value -> courseid][$value -> name] = $value;
         }
 
         return $arrCourses;

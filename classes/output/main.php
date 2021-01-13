@@ -15,6 +15,9 @@ if (is_file($CFG -> dirroot . '/local/student_lib/locallib.php')) {
     require_once($CFG -> dirroot . '/local/student_lib/locallib.php');
 }
 
+require_once("studentlist_view.php");
+require_once($CFG -> dirroot . "/blocks/tutor/classes/controller/StudentsViewController.php");
+
 /**
  * Class main
  * @package block_tutor\output
@@ -56,6 +59,7 @@ class main implements renderable, templatable
 
         //fall server
         $studentslistview = new studentslist_view;
+//        $studentslistview = new StudentsViewController;
         $enrolledview = new enrolled_view;
         $webinarsview = new webinars_view($USER -> id);
 
@@ -88,6 +92,7 @@ class main implements renderable, templatable
             'viewingenrolled' => $viewingenrolled,
             'viewingwebinars' => $viewingwebinars,
             'needgradignview' => $needgradignview -> export_for_template($output),
+//            'studentslistview' => $studentslistview -> export_for_template($output),
             'studentslistview' => $studentslistview -> export_for_template($output),
             'enrolledview' => $enrolledview -> export_for_template($output),
             'webinarsview' => $webinarsview -> export_for_template($output),

@@ -6,14 +6,13 @@
  * @package PhpStorm
  */
 
-namespace block_tutor\output;
-
+namespace model;
 
 /**
  * Class databaseList
  * @package block_tutor\output
  */
-class databaseList
+class DatabaseManager
 {
     /**
      * @var \moodle_database|null
