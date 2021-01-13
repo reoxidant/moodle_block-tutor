@@ -6,7 +6,7 @@
  * @package PhpStorm
  */
 
-namespace block_tutor\output;
+namespace model;
 
 use sirius_student;
 
@@ -14,7 +14,7 @@ use sirius_student;
  * Class modinfo
  * @package block_tutor\output
  */
-class modinfo extends sirius_student
+class Modinfo extends sirius_student
 {
     private ?\course_modinfo $course_mod_info;
     private array $cms;

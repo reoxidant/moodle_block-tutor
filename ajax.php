@@ -2,7 +2,7 @@
 
 
 use block_tutor\output\studentslist_view;
-use Strategy\StrategyAjax;
+use Strategy\StrategyAjaxViewController;
 
 /**
  *
@@ -20,7 +20,7 @@ $groupId = optional_param('groupId', null, PARAM_INT);
 
 if ($_POST ?? null) if (is_string($selectList) && (!is_null($studentId) || !is_null($groupId))) {
     $view = new studentslist_view;
-    $view -> setStrategy(new StrategyAjax($studentId, $selectList));
+    $view -> setStrategy(new StrategyAjaxViewController($studentId, $selectList));
     $view -> strategy -> get_students();
 }
 

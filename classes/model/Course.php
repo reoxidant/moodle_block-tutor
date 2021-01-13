@@ -6,20 +6,20 @@
  * @package PhpStorm
  */
 
-namespace block_tutor\output;
+namespace model;
 
 use dml_exception;
 use sirius_student;
 
-require_once("group.php");
-require_once("student.php");
-require_once("databaseList.php");
+require_once("Group.php");
+require_once("Student.php");
+require_once("DatabaseManager.php");
 
 /**
  * Class course
  * @package block_tutor\output
  */
-class course extends sirius_student
+class Course extends sirius_student
 {
     /**
      * @var int
@@ -47,9 +47,9 @@ class course extends sirius_student
     public array $arrResultData = array('students' => array(), 'groups' => array());
 
     /**
-     * @var dataBaseList
+     * @var databaseListModel
      */
-    public dataBaseList $database;
+    public databaseListModel $database;
 
     /**
      * @param $student
@@ -98,5 +98,40 @@ class course extends sirius_student
         $this -> setStudentList($obj_student);
 
         $this -> setGroupsList($obj_group);
+    }
+
+    public function SortAndReturnListData():array
+    {
+        $this->sortStudentArr();
+        $this->resetKeysMustacheTemplate();
+
+        return $this->listData;
+    }
+
+    /**
+     * @param $return_arr
+     */
+    private function sortStudentArr()
+    {
+        $this -> sortcmpby = 'studentname';
+        if (isset($this->listData['students']))
+            usort($this->listData['students'], array('self', 'cmp'));
+    }
+
+    /**
+     * @param $return_arr
+     */
+    private function resetKeysMustacheTemplate()
+    {
+        // сбрасываем ключи для mustache
+
+        if (isset($this->listData['groups'])) {
+            $this->listData['groups'] = array_values($this->listData['groups']);
+            foreach ($this->listData['groups'] as $key => $val) {
+                if (isset($key, $val['students'])) {
+                    $this->listData['groups'][$key]['students'] = array_values($val['students']);
+                }
+            }
+        }
     }
 }

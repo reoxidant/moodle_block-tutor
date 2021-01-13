@@ -6,20 +6,20 @@
  * @package PhpStorm
  */
 
-namespace block_tutor\output;
+namespace model;
 
 use dml_exception;
 use sirius_student;
 use moodle_url;
 
-require_once("modinfo.php");
-require_once("databaseList.php");
+require_once("Modinfo.php");
+require_once("DatabaseManager.php");
 
 /**
  * Class student
  * @package block_tutor\output
  */
-class student extends sirius_student
+class Student extends sirius_student
 {
     /**
      * @var int
@@ -58,7 +58,7 @@ class student extends sirius_student
     public function __construct($studentid, $studentname, $studenturl)
     {
         $this -> studentid = $studentid;
-        $this -> studentname = $studentname ? $studentname : fullname((new databaseList()) -> getStudentBy($studentid));
+        $this -> studentname = $studentname ? $studentname : fullname((new databaseListModel()) -> getStudentBy($studentid));
         $this -> studenturl = $studenturl ? $studenturl : new moodle_url('/user/profile.php', array('id' => $studentid));
     }
 
@@ -69,8 +69,8 @@ class student extends sirius_student
      */
     public function set_student_leangroup()
     {
-        $leangroup_field_id = ((new databaseList()) -> getStudentLeanGroup())->id;
-        $data = (new databaseList()) -> getUserInfoBy($leangroup_field_id, $this -> studentid);
+        $leangroup_field_id = ((new databaseListModel()) -> getStudentLeanGroup())->id;
+        $data = (new databaseListModel()) -> getUserInfoBy($leangroup_field_id, $this -> studentid);
 
         if ($leangroup_field_id && isset($data -> data)) {
             $this -> leangroup = trim($data -> data);
@@ -84,7 +84,7 @@ class student extends sirius_student
      */
     public function set_mod_info($courseid)
     {
-        $course = (new databaseList()) -> getCourseBy($courseid);
+        $course = (new databaseListModel()) -> getCourseBy($courseid);
         return (new modinfo($course)) -> modinfo_data($this -> studentid, $group -> id);
     }
 

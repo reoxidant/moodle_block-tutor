@@ -6,11 +6,9 @@
  * @package PhpStorm
  */
 
-namespace Strategy;
+namespace view\StrategyHtmlView;
 
-require_once("../studentslist_view.php");
-
-class StrategyHtml
+class StrategyHtmlView
 {
     private function generateHtmlList($return_arr, $selectList)
     {

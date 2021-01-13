@@ -6,9 +6,9 @@
  * @package PhpStorm
  */
 
-namespace block_tutor\output;
+namespace model;
 
-class group
+class Group
 {
     public $groupid;
     public $name;
