@@ -9,8 +9,8 @@
 namespace model;
 
 use dml_exception;
-use sirius_student;
 use moodle_url;
+use sirius_student;
 
 require_once("Modinfo.php");
 require_once("DatabaseManager.php");
@@ -69,7 +69,7 @@ class Student extends sirius_student
      */
     public function set_student_leangroup()
     {
-        $leangroup_field_id = ((new databaseListModel()) -> getStudentLeanGroup())->id;
+        $leangroup_field_id = ((new databaseListModel()) -> getStudentLeanGroup()) -> id;
         $data = (new databaseListModel()) -> getUserInfoBy($leangroup_field_id, $this -> studentid);
 
         if ($leangroup_field_id && isset($data -> data)) {

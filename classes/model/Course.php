@@ -50,6 +50,7 @@ class Course extends sirius_student
      * @var databaseListModel
      */
     public databaseListModel $database;
+    private string $sortcmpby;
 
     /**
      * @param $student
@@ -100,12 +101,12 @@ class Course extends sirius_student
         $this -> setGroupsList($obj_group);
     }
 
-    public function SortAndReturnListData():array
+    public function SortAndReturnListData(): array
     {
-        $this->sortStudentArr();
-        $this->resetKeysMustacheTemplate();
+        $this -> sortStudentArr();
+        $this -> resetKeysMustacheTemplate();
 
-        return $this->listData;
+        return $this -> listData;
     }
 
     /**
@@ -114,8 +115,13 @@ class Course extends sirius_student
     private function sortStudentArr()
     {
         $this -> sortcmpby = 'studentname';
-        if (isset($this->listData['students']))
-            usort($this->listData['students'], array('self', 'cmp'));
+        if (isset($this -> listData['students']))
+            usort($this -> listData['students'], array('self', 'cmp'));
+    }
+
+    private function cmp($a, $b)
+    {
+        return strcasecmp(mb_strtolower($a[$this -> sortcmpby]), mb_strtolower($b[$this -> sortcmpby]));
     }
 
     /**
@@ -123,13 +129,11 @@ class Course extends sirius_student
      */
     private function resetKeysMustacheTemplate()
     {
-        // сбрасываем ключи для mustache
-
-        if (isset($this->listData['groups'])) {
-            $this->listData['groups'] = array_values($this->listData['groups']);
-            foreach ($this->listData['groups'] as $key => $val) {
+        if (isset($this -> listData['groups'])) {
+            $this -> listData['groups'] = array_values($this -> listData['groups']);
+            foreach ($this -> listData['groups'] as $key => $val) {
                 if (isset($key, $val['students'])) {
-                    $this->listData['groups'][$key]['students'] = array_values($val['students']);
+                    $this -> listData['groups'][$key]['students'] = array_values($val['students']);
                 }
             }
         }

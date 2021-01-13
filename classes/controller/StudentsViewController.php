@@ -1,10 +1,9 @@
 <?php
 
-namespace controller\StudentViewController;
+namespace controller;
 defined('MOODLE_INTERNAL') || die();
 
 use sirius_student;
-use \StrategySelectListViewController;
 
 require_once('StrategySelectListViewController.php');
 
@@ -28,7 +27,7 @@ class StudentsViewController extends sirius_student implements Strategy
 {
 
     /**
-     * @var
+     * @var Strategy
      */
     public Strategy $strategy;
 
@@ -57,8 +56,6 @@ class StudentsViewController extends sirius_student implements Strategy
     public function get_students(): array
     {
         $this -> setStrategy(new StrategySelectListViewController());
-        $students = $this -> strategy -> get_students();
-
-        return $students;
+        return $this -> strategy -> get_students();
     }
 }

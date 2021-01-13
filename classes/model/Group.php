@@ -15,7 +15,7 @@ class Group
 
     public function __construct($groupid, $name)
     {
-        $this->groupid = $groupid;
-        $this->name = $name;
+        $this -> groupid = $groupid;
+        $this -> name = $name;
     }
 }

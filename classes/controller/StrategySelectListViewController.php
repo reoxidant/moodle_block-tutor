@@ -8,10 +8,13 @@
 
 namespace controller;
 
-use controller\StudentViewController\Strategy;
 use model\Course;
 use moodle_url;
 use sirius_student;
+
+global $CFG;
+
+require_once($CFG -> dirroot . '/blocks/tutor/classes/model/Course.php');
 
 /**
  * Class StrategySelectList
@@ -27,7 +30,7 @@ class StrategySelectListViewController extends sirius_student implements Strateg
     {
         $course_data = $this -> getUserGroups();
 
-        $course = new course();
+        $course = new Course();
 
         foreach ($course_data as $courseid => $group) {
             $course -> id = $courseid;
