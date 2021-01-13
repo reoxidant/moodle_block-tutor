@@ -3,7 +3,6 @@
 namespace block_tutor\output;
 defined('MOODLE_INTERNAL') || die();
 
-use controller\StudentsViewController;
 use renderable;
 use renderer_base;
 use templatable;
@@ -16,6 +15,7 @@ if (is_file($CFG -> dirroot . '/local/student_lib/locallib.php')) {
     require_once($CFG -> dirroot . '/local/student_lib/locallib.php');
 }
 
+require_once("studentlist_view.php");
 require_once($CFG -> dirroot . "/blocks/tutor/classes/controller/StudentsViewController.php");
 
 /**
@@ -58,8 +58,8 @@ class main implements renderable, templatable
         $needgradignview = new needgradign_view($USER -> id);
 
         //fall server
-//        $studentslistview = new studentslist_view;
-        $studentslistview = new StudentsViewController;
+        $studentslistview = new studentslist_view;
+//        $studentslistview = new StudentsViewController;
         $enrolledview = new enrolled_view;
         $webinarsview = new webinars_view($USER -> id);
 
