@@ -12,23 +12,27 @@ require_once(__DIR__ . "/classes/controller/StudentsViewController.php");
 $selectList = required_param('selectList', PARAM_RAW);
 $studentId = optional_param('studentId', null, PARAM_INT);
 $groupId = optional_param('groupId', null, PARAM_INT);
-$view = new controller\StudentsViewController;
+$controller = new controller\StudentsViewController;
 
 if ($_POST ?? null) if (is_string($selectList) && (!is_null($studentId) || !is_null($groupId))) {
-    $view -> setStrategy(new \controller\StrategyAjaxViewController($studentId ?? $groupId, $selectList));
-    showDataOnThePage($selectList, $view -> strategy -> get_students());
+    $controller -> setStrategy(new \controller\StrategyAjaxViewController($studentId ?? $groupId, $selectList));
+    showDataOnThePage($selectList, $controller -> strategy -> get_students());
 }
 
-function showDataOnThePage($selectList, $data){
+/**
+ * @param $selectList
+ * @param $data
+ */
+function showDataOnThePage($selectList, $data)
+{
     if ($selectList == "studentlist") {
-        $view -> setStrategy(new \view\StrategyStudentView($data));
-        $view -> strategy -> generateStudentList();
+        $controller -> setStrategy(new \view\StrategyStudentView($data));
+        $controller -> strategy -> generateStudentList();
     } else {
-        $view -> setStrategy(new \view\StrategyGroupView($data));
-        $view -> strategy -> generateGroupList();
+        $controller -> setStrategy(new \view\StrategyGroupView($data));
+        $controller -> strategy -> generateGroupList();
     }
+    echo $controller -> strategy -> html;
 }
-
-echo $view -> strategy -> html;
 
 ?>
