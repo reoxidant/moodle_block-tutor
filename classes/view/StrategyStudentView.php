@@ -8,18 +8,37 @@
 
 namespace view;
 
+/**
+ * Class StrategyStudentView
+ * @package view
+ */
 class StrategyStudentView
 {
+    /**
+     * @var array
+     */
     private array $data = (array)null;
 
+    /**
+     * @var string
+     */
+    public string $html;
+
+    /**
+     * StrategyStudentView constructor.
+     * @param $studentData
+     */
     public function __construct($studentData)
     {
         $this -> data = $studentData;
     }
 
+    /**
+     * @throws \coding_exception
+     */
     private function generateStudentList()
     {
-        return
+        $this->html =
             \html_writer ::start_tag('ul') .
             \html_writer ::start_tag('li', array('class' => 'studentrow')) .
 
@@ -45,7 +64,11 @@ class StrategyStudentView
             \html_writer ::end_tag('ul');
     }
 
-    private function getCourseListData()
+    /**
+     * @return string
+     * @throws \coding_exception
+     */
+    private function getCourseListData(): string
     {
         return
             \html_writer ::start_tag('ul') .

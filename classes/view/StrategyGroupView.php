@@ -8,21 +8,44 @@
 
 namespace view;
 
+/**
+ * Class StrategyGroupView
+ * @package view
+ */
 class StrategyGroupView
 {
+    /**
+     * @var array
+     */
     private array $data = (array)null;
 
+    /**
+     * @var string
+     */
+    public string $html;
+
+    /**
+     * StrategyGroupView constructor.
+     * @param $groupData
+     */
     public function __construct($groupData)
     {
         $this -> data = $groupData;
     }
 
-    private function generateGroup()
+    /**
+     *
+     */
+    private function generateGroupList()
     {
-        $html = \html_writer ::start_tag('ol') . $this -> generateGroupList($return_arr) . \html_writer ::end_tag('ol');
+        $this -> html = \html_writer ::start_tag('ol') . $this -> createListStudents($this -> data) . \html_writer ::end_tag('ol');
     }
 
-    private function generateGroupList($return_arr)
+    /**
+     * @param $groupData
+     * @return string
+     */
+    private function createListStudents($groupData): string
     {
         return
             \html_writer ::start_tag('div') .
