@@ -6,11 +6,7 @@ defined('MOODLE_INTERNAL') || die();
 use context_module;
 use customscripts_muiv_students;
 
-global $CFG;
-
-if (is_file($CFG -> dirroot . "/local/customlib.php")) {
-    require_once($CFG -> dirroot . "/local/customlib.php");
-}
+require_once($CFG -> dirroot . "/local/customlib.php");
 require_once($CFG -> dirroot . '/mod/assign/locallib.php');
 
 class needgradign_view

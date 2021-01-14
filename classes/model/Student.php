@@ -58,7 +58,7 @@ class Student extends sirius_student
     public function __construct($studentid, $studentname, $studenturl)
     {
         $this -> studentid = $studentid;
-        $this -> studentname = $studentname ? $studentname : fullname((new databaseListModel()) -> getStudentBy($studentid));
+        $this -> studentname = $studentname ? $studentname : fullname((new DatabaseManager()) -> getStudentBy($studentid));
         $this -> studenturl = $studenturl ? $studenturl : new moodle_url('/user/profile.php', array('id' => $studentid));
     }
 
@@ -69,8 +69,8 @@ class Student extends sirius_student
      */
     public function set_student_leangroup()
     {
-        $leangroup_field_id = ((new databaseListModel()) -> getStudentLeanGroup()) -> id;
-        $data = (new databaseListModel()) -> getUserInfoBy($leangroup_field_id, $this -> studentid);
+        $leangroup_field_id = ((new DatabaseManager()) -> getStudentLeanGroup()) -> id;
+        $data = (new DatabaseManager()) -> getUserInfoBy($leangroup_field_id, $this -> studentid);
 
         if ($leangroup_field_id && isset($data -> data)) {
             $this -> leangroup = trim($data -> data);
@@ -84,7 +84,7 @@ class Student extends sirius_student
      */
     public function set_mod_info($courseid)
     {
-        $course = (new databaseListModel()) -> getCourseBy($courseid);
+        $course = (new DatabaseManager()) -> getCourseBy($courseid);
         return (new modinfo($course)) -> modinfo_data($this -> studentid, $group -> id);
     }
 

@@ -47,9 +47,9 @@ class Course extends sirius_student
     public array $arrResultData = array('students' => array(), 'groups' => array());
 
     /**
-     * @var databaseListModel
+     * @var DatabaseManager
      */
-    public databaseListModel $database;
+    public DatabaseManager $database;
     private string $sortcmpby;
 
     /**

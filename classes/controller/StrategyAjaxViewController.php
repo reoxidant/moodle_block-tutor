@@ -8,7 +8,6 @@
 
 namespace controller;
 
-use controller\StudentViewController\Strategy;
 use model\Student;
 use moodle_url;
 use sirius_student;
@@ -22,20 +21,22 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
     /**
      * @var int
      */
-    private int $student_id;
+    private int $chosen_id;
     /**
      * @var string
      */
     private string $select_list;
+
+    public Strategy $strategy;
 
     /**
      * StrategyAjax constructor.
      * @param $student_id
      * @param $select_list
      */
-    public function __construct($student_id, $select_list)
+    public function __construct($chosen_id, $select_list)
     {
-        $this -> student_id = $student_id;
+        $this -> chosen_id = $chosen_id;
         $this -> select_list = $select_list;
     }
 
@@ -46,11 +47,12 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
      */
     public function get_students(): array
     {
-
         if ($this -> select_list == "studentlist") {
-            $student = $this -> collectDataStudentBy($this -> student_id);
+            $student = $this -> collectDataStudentBy($this -> chosen_id);
+            return (array)$student;
         } else {
             var_dump("It not time yet!");
+            return array();
         }
 
         //what need for data view
@@ -142,10 +144,15 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
             $return_arr['groups'][$key]['students'] = array_values($val['students']);
         }
         */
-
-        return [] ?? $return_arr;
     }
 
+    /**
+     * @param Strategy $strategy
+     */
+    public function setStrategy(Strategy $strategy)
+    {
+        $this -> strategy = $strategy;
+    }
 
     /**
      * @param $course
