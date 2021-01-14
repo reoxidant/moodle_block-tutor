@@ -69,8 +69,7 @@ class webinars_view
 					mdl_course.fullname, mdl_bigbluebuttonbn.name';
         $params = array('userid' => $this -> userid);
 
-//        return $DB->get_records_sql($sql, $params); //if used you get a error with database
-        return array();
+        return $DB -> get_records_sql($sql, $params);
     }
 
 }

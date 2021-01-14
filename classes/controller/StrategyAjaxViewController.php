@@ -8,7 +8,6 @@
 
 namespace controller;
 
-use controller\StudentViewController\Strategy;
 use model\Student;
 use moodle_url;
 use sirius_student;
