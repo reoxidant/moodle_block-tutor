@@ -17,7 +17,7 @@ class StrategyStudentView
     /**
      * @var array
      */
-    private array $data = (array)null;
+    private array $data = array();
 
     /**
      * @var string
@@ -36,9 +36,9 @@ class StrategyStudentView
     /**
      * @throws \coding_exception
      */
-    private function generateStudentList()
+    public function generateStudentList()
     {
-        $this->html =
+        $this -> html =
             \html_writer ::start_tag('ul') .
             \html_writer ::start_tag('li', array('class' => 'studentrow')) .
 
