@@ -21,7 +21,6 @@ require_once($CFG -> dirroot . '/blocks/tutor/classes/model/Course.php');
  */
 class StrategySelectListViewController extends sirius_student implements Strategy
 {
-    public Strategy $strategy;
     /**
      * @return array[]
      * @throws \moodle_exception
@@ -40,10 +39,5 @@ class StrategySelectListViewController extends sirius_student implements Strateg
         }
 
         return $course -> SortAndReturnListData();
-    }
-
-    public function setStrategy(Strategy $strategy)
-    {
-        $this->strategy = $strategy;
     }
 }

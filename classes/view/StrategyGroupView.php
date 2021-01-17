@@ -17,7 +17,7 @@ class StrategyGroupView
     /**
      * @var array
      */
-    private array $data = (array)null;
+    private array $data = array();
 
     /**
      * @var string
@@ -36,7 +36,7 @@ class StrategyGroupView
     /**
      *
      */
-    private function generateGroupList()
+    public function generateGroupList()
     {
         $this -> html = \html_writer ::start_tag('ol') . $this -> createListStudents($this -> data) . \html_writer ::end_tag('ol');
     }

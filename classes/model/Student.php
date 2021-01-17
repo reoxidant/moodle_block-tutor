@@ -104,4 +104,43 @@ class Student extends sirius_student
     {
         $this -> hasfindebt = sirius_student ::check_hasfindebt($this -> studentid);
     }
+
+    /**
+     * @param $student_id
+     * @return array
+     * @throws \dml_exception
+     */
+    public function getStudentCoursesById($student_id): array
+    {
+        $arrCourses = array();
+
+        foreach ($this -> db_course_records_by($student_id) as $key => $value) {
+            $arrCourses[$value -> courseid][$value -> name] = $value;
+        }
+
+        return $arrCourses;
+    }
+
+    /**
+     * @param $student_id
+     * @return array
+     * @throws \dml_exception
+     */
+    private function db_course_records_by($student_id): array
+    {
+        global $DB;
+
+        $sql = "SELECT g.id, g.courseid, g.name, c.fullname as coursename
+                  FROM
+                    {groups} g,
+                    {groups_members} gm,
+                    {course} c
+                  WHERE 
+                    g.id = gm.groupid
+                    AND c.id = g.courseid
+                    AND gm.userid = $student_id
+                  ORDER BY g.name, c.fullname;";
+
+        return $DB -> get_records_sql($sql, array($student_id));
+    }
 }

@@ -5,7 +5,9 @@ defined('MOODLE_INTERNAL') || die();
 
 use sirius_student;
 
+require_once("Strategy.php");
 require_once('StrategySelectListViewController.php');
+require_once('StrategyAjaxViewController.php');
 
 /**
  * Class studentslist_view
@@ -13,7 +15,19 @@ require_once('StrategySelectListViewController.php');
  */
 class StudentsViewController extends sirius_student implements Strategy
 {
+    /**
+     * @var
+     */
     public Strategy $strategy;
+
+    /**
+     * StudentsViewController constructor.
+     * @param Strategy $strategy
+     */
+    public function __construct(Strategy $strategy)
+    {
+        $this -> strategy = $strategy;
+    }
 
     /**
      * @param $output
@@ -26,9 +40,12 @@ class StudentsViewController extends sirius_student implements Strategy
         return $this -> get_students();
     }
 
+    /**
+     * @param Strategy $strategy
+     */
     public function setStrategy(Strategy $strategy)
     {
-        $this->strategy = $strategy;
+        $this -> strategy = $strategy;
     }
 
     /**
@@ -36,7 +53,6 @@ class StudentsViewController extends sirius_student implements Strategy
      */
     public function get_students(): array
     {
-        $this -> setStrategy(new StrategySelectListViewController());
         return $this -> strategy -> get_students();
     }
 }

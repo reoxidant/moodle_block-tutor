@@ -3,6 +3,7 @@
 namespace block_tutor\output;
 defined('MOODLE_INTERNAL') || die();
 
+use controller\StrategySelectListViewController;
 use controller\StudentsViewController;
 use renderable;
 use renderer_base;
@@ -58,7 +59,7 @@ class main implements renderable, templatable
 
         $needgradignview = new needgradign_view($USER -> id);
 //        $studentslistview = new studentslist_view;
-        $studentslistview = new StudentsViewController;
+        $studentslistview = new StudentsViewController(new StrategySelectListViewController());
         $enrolledview = new enrolled_view;
         $webinarsview = new webinars_view($USER -> id);
 

@@ -15,11 +15,6 @@ namespace controller;
 interface Strategy
 {
     /**
-     * @param Strategy $strategy
-     */
-    public function setStrategy(): Strategy;
-
-    /**
      * @return array
      */
     public function get_students(): array;
