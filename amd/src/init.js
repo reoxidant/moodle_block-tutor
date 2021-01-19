@@ -36,6 +36,17 @@ define([
         root = $(root);
         startLoading(root);
 
+        //for change height tab pages
+        root.on('click', ItemSelectors.tabSelector.groupsDropDownButton, function (e){
+            let heightMenu = $(e.currentTarget).next(".dropdown-menu").height();
+            $(root).find(".full-width").height(heightMenu);
+        });
+
+        root.on('click', ItemSelectors.tabSelector.studentsDropDownButton, function (e){
+            let heightMenu = $(e.currentTarget).next(".dropdown-menu").height();
+            $(root).find(".full-width").height(heightMenu);
+        });
+
         // Bind click events to event links.
         root.on(CustomEvents.events.activate, "[data-toggle='tab']", function (e) {
             startLoading(root);
