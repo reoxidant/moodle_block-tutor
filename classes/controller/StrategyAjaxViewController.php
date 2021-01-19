@@ -71,6 +71,7 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
     /**
      * @param $selectList
      * @param $data
+     * @throws \coding_exception
      */
     public function showDataOnThePage($data)
     {
