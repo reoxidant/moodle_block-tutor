@@ -36,14 +36,22 @@ class StrategyStudentView
     /**
      * @throws \coding_exception
      */
-    public function generateStudentList()
+    public function pullHtmlStudentData()
     {
+        list("studenturl" => $studenturl, "studentname" => $studentname, "hasfindebt" => $hasfindebt, "leangroup" => $student_leangroup) = $this->data;
+
+        if($hasfindebt){
+            $htmlhasfindebt = \html_writer ::start_tag('span', array('class' => 'hasfindebt_info')) .
+                get_string("hasfindebt", 'block_tutor') .
+            \html_writer ::end_tag('span');
+        }
+
         $this -> html =
             \html_writer ::start_tag('ul') .
             \html_writer ::start_tag('li', array('class' => 'studentrow')) .
 
-            \html_writer ::start_tag('a', array('href' => $studenturl, 'target' => '_blank'))
-            . $studentname .
+            \html_writer ::start_tag('a', array('href' => $studenturl ?? "error", 'target' => '_blank'))
+            . $studentname.
             \html_writer ::end_tag('a') .
 
             \html_writer ::start_tag('i')
@@ -51,14 +59,12 @@ class StrategyStudentView
             \html_writer ::end_tag('i') .
 
             \html_writer ::start_tag('small')
-            . $groupname .
+            . $student_leangroup .
             \html_writer ::end_tag('small') .
 
-            \html_writer ::start_tag('span', array('class' => 'hasfindebt_info')) .
-            get_string("hasfindebt", 'block_tutor') .
-            \html_writer ::end_tag('span') .
+            $htmlhasfindebt.
 
-            $this -> getCourseListData() .
+            $this -> studentCourseData() .
 
             \html_writer ::end_tag('li') .
             \html_writer ::end_tag('ul');
@@ -68,7 +74,7 @@ class StrategyStudentView
      * @return string
      * @throws \coding_exception
      */
-    private function getCourseListData(): string
+    private function studentCourseData(): string
     {
         return
             \html_writer ::start_tag('ul') .
