@@ -33,14 +33,7 @@
                     </ul>
                 </div>
             </ol>
-            <ol>
-                {{#studentslistview.groups}}
-                    {{> block_tutor/studentslist-view-groupslist }}
-                {{/studentslistview.groups}}
-                {{^studentslistview.groups}}
-                    {{#str}} dataempty, block_tutor {{/str}}
-                {{/studentslistview.groups}}
-            </ol>
+            <div class="full-width"></div>
         </div>
         <div class="tab-pane {{#studentlist_tab.bystudent}}active show{{/studentlist_tab.bystudent}} fade" id="tutor_studentlist_bystudent">
             <ol>

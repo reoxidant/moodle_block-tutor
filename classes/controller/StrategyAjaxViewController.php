@@ -32,6 +32,8 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
      */
     private string $select_list;
 
+    private array $data;
+
     /**
      * StrategyAjax constructor.
      * @param $student_id
@@ -73,15 +75,23 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
      * @param $data
      * @throws \coding_exception
      */
-    public function showDataOnThePage($data)
+    public function showDataOnThePage()
     {
         if ($this -> select_list == "studentlist") {
-            $studentView = new StrategyStudentView($data);
-            $studentView -> generateStudentList();
+            $studentView = new StrategyStudentView($this -> data);
+            $studentView -> pullHtmlStudentData();
         } else {
-            $groupView = new StrategyGroupView($data);
+            $groupView = new StrategyGroupView($this -> data);
             $groupView -> generateGroupList();
         }
         echo $studentView -> html ?? $groupView -> html;
+    }
+
+    /**
+     * @param array $data
+     */
+    public function setData(array $data): void
+    {
+        $this -> data = $data;
     }
 }

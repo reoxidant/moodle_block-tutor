@@ -15,6 +15,7 @@ $groupId = optional_param('groupId', null, PARAM_INT);
 
 if ($_POST ?? null) if (is_string($selectList) && (!is_null($studentId) || !is_null($groupId))) {
     $controller = new \controller\StudentsViewController(new \controller\StrategyAjaxViewController($studentId ?? $groupId, $selectList));
-    $controller -> strategy -> showDataOnThePage($selectList == "selectList" ? $controller -> strategy -> get_students() : array());
+    $controller -> strategy -> setData($controller->strategy->get_students());
+    $controller -> strategy -> showDataOnThePage();
 }
 ?>
