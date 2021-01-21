@@ -19,7 +19,7 @@
     <div class="tab-content">
         <div class="tab-pane {{#studentlist_tab.bygroup}}active show{{/studentlist_tab.bygroup}} fade" id="tutor_studentlist_bygroup">
             <ol>
-                <div class="dropdown">
+                <div id="dropdown-btn" class="dropdown">
                     <button id="groupsdropdown" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" aria-label="{{#str}} aria:groupsdropdown, block_tutor {{/str}}">
                         {{#pix}} t/sort_by {{/pix}}
                         <span class="d-sm-inline-block" data-active-item-text>
@@ -37,7 +37,7 @@
         </div>
         <div class="tab-pane {{#studentlist_tab.bystudent}}active show{{/studentlist_tab.bystudent}} fade" id="tutor_studentlist_bystudent">
             <ol>
-                <div class="dropdown">
+                <div id="dropdown-btn" class="dropdown">
                     <button id="studentsdropdown" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" aria-label="{{#str}} aria:studentsdropdown, block_tutor {{/str}}">
                         {{#pix}} t/sort_by {{/pix}}
                         <span class="d-sm-inline-block" data-active-item-text>

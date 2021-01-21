@@ -12,8 +12,7 @@ define([], function () {
             studentListDropDown: "#studentsdropdown + .dropdown-menu .dropdown-item",
             activeItemGroup: "#groupsdropdown + .dropdown-menu .active",
             activeItemStudent: "#studentsdropdown + .dropdown-menu .active",
-            groupsDropDownButton:"#groupsdropdown",
-            studentsDropDownButton:"#studentsdropdown"
+            dropDownButton:"#dropdown-btn",
         }
     };
 });
