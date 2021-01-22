@@ -43,8 +43,7 @@ define([
         });
 
         root.on('hide.bs.dropdown', ItemSelectors.tabSelector.dropDownButton, function (e) {
-            let heightContent = $(root).find("#content").height();
-            $(root).find(".full-width").height(heightContent);
+            $(root).find(".full-width").css('height','auto');
         });
 
         // Bind click events to event links.
@@ -74,6 +73,7 @@ define([
                     type: "POST",
                     data: {selectList: "grouplist", groupId: groupId},
                     url: location.origin + "/blocks/tutor/ajax.php",
+                    dataType:'html',
                     beforeSend: function () {
                         startLoading(root);
                     },
@@ -101,13 +101,13 @@ define([
                     type: "POST",
                     data: {selectList: "studentlist", studentId: studentId},
                     url: location.origin + "/blocks/tutor/ajax.php",
-                    success: function (data) {   console.log(data)   },
+                    dataType:'html',
+                    success: function (data) {   $(ItemSelectors.tabSelector.content).html(data)   },
                     beforeSend: function () {
                         startLoading(root);
                     },
                     complete: function () {
                         stopLoading(root);
-                        console.log(112);
                     },
                     cache: "false",
                     error: function () {
@@ -117,19 +117,6 @@ define([
                         });
                     }
                 })
-                // .done(function(data){
-                //     console.log(23);
-                //     $(root).find("#content").html(data);
-                // })
-                .done(function() {
-                    alert( "success" );
-                })
-                .fail(function() {
-                    alert( "error" );
-                })
-                .always(function() {
-                    alert( "complete" );
-                });
 
             }, 500);
         });

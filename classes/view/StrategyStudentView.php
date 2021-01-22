@@ -48,11 +48,11 @@ class StrategyStudentView
                     . $studentname .
                     \html_writer ::end_tag('a') .
 
-//                    $this -> leangroup($leangroup) .
-//
-//                    $this -> hasfindebt() .
-//
-//                    $this -> studentCourseDataBy() .
+                    $this -> leangroup($leangroup) .
+
+                    $this -> hasfindebt() .
+
+                    $this -> studentCourseDataBy() .
 
                 \html_writer ::end_tag('li') .
             \html_writer ::end_tag('ul');
