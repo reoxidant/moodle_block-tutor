@@ -43,7 +43,8 @@ define([
         });
 
         root.on('hide.bs.dropdown', ItemSelectors.tabSelector.dropDownButton, function (e) {
-            $(root).find(".full-width").height(0);
+            let heightContent = $(root).find("#content").height();
+            $(root).find(".full-width").height(heightContent);
         });
 
         // Bind click events to event links.
@@ -100,11 +101,13 @@ define([
                     type: "POST",
                     data: {selectList: "studentlist", studentId: studentId},
                     url: location.origin + "/blocks/tutor/ajax.php",
+                    success: function (data) {   console.log(data)   },
                     beforeSend: function () {
                         startLoading(root);
                     },
                     complete: function () {
                         stopLoading(root);
+                        console.log(112);
                     },
                     cache: "false",
                     error: function () {
@@ -113,7 +116,21 @@ define([
                             type: "error"
                         });
                     }
+                })
+                // .done(function(data){
+                //     console.log(23);
+                //     $(root).find("#content").html(data);
+                // })
+                .done(function() {
+                    alert( "success" );
+                })
+                .fail(function() {
+                    alert( "error" );
+                })
+                .always(function() {
+                    alert( "complete" );
                 });
+
             }, 500);
         });
 
