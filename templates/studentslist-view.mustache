@@ -17,10 +17,13 @@
     </div>
 
     <div class="tab-content">
-        <div class="tab-pane {{#studentlist_tab.bygroup}}active show{{/studentlist_tab.bygroup}} fade" id="tutor_studentlist_bygroup">
+        <div class="tab-pane {{#studentlist_tab.bygroup}}active show{{/studentlist_tab.bygroup}} fade"
+             id="tutor_studentlist_bygroup">
             <ol>
                 <div id="dropdown-btn" class="dropdown">
-                    <button id="groupsdropdown" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" aria-label="{{#str}} aria:groupsdropdown, block_tutor {{/str}}">
+                    <button id="groupsdropdown" type="button" class="btn btn-outline-secondary dropdown-toggle"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            aria-label="{{#str}} aria:groupsdropdown, block_tutor {{/str}}">
                         {{#pix}} t/sort_by {{/pix}}
                         <span class="d-sm-inline-block" data-active-item-text>
                             {{#str}} title_group_select, block_tutor {{/str}}
@@ -33,12 +36,15 @@
                     </ul>
                 </div>
             </ol>
-            <div class="full-width"></div>
+            <div class="full-width"><div id="content"></div></div>
         </div>
-        <div class="tab-pane {{#studentlist_tab.bystudent}}active show{{/studentlist_tab.bystudent}} fade" id="tutor_studentlist_bystudent">
+        <div class="tab-pane {{#studentlist_tab.bystudent}}active show{{/studentlist_tab.bystudent}} fade"
+             id="tutor_studentlist_bystudent">
             <ol>
                 <div id="dropdown-btn" class="dropdown">
-                    <button id="studentsdropdown" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" aria-label="{{#str}} aria:studentsdropdown, block_tutor {{/str}}">
+                    <button id="studentsdropdown" type="button" class="btn btn-outline-secondary dropdown-toggle"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            aria-label="{{#str}} aria:studentsdropdown, block_tutor {{/str}}">
                         {{#pix}} t/sort_by {{/pix}}
                         <span class="d-sm-inline-block" data-active-item-text>
                             {{#str}} title_student_select, block_tutor {{/str}}
@@ -51,7 +57,7 @@
                     </ul>
                 </div>
             </ol>
-            <div class="full-width"></div>
+            <div class="full-width"><div id="content"></div></div>
         </div>
     </div>
 
@@ -63,14 +69,14 @@
 </div>
 {{#js}}
     require(['jquery', 'core/custom_interaction_events'], function($, customEvents) {
-        var root = $('#studentlist-view-choices-{{uniqid}}');
-        customEvents.define(root, [customEvents.events.activate]);
-        root.on(customEvents.events.activate, '[data-toggle="btns"] > .btn', function() {
-        root.find('.btn.active').removeClass('active');
+    var root = $('#studentlist-view-choices-{{uniqid}}');
+    customEvents.define(root, [customEvents.events.activate]);
+    root.on(customEvents.events.activate, '[data-toggle="btns"] > .btn', function() {
+    root.find('.btn.active').removeClass('active');
     });
     });
     require(['jquery', 'block_tutor/init'], function($, TypePreferences) {
-        var root = $('#studentlist-view-choices-{{uniqid}}');
-        TypePreferences.registerEventListeners(root, 'studentlist');
+    var root = $('#studentlist-view-choices-{{uniqid}}');
+    TypePreferences.registerEventListeners(root, 'studentlist');
     });
 {{/js}}

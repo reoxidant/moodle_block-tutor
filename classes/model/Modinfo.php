@@ -16,10 +16,23 @@ use sirius_student;
  */
 class Modinfo extends sirius_student
 {
+    /**
+     * @var \course_modinfo|null
+     */
     private ?\course_modinfo $course_mod_info;
+    /**
+     * @var array|\cm_info[]
+     */
     private array $cms;
+    /**
+     * @var int
+     */
     private int $courseid;
 
+    /**
+     * Modinfo constructor.
+     * @param $course
+     */
     public function __construct($course)
     {
         $this -> courseid = $course -> id;
@@ -33,6 +46,11 @@ class Modinfo extends sirius_student
         }
     }
 
+    /**
+     * @param $userid
+     * @param $groupid
+     * @return array
+     */
     public function modinfo_data($userid, $groupid): array
     {
         foreach ($this -> cms as $mod) {

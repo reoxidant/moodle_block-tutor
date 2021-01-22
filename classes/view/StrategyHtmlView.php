@@ -8,8 +8,17 @@
 
 namespace view;
 
+/**
+ * Class StrategyHtmlView
+ * @package view
+ */
 class StrategyHtmlView
 {
+    /**
+     * @param $return_arr
+     * @param $selectList
+     * @return string
+     */
     private function generateHtmlList($return_arr, $selectList)
     {
         if ($selectList === "grouplist") {

@@ -37,19 +37,19 @@ define([
         startLoading(root);
 
         //for change height tab pages
-        root.on('show.bs.dropdown', ItemSelectors.tabSelector.dropDownButton, function (e){
+        root.on('show.bs.dropdown', ItemSelectors.tabSelector.dropDownButton, function (e) {
             let heightMenu = $(e.currentTarget).find(".dropdown-menu").height();
             $(root).find(".full-width").height(heightMenu);
         });
 
-        root.on('hide.bs.dropdown', ItemSelectors.tabSelector.dropDownButton, function (e){
-            $(root).find(".full-width").height(0);
+        root.on('hide.bs.dropdown', ItemSelectors.tabSelector.dropDownButton, function (e) {
+            $(root).find(".full-width").css('height','auto');
         });
 
         // Bind click events to event links.
         root.on(CustomEvents.events.activate, "[data-toggle='tab']", function (e) {
             startLoading(root);
-            var tabname = $(e.currentTarget).data('tabname');
+            let tabname = $(e.currentTarget).data('tabname');
             // Bootstrap does not change the URL when using BS tabs, so need to do this here.
             // Also check to make sure the browser supports the history API.
             if (type == 'studentlist') {
@@ -67,12 +67,13 @@ define([
             startLoading(root);
 
             setTimeout(function () {
-                var groupId = root.find(ItemSelectors.tabSelector.activeItemGroup)[0].dataset.group;
+                let groupId = root.find(ItemSelectors.tabSelector.activeItemGroup)[0].dataset.group;
 
                 $.ajax({
                     type: "POST",
                     data: {selectList: "grouplist", groupId: groupId},
                     url: location.origin + "/blocks/tutor/ajax.php",
+                    dataType:'html',
                     beforeSend: function () {
                         startLoading(root);
                     },
@@ -94,12 +95,14 @@ define([
             startLoading(root);
 
             setTimeout(function () {
-                var studentId = root.find(ItemSelectors.tabSelector.activeItemStudent)[0].dataset.student;
+                let studentId = root.find(ItemSelectors.tabSelector.activeItemStudent)[0].dataset.student;
 
                 $.ajax({
                     type: "POST",
                     data: {selectList: "studentlist", studentId: studentId},
                     url: location.origin + "/blocks/tutor/ajax.php",
+                    dataType:'html',
+                    success: function (data) {   $(ItemSelectors.tabSelector.content).html(data)   },
                     beforeSend: function () {
                         startLoading(root);
                     },
@@ -113,7 +116,8 @@ define([
                             type: "error"
                         });
                     }
-                });
+                })
+
             }, 500);
         });
 
@@ -124,7 +128,7 @@ define([
             .fail(Notification.exception);
     };
 
-    var LoadTabContent = function (root, type, tabname) {
+    let LoadTabContent = function (root, type, tabname) {
         return AjaxRepository.getContentData(root, type, tabname)
             .done(function () {
                 return stopLoading(root);

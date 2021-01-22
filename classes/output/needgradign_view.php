@@ -9,16 +9,33 @@ use customscripts_muiv_students;
 require_once($CFG -> dirroot . "/local/customlib.php");
 require_once($CFG -> dirroot . '/mod/assign/locallib.php');
 
+/**
+ * Class needgradign_view
+ * @package block_tutor\output
+ */
 class needgradign_view
 {
+    /**
+     * @var int
+     */
     private $userid;
 
+    /**
+     * needgradign_view constructor.
+     * @param $userid
+     */
     function __construct($userid)
     {
         $this -> userid = (int)$userid;
     }
 
-    public function export_for_template($output)
+    /**
+     * @param $output
+     * @return array
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public function export_for_template($output): array
     {
         global $CFG, $DB;
 
@@ -48,7 +65,11 @@ class needgradign_view
         return $return_arr;
     }
 
-    private function get_need_grading()
+    /**
+     * @return array
+     * @throws \dml_exception
+     */
+    private function get_need_grading(): array
     {
         global $DB;
 

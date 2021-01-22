@@ -43,7 +43,7 @@ class StrategySelectListViewController extends sirius_student implements Strateg
         }
 
         $time = microtime(true) - $start;
-        \core\notification::warning("$time - sec perform operation");
+        \core\notification ::warning("$time - sec perform operation");
 
         return $course -> SortAndReturnListData();
     }

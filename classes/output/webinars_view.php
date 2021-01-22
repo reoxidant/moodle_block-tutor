@@ -6,15 +6,32 @@ defined('MOODLE_INTERNAL') || die();
 use context_module;
 use moodle_url;
 
+/**
+ * Class webinars_view
+ * @package block_tutor\output
+ */
 class webinars_view
 {
+    /**
+     * @var int
+     */
     private $userid;
 
+    /**
+     * webinars_view constructor.
+     * @param $userid
+     */
     function __construct($userid)
     {
         $this -> userid = (int)$userid;
     }
 
+    /**
+     * @param $output
+     * @return array
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
     public function export_for_template($output)
     {
 
@@ -46,6 +63,10 @@ class webinars_view
         return $return_arr;
     }
 
+    /**
+     * @return array
+     * @throws \dml_exception
+     */
     private function get_user_webinars()
     {
         global $DB;

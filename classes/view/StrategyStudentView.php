@@ -38,35 +38,23 @@ class StrategyStudentView
      */
     public function pullHtmlStudentData()
     {
-        list("studenturl" => $studenturl, "studentname" => $studentname, "hasfindebt" => $hasfindebt, "leangroup" => $student_leangroup) = $this->data;
-
-        if($hasfindebt){
-            $htmlhasfindebt = \html_writer ::start_tag('span', array('class' => 'hasfindebt_info')) .
-                get_string("hasfindebt", 'block_tutor') .
-            \html_writer ::end_tag('span');
-        }
+        list("studenturl" => $studenturl, "studentname" => $studentname, "leangroup" => $leangroup) = $this -> data;
 
         $this -> html =
             \html_writer ::start_tag('ul') .
-            \html_writer ::start_tag('li', array('class' => 'studentrow')) .
+                \html_writer ::start_tag('li', array('class' => 'studentrow')) .
 
-            \html_writer ::start_tag('a', array('href' => $studenturl ?? "error", 'target' => '_blank'))
-            . $studentname.
-            \html_writer ::end_tag('a') .
+                    \html_writer ::start_tag('a', array('href' => $studenturl, 'target' => '_blank'))
+                    . $studentname .
+                    \html_writer ::end_tag('a') .
 
-            \html_writer ::start_tag('i')
-            . $student_leangroup .
-            \html_writer ::end_tag('i') .
+                    $this -> leangroup($leangroup) .
 
-            \html_writer ::start_tag('small')
-            . $student_leangroup .
-            \html_writer ::end_tag('small') .
+                    $this -> hasfindebt() .
 
-            $htmlhasfindebt.
+                    $this -> studentCourseDataBy() .
 
-            $this -> studentCourseData() .
-
-            \html_writer ::end_tag('li') .
+                \html_writer ::end_tag('li') .
             \html_writer ::end_tag('ul');
     }
 
@@ -74,23 +62,74 @@ class StrategyStudentView
      * @return string
      * @throws \coding_exception
      */
-    private function studentCourseData(): string
+    private function hasfindebt(): string
+    {
+        list("hasfindebt" => $hasfindebt) = $this -> data;
+
+        return $hasfindebt ?
+            \html_writer ::start_tag('span', array('class' => 'hasfindebt_info')) .
+            get_string("hasfindebt", 'block_tutor') .
+            \html_writer ::end_tag('span') : "";
+    }
+
+    /**
+     * @param $student_leangroup
+     * @return string
+     */
+    private function leangroup($student_leangroup): string
     {
         return
-            \html_writer ::start_tag('ul') .
-            \html_writer ::start_tag('li') .
-            \html_writer ::start_tag("b") .
-            \html_writer ::start_tag("a",
-                array(
-                    'href' => "$mod_url&rownum=0&action=grader&userid={{userid}}&group={{groupid}}&treset=1",
-                    'target' => '_blank',
-                    'title' => get_string("gotosubmition", 'block_tutor')
-                )
-            ) .
-            \html_writer ::end_tag("a") .
-            \html_writer ::end_tag("b") .
-            \html_writer ::start_tag("b") . $modgrade . \html_writer ::end_tag("b") .
-            \html_writer ::end_tag('li') .
-            \html_writer ::end_tag('ul');
+            \html_writer ::start_tag('i')
+            . $student_leangroup .
+            \html_writer ::end_tag('i') .
+
+            \html_writer ::start_tag('small')
+            . $student_leangroup .
+            \html_writer ::end_tag('small');
+    }
+
+    /**
+     * @return string
+     * @throws \coding_exception
+     */
+    private function studentCourseDataBy(): string
+    {
+        list("studentid" => $userid, "groupid" => $groupid, "coursedata" => $coursedata) = $this -> data;
+
+        $html_course = "";
+
+        foreach ($coursedata as $course) {
+            $html_course .=
+                \html_writer ::start_tag('ul') .
+                    \html_writer ::start_tag('li') .
+                        \html_writer ::start_tag("b") .
+                            \html_writer ::start_tag("a",
+                                array(
+                                    'href' => "{$course['mod_info']}&rownum=0&action=grader&userid=$userid&group=$groupid&treset=1",
+                                    'target' => '_blank',
+                                    'title' => get_string("gotosubmition", 'block_tutor')
+                                )
+                            ) .
+                            \html_writer ::end_tag("a") .
+                        \html_writer ::end_tag("b") .
+                    $this -> modinfo($course['mod_info']) .
+                    \html_writer ::end_tag('li') .
+                \html_writer ::end_tag('ul');
+        }
+
+        return $html_course;
+    }
+
+    /**
+     * @param $data
+     * @return string
+     */
+    private function modinfo($data = array()): string
+    {
+        if(!empty($data)){
+            return \html_writer ::start_tag("b") . $data['modgrade'] . \html_writer ::end_tag("b");
+        } else {
+            return "";
+        }
     }
 }
