@@ -32,6 +32,9 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
      */
     private string $select_list;
 
+    /**
+     * @var array
+     */
     private array $data;
 
     /**

@@ -3,8 +3,17 @@
 namespace block_tutor\output;
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Class enrolled_view
+ * @package block_tutor\output
+ */
 class enrolled_view
 {
+    /**
+     * @param $output
+     * @return array
+     * @throws \coding_exception
+     */
     public function export_for_template($output)
     {
         global $USER;

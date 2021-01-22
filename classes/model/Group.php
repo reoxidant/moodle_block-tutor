@@ -8,11 +8,26 @@
 
 namespace model;
 
+/**
+ * Class Group
+ * @package model
+ */
 class Group
 {
+    /**
+     * @var
+     */
     public $groupid;
+    /**
+     * @var
+     */
     public $name;
 
+    /**
+     * Group constructor.
+     * @param $groupid
+     * @param $name
+     */
     public function __construct($groupid, $name)
     {
         $this -> groupid = $groupid;
