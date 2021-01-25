@@ -38,23 +38,31 @@ class StrategyStudentView
      */
     public function pullHtmlStudentData()
     {
-        list("studenturl" => $studenturl, "studentname" => $studentname, "leangroup" => $leangroup) = $this -> data;
+        list("studenturl" => $studenturl, "studentname" => $studentname, "leangroup" => $leangroup, "hasfindebt" => $hasfindebt) = $this -> data;
+
+        if ($hasfindebt) {
+            $classNameForListItem = "studentrow hasfindebt";
+            $htmlhasfindebt = $this -> hasfindebt();
+        } else {
+            $classNameForListItem = "studentrow";
+            $htmlhasfindebt = "";
+        }
 
         $this -> html =
             \html_writer ::start_tag('ul') .
-                \html_writer ::start_tag('li', array('class' => 'studentrow')) .
+            \html_writer ::start_tag('li', array('class' => $classNameForListItem)) .
 
-                    \html_writer ::start_tag('a', array('href' => $studenturl, 'target' => '_blank'))
-                    . $studentname .
-                    \html_writer ::end_tag('a') .
+            \html_writer ::start_tag('a', array('href' => $studenturl, 'target' => '_blank'))
+            . " $studentname " .
+            \html_writer ::end_tag('a') .
 
-                    $this -> leangroup($leangroup) .
+            $this -> leangroup($leangroup) .
 
-                    $this -> hasfindebt() .
+            $htmlhasfindebt .
 
-                    $this -> studentCourseDataBy() .
+            $this -> studentCourseDataBy() .
 
-                \html_writer ::end_tag('li') .
+            \html_writer ::end_tag('li') .
             \html_writer ::end_tag('ul');
     }
 
@@ -64,12 +72,12 @@ class StrategyStudentView
      */
     private function hasfindebt(): string
     {
-        list("hasfindebt" => $hasfindebt) = $this -> data;
-
-        return $hasfindebt ?
+        return
+            "(" .
             \html_writer ::start_tag('span', array('class' => 'hasfindebt_info')) .
             get_string("hasfindebt", 'block_tutor') .
-            \html_writer ::end_tag('span') : "";
+            \html_writer ::end_tag('span') .
+            ")";
     }
 
     /**
@@ -79,13 +87,17 @@ class StrategyStudentView
     private function leangroup($student_leangroup): string
     {
         return
-            \html_writer ::start_tag('i')
-            . $student_leangroup .
+            "(" .
+            \html_writer ::start_tag('i') .
+            $student_leangroup .
             \html_writer ::end_tag('i') .
+            ")" .
 
-            \html_writer ::start_tag('small')
-            . $student_leangroup .
-            \html_writer ::end_tag('small');
+            " - " .
+            \html_writer ::start_tag('small') .
+            $student_leangroup .
+            \html_writer ::end_tag('small') .
+            " ";
     }
 
     /**
@@ -101,19 +113,19 @@ class StrategyStudentView
         foreach ($coursedata as $course) {
             $html_course .=
                 \html_writer ::start_tag('ul') .
-                    \html_writer ::start_tag('li') .
-                        \html_writer ::start_tag("b") .
-                            \html_writer ::start_tag("a",
-                                array(
-                                    'href' => "{$course['mod_info']}&rownum=0&action=grader&userid=$userid&group=$groupid&treset=1",
-                                    'target' => '_blank',
-                                    'title' => get_string("gotosubmition", 'block_tutor')
-                                )
-                            ) .
-                            \html_writer ::end_tag("a") .
-                        \html_writer ::end_tag("b") .
-                    $this -> modinfo($course['mod_info']) .
-                    \html_writer ::end_tag('li') .
+                \html_writer ::start_tag('li') .
+                \html_writer ::start_tag("b") .
+                \html_writer ::start_tag("a",
+                    array(
+                        'href' => "{$course['mod_info']}&rownum=0&action=grader&userid=$userid&group=$groupid&treset=1",
+                        'target' => '_blank',
+                        'title' => get_string("gotosubmition", 'block_tutor')
+                    )
+                ) .
+                \html_writer ::end_tag("a") .
+                \html_writer ::end_tag("b") .
+                $this -> modinfo($course['mod_info']) .
+                \html_writer ::end_tag('li') .
                 \html_writer ::end_tag('ul');
         }
 
@@ -126,7 +138,7 @@ class StrategyStudentView
      */
     private function modinfo($data = array()): string
     {
-        if(!empty($data)){
+        if (!empty($data)) {
             return \html_writer ::start_tag("b") . $data['modgrade'] . \html_writer ::end_tag("b");
         } else {
             return "";

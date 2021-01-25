@@ -10,6 +10,9 @@ use renderer_base;
 use templatable;
 
 global $CFG;
+global $PAGE;
+
+$PAGE -> requires -> js('/blocks/tutor/amd/src/loader.js');
 
 require_once($CFG -> dirroot . '/blocks/tutor/lib.php');
 
