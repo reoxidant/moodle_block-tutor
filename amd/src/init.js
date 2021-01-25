@@ -34,7 +34,6 @@ define([
 
     var registerEventListeners = function (root, type = null, template = "block_tutor/main") {
         root = $(root);
-        startLoading(root);
 
         //for change height tab pages
         root.on('show.bs.dropdown', ItemSelectors.tabSelector.dropDownButton, function (e) {
@@ -43,7 +42,7 @@ define([
         });
 
         root.on('hide.bs.dropdown', ItemSelectors.tabSelector.dropDownButton, function (e) {
-            $(root).find(".full-width").css('height','auto');
+            $(root).find(".full-width").css('height', 'auto');
         });
 
         // Bind click events to event links.
@@ -73,7 +72,7 @@ define([
                     type: "POST",
                     data: {selectList: "grouplist", groupId: groupId},
                     url: location.origin + "/blocks/tutor/ajax.php",
-                    dataType:'html',
+                    dataType: 'html',
                     beforeSend: function () {
                         startLoading(root);
                     },
@@ -101,8 +100,10 @@ define([
                     type: "POST",
                     data: {selectList: "studentlist", studentId: studentId},
                     url: location.origin + "/blocks/tutor/ajax.php",
-                    dataType:'html',
-                    success: function (data) {   $(ItemSelectors.tabSelector.content).html(data)   },
+                    dataType: 'html',
+                    success: function (data) {
+                        $(ItemSelectors.tabSelector.content).html(data)
+                    },
                     beforeSend: function () {
                         startLoading(root);
                     },

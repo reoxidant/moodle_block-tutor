@@ -34,7 +34,6 @@ define([
 
     var registerEventListeners = function (root, type = null, template = "block_tutor/main") {
         root = $(root);
-        startLoading(root);
 
         // Bind click events to event links.
         root.on(CustomEvents.events.activate, "[data-toggle='tab']", function (e) {
