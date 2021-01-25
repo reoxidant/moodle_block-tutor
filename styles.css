@@ -27,3 +27,7 @@
 .course_section {
     display: none
 }
+
+.block-tutor .overlay-icon-container{
+    z-index: 999 !important;
+}
