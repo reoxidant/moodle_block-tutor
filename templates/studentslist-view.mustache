@@ -77,6 +77,6 @@
     });
     require(['jquery', 'block_tutor/init'], function($, TypePreferences) {
     var root = $('#studentlist-view-choices-{{uniqid}}');
-    TypePreferences.registerEventListeners(root, 'studentlist');
+    TypePreferences.tabStudentList(root, 'studentlist');
     });
 {{/js}}
