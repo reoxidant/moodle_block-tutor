@@ -108,12 +108,28 @@ class StrategyStudentView
     {
         list("studentid" => $userid, "groupid" => $groupid, "coursedata" => $coursedata) = $this -> data;
 
+//             <ul>
+//                {{#data}}
+//                    <li><a href="{{{courseurl}}}" target="_blank">{{coursename}}</a>
+//                    {{#mod_info}}
+//                        {{#mod_url}}
+//                            - (<b><a href="{{mod_url}}&rownum=0&action=grader&userid={{userid}}&group={{groupid}}&treset=1" target="_blank" title="{{#str}} gotosubmition, block_tutor {{/str}}">{{mod_grade}}</a></b>)
+//                        {{/mod_url}}
+//                        {{^mod_url}}
+//                            - (<b>{{mod_grade}}</b>)
+//                        {{/mod_url}}
+//                    {{/mod_info}}
+//                    </li>
+//                {{/data}}
+//            </ul>
+
         $html_course = "";
 
         foreach ($coursedata as $course) {
             $html_course .=
                 \html_writer ::start_tag('ul') .
                 \html_writer ::start_tag('li') .
+                \html_writer ::start_tag('a', array('href' => $studenturl, 'target' => '_blank')) . " {$course["coursename"]} " . \html_writer ::end_tag("a") .
                 \html_writer ::start_tag("b") .
                 \html_writer ::start_tag("a",
                     array(
@@ -124,9 +140,10 @@ class StrategyStudentView
                 ) .
                 \html_writer ::end_tag("a") .
                 \html_writer ::end_tag("b") .
-                $this -> modinfo($course['mod_info']) .
-                \html_writer ::end_tag('li') .
-                \html_writer ::end_tag('ul');
+                (!$data = $course['mod_info']) ? \html_writer ::start_tag("b") . $data['modgrade'] : "" .
+                    \html_writer ::end_tag("b") .
+                    \html_writer ::end_tag('li') .
+                    \html_writer ::end_tag('ul');
         }
 
         return $html_course;
