@@ -24,9 +24,13 @@ class studentslist_view extends sirius_student
      * @param $output
      * @return array[]
      */
-    public function export_for_template($output)
+    public function export_for_template($output): array
     {
-        return $this -> get_students();
+        try {
+            return $this -> get_students();
+        } catch (\dml_exception | \moodle_exception $e) {
+            // Catch the re-thrown exception.
+        }
     }
 
     /**
@@ -34,7 +38,7 @@ class studentslist_view extends sirius_student
      * @throws \dml_exception
      * @throws \moodle_exception
      */
-    private function get_students()
+    private function get_students(): array
     {
         global $DB, $USER;
 
@@ -122,7 +126,7 @@ class studentslist_view extends sirius_student
      * @return array
      * @throws \moodle_exception
      */
-    private function get_grade_mod($course, $userid, $groupid)
+    private function get_grade_mod($course, $userid, $groupid): array
     {
         $modinfo_obj = get_fast_modinfo($course);
         $cms = $modinfo_obj -> cms;
