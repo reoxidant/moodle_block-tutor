@@ -23,7 +23,7 @@ define(
      *
      * @param {object} root The container element
      */
-    var registerEventListeners = function (root, type = null) {
+    var registerTutorEventListeners = function (root, type = null) {
         CustomEvents.define(root, [CustomEvents.events.activate]);
         root.on(CustomEvents.events.activate, "[data-toggle='tab']", function (e) {
             var tabname = $(e.currentTarget).data('tabname');
@@ -55,6 +55,6 @@ define(
     };
 
     return {
-        registerEventListeners: registerEventListeners
+        registerTutorEventListeners: registerTutorEventListeners
     };
 });

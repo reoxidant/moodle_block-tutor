@@ -32,8 +32,7 @@ define([
         loadingIconContainer.addClass('hidden');
     };
 
-    var registerEventListeners = function (root, type = null, template = "block_tutor/main") {
-        root = $(root);
+    var tabStudentList = function (root, type = null, template = "block_tutor/main") {
 
         //for change height tab pages
         root.on('show.bs.dropdown', ItemSelectors.tabSelector.dropDownButton, function (e) {
@@ -43,23 +42,6 @@ define([
 
         root.on('hide.bs.dropdown', ItemSelectors.tabSelector.dropDownButton, function (e) {
             $(root).find(".full-width").css('height', 'auto');
-        });
-
-        // Bind click events to event links.
-        root.on(CustomEvents.events.activate, "[data-toggle='tab']", function (e) {
-            startLoading(root);
-            let tabname = $(e.currentTarget).data('tabname');
-            // Bootstrap does not change the URL when using BS tabs, so need to do this here.
-            // Also check to make sure the browser supports the history API.
-            if (type == 'studentlist') {
-                type = 'block_tutor_studentlist_tab';
-            } else {
-                type = 'block_tutor_last_tab';
-                if (typeof window.history.pushState === "function") {
-                    window.history.pushState(null, null, '?tutortab=' + tabname);
-                }
-            }
-            return LoadTabContent(root, type, tabname);
         });
 
         root.on('click', ItemSelectors.tabSelector.groupListDropDown, function (e) {
@@ -123,10 +105,29 @@ define([
         });
 
         return AjaxRepository.getContentData(root, type)
-            .always(function () {
-                return stopLoading(root);
-            })
             .fail(Notification.exception);
+    }
+
+    var registerEventListeners = function (root, type = null, template = "block_tutor/main") {
+        root = $(root);
+        stopLoading(root)
+
+        // Bind click events to event links.
+        root.on(CustomEvents.events.activate, "[data-toggle='tab']", function (e) {
+            startLoading(root);
+            let tabname = $(e.currentTarget).data('tabname');
+            // Bootstrap does not change the URL when using BS tabs, so need to do this here.
+            // Also check to make sure the browser supports the history API.
+            if (type == 'studentlist') {
+                type = 'block_tutor_studentlist_tab';
+            } else {
+                type = 'block_tutor_last_tab';
+                if (typeof window.history.pushState === "function") {
+                    window.history.pushState(null, null, '?tutortab=' + tabname);
+                }
+            }
+            return LoadTabContent(root, type, tabname);
+        });
     };
 
     let LoadTabContent = function (root, type, tabname) {
@@ -138,6 +139,7 @@ define([
     };
 
     return {
+        tabStudentList: tabStudentList,
         registerEventListeners: registerEventListeners
     };
 });
