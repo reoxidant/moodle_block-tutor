@@ -75,6 +75,7 @@ class Course extends sirius_student
 
     /**
      * @throws dml_exception
+     * @throws \moodle_exception
      */
     public function setCourseList()
     {

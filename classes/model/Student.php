@@ -49,11 +49,17 @@ class Student extends sirius_student
     public array $coursedata;
 
     /**
+     * @var array
+     */
+    public array $groupnames = [];
+
+    /**
      * student constructor.
      * @param $studentid
      * @param $studentname
      * @param $studenturl
      * @throws dml_exception
+     * @throws \moodle_exception
      */
     public function __construct($studentid, $studentname, $studenturl)
     {
@@ -78,14 +84,15 @@ class Student extends sirius_student
     }
 
     /**
-     * @param $userid
+     * @param $courseid
      * @param $groupid
+     * @return array
      * @throws dml_exception
      */
-    public function set_mod_info($courseid)
+    public function set_mod_info($courseid, $groupid): array
     {
         $course = (new DatabaseManager()) -> getCourseBy($courseid);
-        return (new modinfo($course)) -> modinfo_data($this -> studentid, $group -> id);
+        return (new modinfo($course)) -> modinfo_data($this -> studentid, $groupid);
     }
 
     /**
@@ -95,6 +102,15 @@ class Student extends sirius_student
     public function set_course_data($coursename, $courseurl, $modinfo)
     {
         $this -> coursedata[] = ['userid' => $this -> studentid, 'coursename' => $coursename, 'courseurl' => $courseurl, 'mod_info' => $modinfo];
+    }
+
+    /**
+     * @param $groupname
+     */
+    public function set_student_groupnames($groupname)
+    {
+        if (!in_array($groupname, $this -> groupnames))
+            $this -> groupnames[] = $groupname;
     }
 
     /**
@@ -110,7 +126,7 @@ class Student extends sirius_student
      * @return array
      * @throws \dml_exception
      */
-    public function getStudentCoursesById($student_id): array
+    public function get_student_courses_by_id($student_id): array
     {
         $arrCourses = array();
 

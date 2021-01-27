@@ -8,6 +8,8 @@
 
 namespace controller;
 
+use dml_exception;
+use model\StructStudentCourse;
 use model\Student;
 use moodle_url;
 use sirius_student;
@@ -50,20 +52,22 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
 
     /**
      * @return array
-     * @throws \dml_exception
+     * @throws dml_exception
+     * @throws \moodle_exception
      */
     public function get_students(): array
     {
         $student_id = $this -> chosen_id;
         $student = new student($student_id, null, null);
-        $coursesAndGroups = $student -> getStudentCoursesById($student_id);
+        $coursesAndGroups = $student -> get_student_courses_by_id($student_id);
         $student -> check_student_hasfindebt();
         $student -> set_student_leangroup();
 
         foreach ($coursesAndGroups as $courseid => $groups) {
             $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
-            foreach ($groups as $group) {
-                $modinfo = $student -> set_mod_info($courseid);
+            foreach ($groups as $groupname => $group) {
+                $student -> set_student_groupnames($groupname);
+                $modinfo = $student -> set_mod_info($courseid, $group -> id);
                 $student -> set_course_data($group -> coursename, $courseurl, $modinfo);
             }
         }

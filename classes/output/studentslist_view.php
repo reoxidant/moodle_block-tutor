@@ -102,6 +102,8 @@ class studentslist_view extends sirius_student
             $return_arr['groups'][$key]['students'] = array_values($val['students']);
         }
 
+        $debugData = $return_arr;
+
         return $return_arr;
     }
 
