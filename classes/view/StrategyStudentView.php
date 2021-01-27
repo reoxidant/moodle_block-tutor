@@ -38,7 +38,13 @@ class StrategyStudentView
      */
     public function pullHtmlStudentData()
     {
-        list("studenturl" => $studenturl, "studentname" => $studentname, "leangroup" => $leangroup, "hasfindebt" => $hasfindebt) = $this -> data;
+        list(
+            "studenturl" => $studenturl,
+            "studentname" => $studentname,
+            "leangroup" => $leangroup,
+            "hasfindebt" => $hasfindebt,
+            "groupnames" => $groupnames
+            ) = $this -> data;
 
         if ($hasfindebt) {
             $classNameForListItem = "studentrow hasfindebt";
@@ -51,12 +57,14 @@ class StrategyStudentView
         $this -> html =
             \html_writer ::start_tag('ul') .
             \html_writer ::start_tag('li', array('class' => $classNameForListItem)) .
-
+            //html_writer::link($url, 'Some text to display', array('target' => '_blank'));
             \html_writer ::start_tag('a', array('href' => $studenturl, 'target' => '_blank'))
             . " $studentname " .
             \html_writer ::end_tag('a') .
 
             $this -> leangroup($leangroup) .
+
+            $this -> groupname(end($groupnames)) .
 
             $htmlhasfindebt .
 
@@ -73,11 +81,9 @@ class StrategyStudentView
     private function hasfindebt(): string
     {
         return
-            "(" .
             \html_writer ::start_tag('span', array('class' => 'hasfindebt_info')) .
-            get_string("hasfindebt", 'block_tutor') .
-            \html_writer ::end_tag('span') .
-            ")";
+            "(" . get_string("hasfindebt", 'block_tutor') . ")" .
+            \html_writer ::end_tag('span');
     }
 
     /**
@@ -87,17 +93,22 @@ class StrategyStudentView
     private function leangroup($student_leangroup): string
     {
         return
-            "(" .
             \html_writer ::start_tag('i') .
-            $student_leangroup .
-            \html_writer ::end_tag('i') .
-            ")" .
+            "(" . $student_leangroup . ")" .
+            \html_writer ::end_tag('i');
+    }
 
+    /**
+     * @param $student_groupname
+     * @return string
+     */
+    private function groupname($student_groupname): string
+    {
+        return
             " - " .
             \html_writer ::start_tag('small') .
-            $student_leangroup .
-            \html_writer ::end_tag('small') .
-            " ";
+            $student_groupname .
+            \html_writer ::end_tag('small');
     }
 
     /**
