@@ -44,6 +44,8 @@ class StudentsViewController extends sirius_student implements Strategy
         }
 
         return $studentScreenData;
+
+//        return $this -> get_students();
     }
 
     /**

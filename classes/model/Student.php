@@ -43,15 +43,18 @@ class Student extends sirius_student
      */
     public string $leangroup;
 
+
     /**
-     * @var array
+     * @var string|mixed
      */
-    public array $coursedata;
+    public string $groupname;
 
     /**
      * @var array
      */
-    public array $groupnames = [];
+    public array $studentdata;
+
+    public array $mod_data = array();
 
     /**
      * student constructor.
@@ -61,11 +64,13 @@ class Student extends sirius_student
      * @throws dml_exception
      * @throws \moodle_exception
      */
-    public function __construct($studentid, $studentname, $studenturl)
+    public function __construct($studentid, $studentname, $studenturl, $groupname = "", $courses = array())
     {
         $this -> studentid = $studentid;
         $this -> studentname = $studentname ? $studentname : fullname((new DatabaseManager()) -> getStudentBy($studentid));
         $this -> studenturl = $studenturl ? $studenturl : new moodle_url('/user/profile.php', array('id' => $studentid));
+        $this -> groupname = $groupname;
+        $this -> studentdata = $courses;
     }
 
     /**
@@ -79,7 +84,7 @@ class Student extends sirius_student
         $data = (new DatabaseManager()) -> getUserInfoBy($leangroup_field_id, $this -> studentid);
 
         if ($leangroup_field_id && isset($data -> data)) {
-            $this -> leangroup = trim($data -> data);
+            $this->leangroup = trim($data -> data);
         }
     }
 
@@ -89,28 +94,10 @@ class Student extends sirius_student
      * @return array
      * @throws dml_exception
      */
-    public function set_mod_info($courseid, $groupid): array
+    public function set_mod_info($courseid, $groupid)
     {
         $course = (new DatabaseManager()) -> getCourseBy($courseid);
-        return (new modinfo($course)) -> modinfo_data($this -> studentid, $groupid);
-    }
-
-    /**
-     * @param $coursename
-     * @param $courseurl
-     */
-    public function set_course_data($coursename, $courseurl, $modinfo)
-    {
-        $this -> coursedata[] = ['userid' => $this -> studentid, 'coursename' => $coursename, 'courseurl' => $courseurl, 'mod_info' => $modinfo];
-    }
-
-    /**
-     * @param $groupname
-     */
-    public function set_student_groupnames($groupname)
-    {
-        if (!in_array($groupname, $this -> groupnames))
-            $this -> groupnames[] = $groupname;
+        $this->mod_data = (new modinfo($course)) -> modinfo_data($this -> studentid, $groupid);
     }
 
     /**
@@ -118,45 +105,21 @@ class Student extends sirius_student
      */
     public function check_student_hasfindebt()
     {
-        $this -> hasfindebt = sirius_student ::check_hasfindebt($this -> studentid);
+        $this->hasfindebt = sirius_student ::check_hasfindebt($this -> studentid);
     }
 
     /**
-     * @param $student_id
-     * @return array
-     * @throws \dml_exception
+     * @param $studentsCache
      */
-    public function get_student_courses_by_id($student_id): array
+    public function get_student_data_from_cache($studentsCache)
     {
-        $arrCourses = array();
-
-        foreach ($this -> db_course_records_by($student_id) as $key => $value) {
-            $arrCourses[$value -> courseid][$value -> name] = $value;
+        foreach ($studentsCache as $student) {
+            if ($student["studentid"] == $this -> studentid) {
+                $this -> groupname = $student['groupname'];
+                $this -> studentdata = $student['studentdata'];
+            } else {
+                continue;
+            }
         }
-
-        return $arrCourses;
-    }
-
-    /**
-     * @param $student_id
-     * @return array
-     * @throws \dml_exception
-     */
-    private function db_course_records_by($student_id): array
-    {
-        global $DB;
-
-        $sql = "SELECT g.id, g.courseid, g.name, c.fullname as coursename
-                  FROM
-                    {groups} g,
-                    {groups_members} gm,
-                    {course} c
-                  WHERE 
-                    g.id = gm.groupid
-                    AND c.id = g.courseid
-                    AND gm.userid = $student_id
-                  ORDER BY g.name, c.fullname;";
-
-        return $DB -> get_records_sql($sql, array($student_id));
     }
 }
