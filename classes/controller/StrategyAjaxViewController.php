@@ -74,9 +74,9 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
                 }
             }
 
-            usort($student -> studentdata["courses"], array('self', 'cmp'));
+            usort($student -> studentdata, array('self', 'cmp'));
 
-            return (array)$student -> studentdata;
+            return (array)$student;
         } else {
             return array();
         }

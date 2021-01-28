@@ -43,7 +43,7 @@ class StrategyStudentView
             "studentname" => $studentname,
             "leangroup" => $leangroup,
             "hasfindebt" => $hasfindebt,
-            "groupnames" => $groupnames
+            "groupname" => $groupname
             ) = $this -> data;
 
         if ($hasfindebt) {
@@ -64,7 +64,7 @@ class StrategyStudentView
 
             $this -> leangroup($leangroup) .
 
-            $this -> groupname(end($groupnames)) .
+            $this -> groupname($groupname) .
 
             $htmlhasfindebt .
 
@@ -82,7 +82,7 @@ class StrategyStudentView
     {
         return
             \html_writer ::start_tag('span', array('class' => 'hasfindebt_info')) .
-            "(" . get_string("hasfindebt", 'block_tutor') . ")" .
+            " (" . get_string("hasfindebt", 'block_tutor') . ")" .
             \html_writer ::end_tag('span');
     }
 
