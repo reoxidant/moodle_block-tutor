@@ -63,10 +63,10 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
         $cache = \cache ::make('block_tutor', 'student_screen_data');
         if ($studentsCache = $cache -> get('student_screen_data')["students"]) {
             $student -> get_student_data_from_cache($studentsCache);
-            $student -> studentcache['hasfindebt'] = $student -> check_student_hasfindebt();
-            $student -> studentcache['leangroup'] = $student -> set_student_leangroup();
+            $student -> check_student_hasfindebt();
+            $student -> set_student_leangroup();
 
-            foreach ($student->studentcache['studentcourses']["courses"] as $courseid => $course){
+            foreach ($student->studentdata as $courseid => $course){
                 $course["course_data"] -> url = new moodle_url('/course/view.php', array('id' => $courseid));
                 foreach ($course['groupid'] as $groupid){
                      if ($mod_data = $student -> set_mod_info($courseid, $groupid))
@@ -74,9 +74,9 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
                 }
             }
 
-            usort($student -> studentcache['studentcourses']["courses"], array('self', 'cmp'));
+            usort($student -> studentdata["courses"], array('self', 'cmp'));
 
-            return (array)$student;
+            return (array)$student -> studentdata;
         } else {
             return array();
         }

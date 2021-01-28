@@ -52,7 +52,9 @@ class Student extends sirius_student
     /**
      * @var array
      */
-    public array $studentcache;
+    public array $studentdata;
+
+    public array $mod_data = array();
 
     /**
      * student constructor.
@@ -68,7 +70,7 @@ class Student extends sirius_student
         $this -> studentname = $studentname ? $studentname : fullname((new DatabaseManager()) -> getStudentBy($studentid));
         $this -> studenturl = $studenturl ? $studenturl : new moodle_url('/user/profile.php', array('id' => $studentid));
         $this -> groupname = $groupname;
-        $this -> studentcourses = $courses;
+        $this -> studentdata = $courses;
     }
 
     /**
@@ -76,13 +78,13 @@ class Student extends sirius_student
      * @throws dml_exception
      * @throws dml_exception
      */
-    public function set_student_leangroup(): string
+    public function set_student_leangroup()
     {
         $leangroup_field_id = ((new DatabaseManager()) -> getStudentLeanGroup()) -> id;
         $data = (new DatabaseManager()) -> getUserInfoBy($leangroup_field_id, $this -> studentid);
 
         if ($leangroup_field_id && isset($data -> data)) {
-            return trim($data -> data);
+            $this->leangroup = trim($data -> data);
         }
     }
 
@@ -92,18 +94,18 @@ class Student extends sirius_student
      * @return array
      * @throws dml_exception
      */
-    public function set_mod_info($courseid, $groupid): array
+    public function set_mod_info($courseid, $groupid)
     {
         $course = (new DatabaseManager()) -> getCourseBy($courseid);
-        return (new modinfo($course)) -> modinfo_data($this -> studentid, $groupid);
+        $this->mod_data = (new modinfo($course)) -> modinfo_data($this -> studentid, $groupid);
     }
 
     /**
      *
      */
-    public function check_student_hasfindebt():bool
+    public function check_student_hasfindebt()
     {
-        return sirius_student ::check_hasfindebt($this -> studentid);
+        $this->hasfindebt = sirius_student ::check_hasfindebt($this -> studentid);
     }
 
     /**
@@ -113,7 +115,8 @@ class Student extends sirius_student
     {
         foreach ($studentsCache as $student) {
             if ($student["studentid"] == $this -> studentid) {
-                $this -> studentcache = $student;
+                $this -> groupname = $student['groupname'];
+                $this -> studentdata = $student['studentdata'];
             } else {
                 continue;
             }
