@@ -17,11 +17,11 @@ class Group
     /**
      * @var
      */
-    public $groupid;
+    public string $groupid;
     /**
      * @var
      */
-    public $name;
+    public string $name;
 
     /**
      * Group constructor.

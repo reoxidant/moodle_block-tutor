@@ -48,10 +48,9 @@ class Student extends sirius_student
      */
     public array $coursedata;
 
-    /**
-     * @var array
-     */
-    public array $groupnames = [];
+    public string $groupname;
+
+    public array $studentcourses;
 
     /**
      * student constructor.
@@ -61,11 +60,13 @@ class Student extends sirius_student
      * @throws dml_exception
      * @throws \moodle_exception
      */
-    public function __construct($studentid, $studentname, $studenturl)
+    public function __construct($studentid, $studentname, $studenturl, $groupname = "", $courses = array())
     {
         $this -> studentid = $studentid;
         $this -> studentname = $studentname ? $studentname : fullname((new DatabaseManager()) -> getStudentBy($studentid));
         $this -> studenturl = $studenturl ? $studenturl : new moodle_url('/user/profile.php', array('id' => $studentid));
+        $this -> groupname = $groupname;
+        $this -> studentcourses = $courses;
     }
 
     /**
@@ -102,15 +103,6 @@ class Student extends sirius_student
     public function set_course_data($coursename, $courseurl, $modinfo)
     {
         $this -> coursedata[] = ['userid' => $this -> studentid, 'coursename' => $coursename, 'courseurl' => $courseurl, 'mod_info' => $modinfo];
-    }
-
-    /**
-     * @param $groupname
-     */
-    public function set_student_groupnames($groupname)
-    {
-        if (!in_array($groupname, $this -> groupnames))
-            $this -> groupnames[] = $groupname;
     }
 
     /**

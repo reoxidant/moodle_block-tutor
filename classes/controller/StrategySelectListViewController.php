@@ -33,11 +33,13 @@ class StrategySelectListViewController extends sirius_student implements Strateg
 
         $course = new Course();
 
+        $student_courses = array();
+
         foreach ($course_data as $courseid => $group) {
             $course -> id = $courseid;
             $course -> url = new moodle_url('/course/view.php', array('id' => $courseid));
             $course -> groups = $group;
-            $course -> setCourseList();
+            $course -> setCourseList($student_courses);
         }
 
 //        $time = microtime(true) - $start;
