@@ -59,21 +59,27 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
     {
         $student_id = $this -> chosen_id;
         $student = new student($student_id, null, null);
-        $coursesAndGroups = $student -> get_student_courses_by_id($student_id);
-        $student -> check_student_hasfindebt();
-        $student -> set_student_leangroup();
 
-        foreach ($coursesAndGroups as $courseid => $groups) {
-            $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
-            foreach ($groups as $groupname => $group) {
-                $modinfo = $student -> set_mod_info($courseid, $group -> id);
-                $student -> set_course_data($group -> coursename, $courseurl, $modinfo);
+        $cache = \cache ::make('block_tutor', 'student_screen_data');
+        if ($studentsCache = $cache -> get('student_screen_data')["students"]) {
+            $student -> get_student_data_from_cache($studentsCache);
+            $student -> studentcache['hasfindebt'] = $student -> check_student_hasfindebt();
+            $student -> studentcache['leangroup'] = $student -> set_student_leangroup();
+
+            foreach ($student->studentcache['studentcourses']["courses"] as $courseid => $course){
+                $course["course_data"] -> url = new moodle_url('/course/view.php', array('id' => $courseid));
+                foreach ($course['groupid'] as $groupid){
+                     if ($mod_data = $student -> set_mod_info($courseid, $groupid))
+                         $course["course_data"] -> mod_info[] = $mod_data;
+                }
             }
+
+            usort($student -> studentcache['studentcourses']["courses"], array('self', 'cmp'));
+
+            return (array)$student;
+        } else {
+            return array();
         }
-
-        usort($student -> coursedata, array('self', 'cmp'));
-
-        return (array)$student;
     }
 
     /**

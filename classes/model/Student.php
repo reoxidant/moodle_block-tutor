@@ -43,14 +43,16 @@ class Student extends sirius_student
      */
     public string $leangroup;
 
+
+    /**
+     * @var string|mixed
+     */
+    public string $groupname;
+
     /**
      * @var array
      */
-    public array $coursedata;
-
-    public string $groupname;
-
-    public array $studentcourses;
+    public array $studentcache;
 
     /**
      * student constructor.
@@ -74,13 +76,13 @@ class Student extends sirius_student
      * @throws dml_exception
      * @throws dml_exception
      */
-    public function set_student_leangroup()
+    public function set_student_leangroup(): string
     {
         $leangroup_field_id = ((new DatabaseManager()) -> getStudentLeanGroup()) -> id;
         $data = (new DatabaseManager()) -> getUserInfoBy($leangroup_field_id, $this -> studentid);
 
         if ($leangroup_field_id && isset($data -> data)) {
-            $this -> leangroup = trim($data -> data);
+            return trim($data -> data);
         }
     }
 
@@ -97,58 +99,24 @@ class Student extends sirius_student
     }
 
     /**
-     * @param $coursename
-     * @param $courseurl
-     */
-    public function set_course_data($coursename, $courseurl, $modinfo)
-    {
-        $this -> coursedata[] = ['userid' => $this -> studentid, 'coursename' => $coursename, 'courseurl' => $courseurl, 'mod_info' => $modinfo];
-    }
-
-    /**
      *
      */
-    public function check_student_hasfindebt()
+    public function check_student_hasfindebt():bool
     {
-        $this -> hasfindebt = sirius_student ::check_hasfindebt($this -> studentid);
+        return sirius_student ::check_hasfindebt($this -> studentid);
     }
 
     /**
-     * @param $student_id
-     * @return array
-     * @throws \dml_exception
+     * @param $studentsCache
      */
-    public function get_student_courses_by_id($student_id): array
+    public function get_student_data_from_cache($studentsCache)
     {
-        $arrCourses = array();
-
-        foreach ($this -> db_course_records_by($student_id) as $key => $value) {
-            $arrCourses[$value -> courseid][$value -> name] = $value;
+        foreach ($studentsCache as $student) {
+            if ($student["studentid"] == $this -> studentid) {
+                $this -> studentcache = $student;
+            } else {
+                continue;
+            }
         }
-
-        return $arrCourses;
-    }
-
-    /**
-     * @param $student_id
-     * @return array
-     * @throws \dml_exception
-     */
-    private function db_course_records_by($student_id): array
-    {
-        global $DB;
-
-        $sql = "SELECT g.id, g.courseid, g.name, c.fullname as coursename
-                  FROM
-                    {groups} g,
-                    {groups_members} gm,
-                    {course} c
-                  WHERE 
-                    g.id = gm.groupid
-                    AND c.id = g.courseid
-                    AND gm.userid = $student_id
-                  ORDER BY g.name, c.fullname;";
-
-        return $DB -> get_records_sql($sql, array($student_id));
     }
 }

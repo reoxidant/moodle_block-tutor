@@ -95,7 +95,8 @@ class Course extends sirius_student
 
             foreach ($group_students as $userid => $profile) {
 
-                $student_course[$userid][$group_data -> courseid] = $group_data;
+                $student_course[$userid]["courses"][$group_data -> courseid]["course_data"] = $group_data;
+                $student_course[$userid]["courses"][$group_data -> courseid]["groupid"][] = $group_data->id;
                 $obj_student = new student($userid, $profile -> name, $profile -> profileurl, $groupname, $student_course[$userid]);
 
                 $this -> setListBy($obj_student, $obj_group);
