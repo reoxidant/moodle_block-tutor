@@ -69,8 +69,9 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
             foreach ($student->studentdata as $courseid => $course){
                 $course["course_data"] -> url = new moodle_url('/course/view.php', array('id' => $courseid));
                 foreach ($course['groupid'] as $groupid){
-                     if ($mod_data = $student -> set_mod_info($courseid, $groupid))
-                         $course["course_data"] -> mod_info[] = $mod_data;
+                   if($grade_mod = $student -> set_mod_info($courseid, $groupid)){
+                       $course["course_data"]->mod_info[] = $grade_mod;
+                   }
                 }
             }
 

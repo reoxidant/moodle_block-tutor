@@ -94,10 +94,10 @@ class Student extends sirius_student
      * @return array
      * @throws dml_exception
      */
-    public function set_mod_info($courseid, $groupid)
+    public function set_mod_info($courseid, $groupid): array
     {
         $course = (new DatabaseManager()) -> getCourseBy($courseid);
-        $this->mod_data = (new modinfo($course)) -> modinfo_data($this -> studentid, $groupid);
+        return (new modinfo($course)) -> modinfo_data($this -> studentid, $groupid);
     }
 
     /**

@@ -30,6 +30,11 @@ class Modinfo extends sirius_student
     private int $courseid;
 
     /**
+     * @var int
+     */
+    public int $userid;
+
+    /**
      * Modinfo constructor.
      * @param $course
      */
@@ -53,8 +58,13 @@ class Modinfo extends sirius_student
      */
     public function modinfo_data($userid, $groupid): array
     {
+        $this -> userid = $userid;
+
+        $return_arr = array();
+
         foreach ($this -> cms as $mod) {
             $modname = $mod -> modname;
+
             $access = $this -> check_mod_capability($mod);
 
             if ($access && ($modname == 'assign' || $modname == 'quiz')) {
@@ -66,7 +76,7 @@ class Modinfo extends sirius_student
                     continue;
 
                 $return_arr['mod_grade'] = (string)intval($mod_grade);
-                $return_arr['mod_url'] = ($modname == 'assign') ? null : $mod -> url;
+                $return_arr['mod_url'] = ($modname == 'assign') ? $mod -> url : null;
                 $return_arr['modname'] = $modname;
                 $return_arr['groupid'] = $groupid;
 
@@ -74,6 +84,21 @@ class Modinfo extends sirius_student
             }
         }
 
-        return $return_arr ?? [];
+        return $return_arr;
+    }
+
+    /**
+     * @param $modinfo
+     * @return bool
+     */
+    public function check_mod_capability($modinfo): bool
+    {
+        $context = \context_module ::instance($modinfo -> id);
+        if (empty($context -> id))
+            return false;
+
+        $enrolled = is_enrolled($context, $this -> userid, '', true);
+
+        return is_siteadmin($this -> userid) || ($modinfo -> visible == 1 && $modinfo -> deletioninprogress == 0 && $modinfo -> visibleoncoursepage == 1 && $enrolled);
     }
 }

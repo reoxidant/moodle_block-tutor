@@ -117,59 +117,62 @@ class StrategyStudentView
      */
     private function studentCourseDataBy(): string
     {
-        list("studentid" => $userid, "groupid" => $groupid, "coursedata" => $coursedata) = $this -> data;
-
-//             <ul>
-//                {{#data}}
-//                    <li><a href="{{{courseurl}}}" target="_blank">{{coursename}}</a>
-//                    {{#mod_info}}
-//                        {{#mod_url}}
-//                            - (<b><a href="{{mod_url}}&rownum=0&action=grader&userid={{userid}}&group={{groupid}}&treset=1" target="_blank" title="{{#str}} gotosubmition, block_tutor {{/str}}">{{mod_grade}}</a></b>)
-//                        {{/mod_url}}
-//                        {{^mod_url}}
-//                            - (<b>{{mod_grade}}</b>)
-//                        {{/mod_url}}
-//                    {{/mod_info}}
-//                    </li>
-//                {{/data}}
-//            </ul>
+        list("studentdata" => $courses) = $this -> data;
 
         $html_course = "";
+        $html_course .= \html_writer ::start_tag('ul');
 
-        foreach ($coursedata as $course) {
-            $html_course .=
-                \html_writer ::start_tag('ul') .
-                \html_writer ::start_tag('li') .
-                \html_writer ::start_tag('a', array('href' => $studenturl, 'target' => '_blank')) . " {$course["coursename"]} " . \html_writer ::end_tag("a") .
-                \html_writer ::start_tag("b") .
-                \html_writer ::start_tag("a",
-                    array(
-                        'href' => "{$course['mod_info']}&rownum=0&action=grader&userid=$userid&group=$groupid&treset=1",
-                        'target' => '_blank',
-                        'title' => get_string("gotosubmition", 'block_tutor')
-                    )
-                ) .
-                \html_writer ::end_tag("a") .
-                \html_writer ::end_tag("b") .
-                (!$data = $course['mod_info']) ? \html_writer ::start_tag("b") . $data['modgrade'] : "" .
-                    \html_writer ::end_tag("b") .
-                    \html_writer ::end_tag('li') .
-                    \html_writer ::end_tag('ul');
+        if ($courses) {
+            foreach ($courses as $course) {
+                $html_course .=
+                    \html_writer ::start_tag('li') .
+                    \html_writer ::link($course['course_data'] -> url, $course['course_data'] -> coursename, array('target' => '_blank')) .
+                    $this -> mod_info($course['course_data'] -> mod_info) .
+                    \html_writer ::end_tag('li');
+            }
         }
+
+        $html_course .= \html_writer ::end_tag('ul');
 
         return $html_course;
     }
 
     /**
-     * @param $data
+     * @param null $mod_data
      * @return string
+     * @throws \coding_exception
      */
-    private function modinfo($data = array()): string
+    private function mod_info($mod_data = null): string
     {
-        if (!empty($data)) {
-            return \html_writer ::start_tag("b") . $data['modgrade'] . \html_writer ::end_tag("b");
-        } else {
+//        {{#mod_url}}
+//            - (<b><a href="{{mod_url}}&rownum=0&action=grader&userid={{userid}}&group={{groupid}}&treset=1" target="_blank" title="{{#str}} gotosubmition, block_tutor {{/str}}">{{mod_grade}}</a></b>)
+//        {{/mod_url}}
+//        {{^mod_url}}
+//            - (<b>{{mod_grade}}</b>)
+//        {{/mod_url}}
+        if (!$mod_data) {
             return "";
+        }
+
+        list("studentid" => $userid) = $this -> data;
+
+        foreach ($mod_data as $mod) {
+            if ($mod['mod_url']) {
+                return
+                    "- (" . \html_writer ::start_tag("b") .
+                    \html_writer ::start_tag("a",
+                        array(
+                            'href' => "{$mod['mod_url']}&rownum=0&action=grader&userid=$userid&group={$mod['groupid']}&treset=1",
+                            'target' => '_blank',
+                            'title' => \get_string("gotosubmition", 'block_tutor')
+                        )
+                    ) . $mod['mod_grade'] .
+                    \html_writer ::end_tag("a") .
+                    \html_writer ::end_tag("b") . ")";
+            } else {
+                return
+                    \html_writer ::start_tag("b") . " {$mod['mod_grade']} " . \html_writer ::end_tag("b");
+            }
         }
     }
 }
