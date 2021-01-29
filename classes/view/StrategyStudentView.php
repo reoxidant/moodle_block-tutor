@@ -57,7 +57,6 @@ class StrategyStudentView
         $this -> html =
             \html_writer ::start_tag('ul') .
             \html_writer ::start_tag('li', array('class' => $classNameForListItem)) .
-            //html_writer::link($url, 'Some text to display', array('target' => '_blank'));
             \html_writer ::start_tag('a', array('href' => $studenturl, 'target' => '_blank'))
             . " $studentname " .
             \html_writer ::end_tag('a') .
@@ -144,12 +143,6 @@ class StrategyStudentView
      */
     private function mod_info($mod_data = null): string
     {
-//        {{#mod_url}}
-//            - (<b><a href="{{mod_url}}&rownum=0&action=grader&userid={{userid}}&group={{groupid}}&treset=1" target="_blank" title="{{#str}} gotosubmition, block_tutor {{/str}}">{{mod_grade}}</a></b>)
-//        {{/mod_url}}
-//        {{^mod_url}}
-//            - (<b>{{mod_grade}}</b>)
-//        {{/mod_url}}
         if (!$mod_data) {
             return "";
         }
@@ -171,7 +164,7 @@ class StrategyStudentView
                     \html_writer ::end_tag("b") . ")";
             } else {
                 return
-                    \html_writer ::start_tag("b") . " {$mod['mod_grade']} " . \html_writer ::end_tag("b");
+                    "- (" . \html_writer ::start_tag("b") . $mod['mod_grade'] . \html_writer ::end_tag("b") . ")";
             }
         }
     }

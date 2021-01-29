@@ -70,7 +70,7 @@ class Modinfo extends sirius_student
             if ($access && ($modname == 'assign' || $modname == 'quiz')) {
 
                 $mod_grade = grade_get_grades($this -> courseid, 'mod', $modname, $mod -> instance, $userid);
-                //@$mod_grade = current($mod_grade -> items[0] -> grades) -> grade;
+                @$mod_grade = current($mod_grade -> items[0] -> grades) -> grade;
 
                 if (empty($mod_grade))
                     continue;

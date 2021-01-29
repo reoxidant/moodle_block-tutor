@@ -92,8 +92,8 @@ class main implements renderable, templatable
             'viewingenrolled' => $viewingenrolled,
             'viewingwebinars' => $viewingwebinars,
             'needgradignview' => $needgradignview -> export_for_template($output),
-            'studentslistview' => $studentslistview -> export_for_template($output),
 //            'studentslistview' => $studentslistview -> export_for_template($output),
+            'studentslistview' => $studentslistview -> export_for_template($output),
             'enrolledview' => $enrolledview -> export_for_template($output),
             'webinarsview' => $webinarsview -> export_for_template($output),
             'studentlist_tab' => [

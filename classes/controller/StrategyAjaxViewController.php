@@ -57,29 +57,38 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
      */
     public function get_students(): array
     {
-        $student_id = $this -> chosen_id;
-        $student = new student($student_id, null, null);
-
         $cache = \cache ::make('block_tutor', 'student_screen_data');
-        if ($studentsCache = $cache -> get('student_screen_data')["students"]) {
-            $student -> get_student_data_from_cache($studentsCache);
-            $student -> check_student_hasfindebt();
-            $student -> set_student_leangroup();
+        //TODO: here is only grouplist
 
-            foreach ($student->studentdata as $courseid => $course){
-                $course["course_data"] -> url = new moodle_url('/course/view.php', array('id' => $courseid));
-                foreach ($course['groupid'] as $groupid){
-                   if($grade_mod = $student -> set_mod_info($courseid, $groupid)){
-                       $course["course_data"]->mod_info[] = $grade_mod;
-                   }
-                }
-            }
+        if ($select_list = "") {
 
-            usort($student -> studentdata, array('self', 'cmp'));
-
-            return (array)$student;
-        } else {
+        }
+        //TODO: here is only studentlist
+        if ($this->select_list === "grouplist") {
             return array();
+        } else if ($this->select_list === "studentlist") {
+            if ($studentsCache = $cache -> get('student_screen_data')["students"]) {
+                $student_id = $this -> chosen_id;
+                $student = new student($student_id, null, null);
+                $student -> get_student_data_from_cache($studentsCache);
+                $student -> check_student_hasfindebt();
+                $student -> set_student_leangroup();
+
+                foreach ($student -> studentdata as $courseid => $course) {
+                    $course["course_data"] -> url = new moodle_url('/course/view.php', array('id' => $courseid));
+                    foreach ($course['groupid'] as $groupid) {
+                        if ($grade_mod = $student -> set_mod_info($courseid, $groupid)) {
+                            $course["course_data"] -> mod_info[] = $grade_mod;
+                        }
+                    }
+                }
+
+                usort($student -> studentdata, array('self', 'cmp'));
+
+                return (array)$student;
+            } else {
+                return array();
+            }
         }
     }
 
