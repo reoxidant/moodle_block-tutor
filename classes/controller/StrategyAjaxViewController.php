@@ -9,6 +9,7 @@
 namespace controller;
 
 use dml_exception;
+use model\Group;
 use model\StructStudentCourse;
 use model\Student;
 use moodle_url;
@@ -48,6 +49,7 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
     {
         $this -> chosen_id = $chosen_id;
         $this -> select_list = $select_list;
+
     }
 
     /**
@@ -65,6 +67,11 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
         }
         //TODO: here is only studentlist
         if ($this->select_list === "grouplist") {
+            if ($studentsCache = $cache -> get('student_screen_data')["groups"]){
+                $group_id = $this -> chosen_id;
+                $group = new group($group_id, null);
+                $group -> get_groups_data_from_cache($studentsCache);
+            }
             return array();
         } else if ($this->select_list === "studentlist") {
             if ($studentsCache = $cache -> get('student_screen_data')["students"]) {

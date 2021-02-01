@@ -28,9 +28,27 @@ class Group
      * @param $groupid
      * @param $name
      */
-    public function __construct($groupid, $name)
+    public function __construct($groupid, $name = "")
     {
         $this -> groupid = $groupid;
-        $this -> name = $name;
+        if ($name != null) {
+            $this -> name = $name;
+        }
+    }
+
+    /**
+     * @param $studentsCache
+     */
+    public function get_groups_data_from_cache($studentsCache)
+    {
+        foreach ($studentsCache as $group) {
+            if ($group["groupid"] == $this -> groupid) {
+                $this -> groupid = $group["groupid"];
+                $this -> name = $group["name"];
+                break;
+            } else {
+                continue;
+            }
+        }
     }
 }
