@@ -89,14 +89,15 @@ class Course extends sirius_student
 
         foreach ($this -> groups as $groupname => $group_data) {
 
+            //TODO: need to insert each groups his students by name group
             $obj_group = new group($group_data -> id, $groupname);
 
-            $group_students = $this -> getGroupUsersByRole($group_data -> id, $this -> id);
+            $obj_group -> students = $this -> getGroupUsersByRole($group_data -> id, $this -> id);
 
-            foreach ($group_students as $userid => $profile) {
+            foreach ($obj_group -> students as $userid => $profile) {
 
                 $student_course[$userid][$group_data -> courseid]["course_data"] = $group_data;
-                $student_course[$userid][$group_data -> courseid]["groupid"][] = $group_data->id;
+                $student_course[$userid][$group_data -> courseid]["groupid"][] = $group_data -> id;
                 $obj_student = new student($userid, $profile -> name, $profile -> profileurl, $groupname, $student_course[$userid]);
 
                 $this -> setListBy($obj_student, $obj_group);

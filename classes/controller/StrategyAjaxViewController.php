@@ -9,6 +9,7 @@
 namespace controller;
 
 use dml_exception;
+use model\Group;
 use model\StructStudentCourse;
 use model\Student;
 use moodle_url;
@@ -48,6 +49,7 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
     {
         $this -> chosen_id = $chosen_id;
         $this -> select_list = $select_list;
+
     }
 
     /**
@@ -64,9 +66,25 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
 
         }
         //TODO: here is only studentlist
-        if ($this->select_list === "grouplist") {
+        if ($this -> select_list === "grouplist") {
+            if ($studentsCache = $cache -> get('student_screen_data')["groups"]) {
+                $group_id = $this -> chosen_id;
+                $group = new group($group_id, null);
+                $group -> get_groups_data_from_cache($studentsCache);
+
+                foreach ($group -> students as $student) {
+                    $student -> check_student_hasfindebt();
+                    $student -> set_student_leangroup();
+                }
+//                $return_arr['groups'][$groupname]['students'][$userid]['studentname'] = $studentname;
+//                $return_arr['groups'][$groupname]['students'][$userid]['studenturl'] = $profileurl;
+//                $return_arr['groups'][$groupname]['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
+//                $return_arr['groups'][$groupname]['students'][$userid]['student_leangroup'] = $student_leangroup;
+//                $return_arr['groups'][$groupname]['students'][$userid]['data'][] = $data;
+//                $return_arr['groups'][$groupname]['name'] = $groupname;
+            }
             return array();
-        } else if ($this->select_list === "studentlist") {
+        } else if ($this -> select_list === "studentlist") {
             if ($studentsCache = $cache -> get('student_screen_data')["students"]) {
                 $student_id = $this -> chosen_id;
                 $student = new student($student_id, null, null);

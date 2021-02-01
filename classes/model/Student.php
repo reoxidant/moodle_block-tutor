@@ -54,6 +54,9 @@ class Student extends sirius_student
      */
     public array $studentdata;
 
+    /**
+     * @var array
+     */
     public array $mod_data = array();
 
     /**
@@ -84,7 +87,7 @@ class Student extends sirius_student
         $data = (new DatabaseManager()) -> getUserInfoBy($leangroup_field_id, $this -> studentid);
 
         if ($leangroup_field_id && isset($data -> data)) {
-            $this->leangroup = trim($data -> data);
+            $this -> leangroup = trim($data -> data);
         }
     }
 
@@ -105,7 +108,7 @@ class Student extends sirius_student
      */
     public function check_student_hasfindebt()
     {
-        $this->hasfindebt = sirius_student ::check_hasfindebt($this -> studentid);
+        $this -> hasfindebt = sirius_student ::check_hasfindebt($this -> studentid);
     }
 
     /**
@@ -117,6 +120,7 @@ class Student extends sirius_student
             if ($student["studentid"] == $this -> studentid) {
                 $this -> groupname = $student['groupname'];
                 $this -> studentdata = $student['studentdata'];
+                break;
             } else {
                 continue;
             }
