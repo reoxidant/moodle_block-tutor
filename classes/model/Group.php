@@ -22,15 +22,21 @@ class Group
      * @var
      */
     public string $name;
+    /**
+     * @var array|mixed
+     */
+    public array $students;
 
     /**
      * Group constructor.
      * @param $groupid
      * @param $name
      */
-    public function __construct($groupid, $name = "")
+    public function __construct($groupid, $name = "", $students = array())
     {
         $this -> groupid = $groupid;
+        $this -> students = $students;
+
         if ($name != null) {
             $this -> name = $name;
         }
@@ -45,6 +51,7 @@ class Group
             if ($group["groupid"] == $this -> groupid) {
                 $this -> groupid = $group["groupid"];
                 $this -> name = $group["name"];
+                $this -> students = $group["students"];
                 break;
             } else {
                 continue;
