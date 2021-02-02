@@ -44,6 +44,9 @@ class StrategySelectListViewController extends sirius_student implements Strateg
 
 //        $time = microtime(true) - $start;
 //        \core\notification ::warning("$time - sec perform operation");
+        $cache = \cache ::make('block_tutor', 'student_screen_data');
+//        if (!$studentScreenData = $cache -> get('student_screen_data')) {}
+        $cache -> set('student_screen_data', $course->listData);
 
         return $course -> SortAndReturnListData();
     }

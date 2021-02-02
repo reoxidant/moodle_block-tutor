@@ -72,16 +72,25 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
                 $group = new group($group_id, null);
                 $group -> get_groups_data_from_cache($studentsCache);
 
-                foreach ($group -> students as $student) {
-                    $student -> check_student_hasfindebt();
-                    $student -> set_student_leangroup();
+                foreach ($group -> students as $group_student) {
+                    $studentCourse = $cache -> get('student_screen_data')["students"][$group_student->id];
+
+                    foreach ($studentCourse["studentdata"] as $courseid => $course){
+                        if(in_array($group_id, $course['groupid'])){
+                            $student = new student($group_student->id, null, null);
+                            $student -> check_student_hasfindebt();
+                            $student -> set_student_leangroup();
+                            if($grade_mod = $student -> set_mod_info($courseid, $group_id)) {
+                                $course["course_data"] -> mod_info[] = $grade_mod;
+                            }
+                            $student->studentdata["course_data"] = $course["course_data"];
+                            $group -> students[$student->studentid] = $student;
+                            break;
+                        }
+                        continue;
+                    }
                 }
-//                $return_arr['groups'][$groupname]['students'][$userid]['studentname'] = $studentname;
-//                $return_arr['groups'][$groupname]['students'][$userid]['studenturl'] = $profileurl;
-//                $return_arr['groups'][$groupname]['students'][$userid]['hasfindebt'] = $curuser_hasfindebt;
-//                $return_arr['groups'][$groupname]['students'][$userid]['student_leangroup'] = $student_leangroup;
-//                $return_arr['groups'][$groupname]['students'][$userid]['data'][] = $data;
-//                $return_arr['groups'][$groupname]['name'] = $groupname;
+                return (array)$group;
             }
             return array();
         } else if ($this -> select_list === "studentlist") {
