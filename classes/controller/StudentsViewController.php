@@ -36,12 +36,9 @@ class StudentsViewController extends sirius_student implements Strategy
      */
     public function export_for_template($output): array
     {
-        $cache = \cache ::make('block_tutor', 'student_screen_data');
-//        if (!$studentScreenData = $cache -> get('student_screen_data')) {}
-        $studentScreenData = $this -> get_students();
-        $cache -> set('student_screen_data', $studentScreenData);
 
-        return $studentScreenData;
+
+        return $this -> get_students();
 
 //        return $this -> get_students();
     }

@@ -55,11 +55,6 @@ class Student extends sirius_student
     public array $studentdata;
 
     /**
-     * @var array
-     */
-    public array $mod_data = array();
-
-    /**
      * student constructor.
      * @param $studentid
      * @param $studentname
