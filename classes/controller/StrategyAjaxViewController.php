@@ -73,22 +73,21 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
                 $group -> get_groups_data_from_cache($studentsCache);
 
                 foreach ($group -> students as $group_student) {
-                    $studentCourse = $cache -> get('student_screen_data')["students"][$group_student->id];
+                    $studentCourse = $cache -> get('student_screen_data')["students"][$group_student -> id];
+                    $student = new student($group_student -> id, null, null);
+                    $student -> check_student_hasfindebt();
+                    $student -> set_student_leangroup();
 
-                    foreach ($studentCourse["studentdata"] as $courseid => $course){
-                        if(in_array($group_id, $course['groupid'])){
-                            $student = new student($group_student->id, null, null);
-                            $student -> check_student_hasfindebt();
-                            $student -> set_student_leangroup();
-                            if($grade_mod = $student -> set_mod_info($courseid, $group_id)) {
+                    foreach ($studentCourse["studentdata"] as $courseid => $course) {
+                        if (in_array($group_id, $course['groupid'])) {
+                            $student -> studentdata["course_data"][] = $course["course_data"];
+                            if ($grade_mod = $student -> set_mod_info($courseid, $group_id)) {
                                 $course["course_data"] -> mod_info[] = $grade_mod;
                             }
-                            $student->studentdata["course_data"] = $course["course_data"];
-                            $group -> students[$student->studentid] = $student;
-                            break;
                         }
                         continue;
                     }
+                    $group -> students[$student -> studentid] = $student;
                 }
                 return (array)$group;
             }
