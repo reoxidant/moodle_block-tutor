@@ -55,11 +55,13 @@ define([
                     data: {selectList: "grouplist", groupId: groupId},
                     url: location.origin + "/blocks/tutor/ajax.php",
                     dataType: 'html',
+                    success: function (data) {
+                        $(ItemSelectors.tabSelector.content).html(data)
+                        stopLoading(root);
+                    },
                     beforeSend: function () {
                         startLoading(root);
-                    },
-                    complete: function () {
-                        stopLoading(root);
+
                     },
                     cache: "false",
                     error: function () {

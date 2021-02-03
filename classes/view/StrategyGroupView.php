@@ -33,24 +33,23 @@ class StrategyGroupView
         $this -> data = $groupData;
     }
 
-    /**
-     *
-     */
-    public function generateGroupList()
+    public function pullHtmlGroupData()
     {
-        $this -> html = \html_writer ::start_tag('ol') . $this -> createListStudents($this -> data) . \html_writer ::end_tag('ol');
+        list("groupid" => $groupid, "name" => $name) = $this -> data;
+
+        $this -> html =
+            \html_writer::start_tag('h5') . $name. \html_writer ::end_tag('h5');
+            \html_writer::start_tag("ul").$this->createListStudents().\html_writer::end_tag("ul");
     }
 
-    /**
-     * @param $groupData
-     * @return string
-     */
-    private function createListStudents($groupData): string
-    {
-        return
-            \html_writer ::start_tag('div') .
-            \html_writer ::start_tag('h5') . $name . \html_writer ::end_tag('h5') .
-            //$this -> generateStudentList($return_arr) .
-            \html_writer ::end_tag('div');
+    private function createListStudents(){
+        list("students" => $studentList) = $this->data;
+
+        foreach ($studentList as $student){
+            $this -> html .=
+            \html_writer::start_tag("li", array("class" => "studentrow hasfindebt")).
+            \html_writer::start_tag("a", array("href" => $student->studenturl, "target" => "_blank")).$student->studentname.\html_writer::end_tag("a")
+            .\html_writer::end_tag("li");
+        }
     }
 }
