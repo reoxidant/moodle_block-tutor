@@ -185,7 +185,7 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
             $studentView -> pullHtmlStudentData();
         } else {
             $groupView = new StrategyGroupView($this -> data);
-            $groupView -> generateGroupList();
+            $groupView -> pullHtmlGroupData();
         }
         echo $studentView -> html ?? $groupView -> html;
     }
