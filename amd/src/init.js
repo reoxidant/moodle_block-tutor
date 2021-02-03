@@ -45,11 +45,9 @@ define([
         });
 
         root.on('click', ItemSelectors.tabSelector.groupListDropDown, function (e) {
-            startLoading(root);
-
             setTimeout(function () {
                 let groupId = root.find(ItemSelectors.tabSelector.activeItemGroup)[0].dataset.group;
-
+                root = $(".block-tutor");
                 $.ajax({
                     type: "POST",
                     data: {selectList: "grouplist", groupId: groupId},
@@ -57,11 +55,13 @@ define([
                     dataType: 'html',
                     success: function (data) {
                         $(ItemSelectors.tabSelector.content).html(data)
-                        stopLoading(root);
+
                     },
                     beforeSend: function () {
                         startLoading(root);
-
+                    },
+                    complete: function () {
+                        stopLoading(root);
                     },
                     cache: "false",
                     error: function () {
@@ -79,7 +79,7 @@ define([
 
             setTimeout(function () {
                 let studentId = root.find(ItemSelectors.tabSelector.activeItemStudent)[0].dataset.student;
-
+                root = $(".block-tutor");
                 $.ajax({
                     type: "POST",
                     data: {selectList: "studentlist", studentId: studentId},
