@@ -92,9 +92,7 @@ class StrategyStudentView
     private function leangroup($student_leangroup): string
     {
         return
-            \html_writer ::start_tag('i') .
-            "(" . $student_leangroup . ")" .
-            \html_writer ::end_tag('i');
+            \html_writer ::start_tag('i') . "(" . $student_leangroup . ")" . \html_writer ::end_tag('i');
     }
 
     /**
@@ -104,10 +102,7 @@ class StrategyStudentView
     private function groupname($student_groupname): string
     {
         return
-            " - " .
-            \html_writer ::start_tag('small') .
-            $student_groupname .
-            \html_writer ::end_tag('small');
+            " - " . \html_writer ::start_tag('small') . $student_groupname . \html_writer ::end_tag('small');
     }
 
     /**
