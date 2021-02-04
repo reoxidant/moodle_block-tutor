@@ -15,11 +15,11 @@ namespace model;
 class Group
 {
     /**
-     * @var
+     * @var string
      */
     public string $groupid;
     /**
-     * @var
+     * @var string
      */
     public string $name;
     /**

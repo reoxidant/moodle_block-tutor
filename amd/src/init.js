@@ -55,7 +55,6 @@ define([
                     dataType: 'html',
                     success: function (data) {
                         $(ItemSelectors.tabSelector.content).html(data)
-
                     },
                     beforeSend: function () {
                         startLoading(root);
@@ -120,7 +119,7 @@ define([
             let tabname = $(e.currentTarget).data('tabname');
             // Bootstrap does not change the URL when using BS tabs, so need to do this here.
             // Also check to make sure the browser supports the history API.
-            if (type == 'studentlist') {
+            if (type === 'studentlist') {
                 type = 'block_tutor_studentlist_tab';
             } else {
                 type = 'block_tutor_last_tab';

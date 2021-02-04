@@ -13,7 +13,7 @@ define([], function () {
             activeItemGroup: "#groupsdropdown + .dropdown-menu .active",
             activeItemStudent: "#studentsdropdown + .dropdown-menu .active",
             dropDownButton: "#dropdown-btn",
-            content: ".show > .full-width #content"
+            content: ".show .full-width #content"
         }
     };
 });

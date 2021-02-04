@@ -44,12 +44,17 @@ class StrategyGroupView
 
         $this -> html =
             \html_writer ::start_tag('h5') . $name . \html_writer ::end_tag('h5');
-        \html_writer ::start_tag("ul") . $this -> createListStudents() . \html_writer ::end_tag("ul");
+        try {
+            \html_writer ::start_tag("ul") . $this -> createListStudents() . \html_writer ::end_tag("ul");
+        } catch (\coding_exception | \moodle_exception $e) {
+            debugging('Error creating list students for group ' . $name . ': ' . $e->getMessage());
+        }
     }
 
     /**
      *
      * @throws \coding_exception
+     * @throws \moodle_exception
      */
     private function createListStudents()
     {
@@ -66,6 +71,7 @@ class StrategyGroupView
             }
 
             $this -> html .=
+                \html_writer::start_tag("ul").
                 \html_writer ::start_tag("li", array("class" => $classNameForListItem)) .
                 \html_writer ::start_tag("a", array("href" => $student -> studenturl, "target" => "_blank")) .
                 $student -> studentname .
@@ -73,7 +79,8 @@ class StrategyGroupView
                 " (" . \html_writer ::start_tag("i") . $student -> leangroup . \html_writer ::end_tag("i") . ") " .
                 $htmlhasfindebt .
                 $this -> createCourseListInfo($student -> studentdata["course_data"]) .
-                \html_writer ::end_tag("li");
+                \html_writer ::end_tag("li").
+                \html_writer::end_tag("ul");
         }
     }
 

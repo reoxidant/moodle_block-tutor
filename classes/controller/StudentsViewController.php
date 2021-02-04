@@ -36,11 +36,7 @@ class StudentsViewController extends sirius_student implements Strategy
      */
     public function export_for_template($output): array
     {
-
-
         return $this -> get_students();
-
-//        return $this -> get_students();
     }
 
     /**
