@@ -91,10 +91,10 @@ class StrategyGroupView
      */
     private function createCourseListInfo($courses): string
     {
-        $list = \html_writer ::start_tag('ul');
+        $list = \html_writer ::start_tag('ul', array("class" => "list-group list-group-flush"));
         foreach ($courses as $course) {
             $list .=
-                \html_writer ::start_tag("li") .
+                \html_writer ::start_tag("li", array("class" => "list-group-item")) .
                 \html_writer ::start_tag("a", array("href" => new moodle_url('/course/view.php', array('id' => $course -> courseid)), "target" => "_blank")) .
                 $course -> coursename .
                 \html_writer ::end_tag("a") .

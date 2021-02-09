@@ -114,12 +114,12 @@ class StrategyStudentView
         list("studentdata" => $courses) = $this -> data;
 
         $html_course = "";
-        $html_course .= \html_writer ::start_tag('ul');
+        $html_course .= \html_writer ::start_tag('ul', array("class" => "list-group list-group-flush"));
 
         if ($courses) {
             foreach ($courses as $course) {
                 $html_course .=
-                    \html_writer ::start_tag('li') .
+                    \html_writer ::start_tag('li', array("class" => "list-group-item")) .
                     \html_writer ::link($course['course_data'] -> url, $course['course_data'] -> coursename, array('target' => '_blank')) .
                     $this -> mod_info($course['course_data'] -> mod_info) .
                     \html_writer ::end_tag('li');
