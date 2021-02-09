@@ -79,17 +79,8 @@ class Course extends sirius_student
      */
     public function setCourseList(&$student_course)
     {
-        /*if (!empty($groups)) {
-            $group_data = array_pop($groups);
-            $obj_group = new group($group_data -> id, $group_data->name);
-            $group_students = $this -> getGroupUsersByRole($group_data->id, $this->id);
-            $this->setListStudentAndGroup($group_students, $obj_group);
-            $this->setCourseList($groups);
-        }*/
-
         foreach ($this -> groups as $groupname => $group_data) {
 
-            //TODO: need to insert each groups his students by name group
             $obj_group = new group($group_data -> id, $groupname);
 
             $obj_group -> students = $this -> getGroupUsersByRole($group_data -> id, $this -> id);
@@ -104,16 +95,6 @@ class Course extends sirius_student
             }
         }
     }
-
-    /*private function setListStudentAndGroup($group_students, $obj_group)
-    {
-        if (!empty($group_students)) {
-            $user_data = array_pop($group_students);
-            $obj_student = new student($user_data -> id, $user_data -> name, $user_data -> profileurl);
-            $this -> setListBy($obj_student, $obj_group);
-            $this -> setListStudentAndGroup($group_students, $obj_group);
-        }
-    }*/
 
     /**
      * @param $obj_student
