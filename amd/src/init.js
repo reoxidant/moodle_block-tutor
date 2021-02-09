@@ -65,7 +65,7 @@ define([
                     cache: "false",
                     error: function () {
                         Notification.addNotification({
-                            message: "Ошибка при вызове группы, похлже такого преподавателя несуществует",
+                            message: "Ошибка при вызове группы, похоже такого преподавателя несуществует",
                             type: "error"
                         });
                     }

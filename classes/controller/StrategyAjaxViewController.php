@@ -94,9 +94,9 @@ class StrategyAjaxViewController extends sirius_student implements Strategy
         $group_id = $this -> chosen_id;
         $group = new group($group_id, null);
         $group -> get_groups_data_from_cache($this -> studentsCache);
+        $cache = \cache ::make('block_tutor', 'student_screen_data');
 
         foreach ($group -> students as $group_student) {
-            $cache = \cache ::make('block_tutor', 'student_screen_data');
             $studentCourse = $cache -> get('student_screen_data')["students"][$group_student -> id];
             $student = $this -> initiateStudentBy($group_student -> id);
             $this -> fillGroupStudentCourse($group_id, $student, $studentCourse);

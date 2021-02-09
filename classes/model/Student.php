@@ -41,8 +41,7 @@ class Student extends sirius_student
     /**
      * @var string
      */
-    public string $leangroup;
-
+    public string $leangroup = "";
 
     /**
      * @var string|mixed
@@ -82,7 +81,9 @@ class Student extends sirius_student
         $data = (new DatabaseManager()) -> getUserInfoBy($leangroup_field_id, $this -> studentid);
 
         if ($leangroup_field_id && isset($data -> data)) {
-            $this -> leangroup = trim($data -> data);
+            if($data -> data ?? null){
+                $this -> leangroup = trim($data -> data);
+            }
         }
     }
 
