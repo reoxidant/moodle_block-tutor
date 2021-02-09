@@ -17,7 +17,6 @@ if (is_file($CFG -> dirroot . '/local/student_lib/locallib.php')) {
     require_once($CFG -> dirroot . '/local/student_lib/locallib.php');
 }
 
-//require_once("studentslist_view.php");
 require_once($CFG -> dirroot . "/blocks/tutor/classes/controller/StudentsViewController.php");
 
 /**
@@ -58,7 +57,6 @@ class main implements renderable, templatable
         global $USER;
 
         $needgradignview = new needgradign_view($USER -> id);
-//        $studentslistview = new studentslist_view;
         $studentslistview = new StudentsViewController(new StrategySelectListViewController());
         $enrolledview = new enrolled_view;
         $webinarsview = new webinars_view($USER -> id);
@@ -92,7 +90,6 @@ class main implements renderable, templatable
             'viewingenrolled' => $viewingenrolled,
             'viewingwebinars' => $viewingwebinars,
             'needgradignview' => $needgradignview -> export_for_template($output),
-//            'studentslistview' => $studentslistview -> export_for_template($output),
             'studentslistview' => $studentslistview -> export_for_template($output),
             'enrolledview' => $enrolledview -> export_for_template($output),
             'webinarsview' => $webinarsview -> export_for_template($output),
