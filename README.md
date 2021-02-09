@@ -10,11 +10,11 @@ Block module for tutor which displaying information about courses, students, gro
 
 ### tab students list
 
-<img src="https://raw.githubusercontent.com/reoxidant/swift-calculator/main/Calculator/Screenshots/Calculator-portrait.png" width=400/> 
+<img src="https://github.com/reoxidant/moodle_block-tutor/blob/master/screenshots/screen_group.png" width=800/> 
 
 ### tab group list
 
-<img src="https://raw.githubusercontent.com/reoxidant/swift-calculator/main/Calculator/Screenshots/Calculator-landscape.png" width=800/>
+<img src="https://github.com/reoxidant/moodle_block-tutor/blob/master/screenshots/screen_student.png" width=800/>
 
 ## Requirement:
 
