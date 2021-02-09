@@ -36,6 +36,11 @@ class StrategyGroupView
     }
 
     /**
+     * @var int
+     */
+    private int $studentid;
+
+    /**
      *
      */
     public function pullHtmlGroupData()
@@ -61,6 +66,8 @@ class StrategyGroupView
         list("students" => $studentList) = $this -> data;
 
         foreach ($studentList as $student) {
+
+            $this->studentid = $student->studentid;
 
             if ($student -> hasfindebt) {
                 $classNameForListItem = "studentrow hasfindebt";
@@ -98,6 +105,7 @@ class StrategyGroupView
                 \html_writer ::start_tag("a", array("href" => new moodle_url('/course/view.php', array('id' => $course -> courseid)), "target" => "_blank")) .
                 $course -> coursename .
                 \html_writer ::end_tag("a") .
+                $this -> mod_info($course->mod_info).
                 \html_writer ::end_tag("li");
         }
         $list .= \html_writer ::end_tag("ul");
@@ -115,5 +123,36 @@ class StrategyGroupView
             \html_writer ::start_tag("span", array("class" => "hasfindebt_info")) .
             " (" . get_string("hasfindebt", "block_tutor") . ") " .
             \html_writer ::end_tag("span");
+    }
+
+    /**
+     * @param null $mod_data
+     * @return string
+     * @throws \coding_exception
+     */
+    private function mod_info($mod_data = null):string
+    {
+        if(!$mod_data){
+            return "";
+        }
+
+        foreach ($mod_data as $mod){
+            if($mod["mod_url"]){
+                return
+                    " - (". \html_writer::start_tag("b") .
+                        \html_writer::start_tag("a",
+                            array(
+                                'href' => "{$mod["mod_url"]}&rownum=0&action=grader&userid=$this->studentid&group={$mod['groupid']}&treset=1",
+                                'target' => "_blank",
+                                'title' => \get_string("gotosubmition", "block_tutor")
+                            )
+                        ) . $mod['mod_grade'] .
+                        \html_writer::end_tag("a") .
+                    \html_writer::end_tag("b").")";
+            } else {
+                return
+                    " - (".\html_writer::start_tag(). $mod["mod_grade"] .\html_writer::end_tag().")";
+            }
+        }
     }
 }
