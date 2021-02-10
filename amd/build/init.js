@@ -32,16 +32,94 @@ define([
         loadingIconContainer.addClass('hidden');
     };
 
+    var tabStudentList = function (root, type = null, template = "block_tutor/main") {
+
+        //for change height tab pages
+        root.on('show.bs.dropdown', ItemSelectors.tabSelector.dropDownButton, function (e) {
+            let heightMenu = $(e.currentTarget).find(".dropdown-menu").height();
+            $(root).find(".full-width").height(heightMenu);
+        });
+
+        root.on('hide.bs.dropdown', ItemSelectors.tabSelector.dropDownButton, function (e) {
+            $(root).find(".full-width").css('height', 'auto');
+        });
+
+        root.on('click', ItemSelectors.tabSelector.groupListDropDown, function (e) {
+            setTimeout(function () {
+                let groupId = root.find(ItemSelectors.tabSelector.activeItemGroup)[0].dataset.group;
+                root = $(".block-tutor");
+                $.ajax({
+                    type: "POST",
+                    data: {selectList: "grouplist", groupId: groupId},
+                    url: location.origin + "/blocks/tutor/ajax.php",
+                    dataType: 'html',
+                    success: function (data) {
+                        $(ItemSelectors.tabSelector.content).html(data)
+                    },
+                    beforeSend: function () {
+                        startLoading(root);
+                    },
+                    complete: function () {
+                        stopLoading(root);
+                    },
+                    cache: "false",
+                    error: function () {
+                        Notification.addNotification({
+                            message: "Ошибка при вызове группы, похоже такого преподавателя несуществует",
+                            type: "error"
+                        });
+                    }
+                });
+            }, 500);
+        });
+
+        root.on('click', ItemSelectors.tabSelector.studentListDropDown, function (e) {
+            startLoading(root);
+
+            setTimeout(function () {
+                let studentId = root.find(ItemSelectors.tabSelector.activeItemStudent)[0].dataset.student;
+                root = $(".block-tutor");
+                $.ajax({
+                    type: "POST",
+                    data: {selectList: "studentlist", studentId: studentId},
+                    url: location.origin + "/blocks/tutor/ajax.php",
+                    dataType: 'html',
+                    success: function (data) {
+                        $(ItemSelectors.tabSelector.content).html(data)
+                    },
+                    beforeSend: function () {
+                        startLoading(root);
+                    },
+                    complete: function () {
+                        stopLoading(root);
+                    },
+                    cache: "false",
+                    error: function () {
+                        Notification.addNotification({
+                            message: "Ошибка при выборе студента, похоже такого студента несуществует",
+                            type: "error"
+                        });
+                    }
+                })
+
+            }, 500);
+        });
+
+        return AjaxRepository.getContentData(root, type)
+            .fail(Notification.exception);
+    }
+
     var registerEventListeners = function (root, type = null, template = "block_tutor/main") {
         root = $(root);
+        stopLoading(root)
 
         // Bind click events to event links.
         root.on(CustomEvents.events.activate, "[data-toggle='tab']", function (e) {
             startLoading(root);
-            var tabname = $(e.currentTarget).data('tabname');
+            let tabname = $(e.currentTarget).data('tabname');
             // Bootstrap does not change the URL when using BS tabs, so need to do this here.
             // Also check to make sure the browser supports the history API.
-            if (type == 'studentlist') {
+            if (type === 'studentlist') {
                 type = 'block_tutor_studentlist_tab';
             } else {
                 type = 'block_tutor_last_tab';
@@ -51,61 +129,9 @@ define([
             }
             return LoadTabContent(root, type, tabname);
         });
-
-        root.on('click', ItemSelectors.selectors.groupListDropDown, function (e) {
-            startLoading(root);
-
-            $.ajax({
-                type: "POST",
-                data: {selectList: true},
-                url: location.origin + "/blocks/tutor/ajax.php",
-                beforeSend: function () {
-                    startLoading(root);
-                },
-                complete: function () {
-                    stopLoading(root);
-                },
-                cache: "false",
-                error: function () {
-                    Notification.addNotification({
-                        message: "Ошибка при вызове групп",
-                        type: "error"
-                    });
-                }
-            });
-        });
-
-        root.on('click', ItemSelectors.tabSelector.studentListDropDown, function (e) {
-            startLoading(root);
-
-            $.ajax({
-                type: "POST",
-                data: {selectList: true},
-                url: location.origin + "/blocks/tutor/ajax.php",
-                beforeSend: function () {
-                    startLoading(root);
-                },
-                complete: function () {
-                    stopLoading(root);
-                },
-                cache: "false",
-                error: function () {
-                    Notification.addNotification({
-                        message: "Ошибка при выбора студентов",
-                        type: "error"
-                    });
-                }
-            });
-        });
-
-        return AjaxRepository.getContentData(root, type)
-            .always(function () {
-                return stopLoading(root);
-            })
-            .fail(Notification.exception);
     };
 
-    var LoadTabContent = function (root, type, tabname) {
+    let LoadTabContent = function (root, type, tabname) {
         return AjaxRepository.getContentData(root, type, tabname)
             .done(function () {
                 return stopLoading(root);
@@ -114,6 +140,7 @@ define([
     };
 
     return {
+        tabStudentList: tabStudentList,
         registerEventListeners: registerEventListeners
     };
 });
