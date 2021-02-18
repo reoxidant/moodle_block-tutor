@@ -4,7 +4,10 @@ Block module for tutor which displaying information about courses, students, gro
 
 ## Features:
 
-- many tabs information
+- display staff about student work
+- display courses
+- display students group
+- display tutor webinar
 
 ## Screenshots:
 
