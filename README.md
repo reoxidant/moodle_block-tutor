@@ -1,6 +1,6 @@
 # moodle_block-tutor
 
-Block module for tutor which displaying information about courses, students, groups and another staffs.
+Block module for tutor which displaying information about courses, students, groups and another staffs about student work.
 
 ## Features:
 
